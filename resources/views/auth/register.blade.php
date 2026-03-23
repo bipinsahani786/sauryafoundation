@@ -6,18 +6,30 @@
         <div class="absolute top-1/4 -right-20 w-[300px] h-[300px] bg-purple-500 rounded-full mix-blend-multiply blur-[100px] opacity-10 animate-blob"></div>
         <div class="absolute bottom-1/4 -left-20 w-[300px] h-[300px] bg-brand-primary rounded-full mix-blend-multiply blur-[100px] opacity-10 animate-blob" style="animation-delay: 3s;"></div>
 
-        <div class="max-w-md w-full relative z-10" data-aos="zoom-in">
+        <div class="max-w-md w-full relative z-10" data-aos="zoom-in" x-data="{ role: 'syndicate' }">
             <div class="glass-card p-8 rounded-[3rem] border-brand-accent/20 shadow-2xl">
                 <div class="text-center mb-8">
                     <div class="w-12 h-12 bg-gradient-to-br from-brand-accent to-brand-primary rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg -rotate-3 text-white">
                         <i class="fas fa-user-plus text-xl"></i>
                     </div>
                     <h2 class="text-2xl font-black text-white mb-1 tracking-tighter">Register</h2>
-                    <p class="text-gray-500 font-bold uppercase tracking-[0.2em] text-[8px]">New Syndicate Membership</p>
+                    <p class="text-gray-500 font-bold uppercase tracking-[0.2em] text-[8px] mb-6">Select Your Terminal Access</p>
+
+                    <div class="flex p-1 bg-brand-dark/80 rounded-2xl border border-brand-border/50 mb-2">
+                        <button type="button" @click="role = 'syndicate'" :class="role === 'syndicate' ? 'bg-gradient-to-r from-brand-accent to-brand-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'" class="flex-1 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300">
+                            Syndicate
+                        </button>
+                        <button type="button" @click="role = 'teacher'" :class="role === 'teacher' ? 'bg-gradient-to-r from-brand-accent to-brand-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'" class="flex-1 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300">
+                            Teacher
+                        </button>
+                    </div>
+                    <p class="text-[8px] text-brand-accent/60 font-medium italic tracking-tight" x-show="role === 'teacher'">* Direct access for coaching professionals.</p>
+                    <p class="text-[8px] text-brand-accent/60 font-medium italic tracking-tight" x-show="role === 'syndicate'">* For investment & portfolio management.</p>
                 </div>
 
                 <form action="{{ route('register') }}" method="POST" class="space-y-4">
                     @csrf
+                    <input type="hidden" name="role" :value="role">
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1.5">

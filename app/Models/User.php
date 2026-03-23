@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
+        'teacher_id',
     ];
 
     public function isSuperAdmin()
@@ -41,9 +42,47 @@ class User extends Authenticatable
         return $this->role === 'syndicate';
     }
 
+    public function isTeacher()
+    {
+        return $this->role === 'teacher';
+    }
+
+    public function isStudent()
+    {
+        return $this->role === 'student';
+    }
+
+    public function teacher()
+    {
+        return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function students()
+    {
+        return $this->hasMany(User::class, 'teacher_id');
+    }
+
     public function subscriptions()
     {
         return $this->hasMany(PlanSubscription::class);
+    }
+
+    public function quizAttempts()
+    {
+        return $this->hasMany(QuizAttempt::class, 'student_id');
+    }
+
+    public function enrolledCourses()
+    {
+        return $this->belongsToMany(Course::class, 'course_user')
+                    ->using(CourseUser::class)
+                    ->withPivot('enrolled_at')
+                    ->withTimestamps();
+    }
+
+    public function contentCompletions()
+    {
+        return $this->hasMany(ContentCompletion::class);
     }
 
     /**

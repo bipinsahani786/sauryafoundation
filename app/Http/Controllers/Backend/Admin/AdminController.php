@@ -7,6 +7,7 @@ use App\Models\SyndicateApplication;
 use App\Models\PlanSubscription;
 use App\Models\Plan;
 use App\Models\User;
+use App\Models\Quiz;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -44,13 +45,21 @@ class AdminController extends Controller
         return back()->with('success', 'Subscription approved successfully.');
     }
 
-    public function rejectSubscription(Request $request, PlanSubscription $subscription)
+    public function quizzes()
     {
-        $subscription->update([
-            'status' => 'rejected',
-            'admin_note' => $request->admin_note
-        ]);
+        $quizzes = Quiz::where('price', '>', 0)->latest()->paginate(10);
+        return view('backend.admin.quizzes.index', compact('quizzes'));
+    }
 
-        return back()->with('success', 'Subscription rejected successfully.');
+    public function approveQuiz(Quiz $quiz)
+    {
+        $quiz->update(['status' => 'published']);
+        return back()->with('success', 'Quiz approved and published.');
+    }
+
+    public function rejectQuiz(Quiz $quiz)
+    {
+        $quiz->update(['status' => 'draft']);
+        return back()->with('success', 'Quiz rejected and moved to draft.');
     }
 }

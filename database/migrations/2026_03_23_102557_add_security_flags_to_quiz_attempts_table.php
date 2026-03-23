@@ -6,10 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('teacher_id')->nullable()->after('id')->constrained('users')->onDelete('set null');
+        Schema::table('quiz_attempts', function (Blueprint $table) {
+            $table->boolean('is_blocked')->default(false)->after('status');
+            $table->text('block_reason')->nullable()->after('is_blocked');
         });
     }
 
@@ -18,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('quiz_attempts', function (Blueprint $table) {
             //
         });
     }
