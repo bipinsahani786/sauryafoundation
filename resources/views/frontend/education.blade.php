@@ -141,12 +141,36 @@
         </div>
     </section>
 
-    <!-- 10. CDA -->
-    <section class="py-40 relative bg-brand-dark overflow-hidden">
+    <!-- 10. Application Form -->
+    <section id="apply" class="py-40 relative bg-brand-dark overflow-hidden">
         <div class="absolute inset-0 bg-brand-accent/5"></div>
-        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
-            <h4 class="text-5xl font-black text-white mb-10">Future-Proof Your Portfolio.</h4>
-            <a href="{{ route('home') }}#apply" class="px-16 py-6 bg-brand-accent text-white rounded-full font-black text-2xl hover:scale-110 transition-all shadow-2xl">Invest in Education</a>
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h4 class="text-5xl font-black text-white mb-6">Invest in Education</h4>
+                <p class="text-gray-400 text-xl">Submit your details to receive the school portfolio syndicate memo.</p>
+            </div>
+            
+            <form action="{{ route('apply') }}" method="POST" class="glass-card p-10 md:p-16 rounded-[3rem] border border-brand-accent/20" data-aos="zoom-in">
+                @csrf
+                <input type="hidden" name="sector" value="Edu Infrastructure">
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="space-y-3">
+                        <label class="text-xs font-bold text-brand-accent uppercase tracking-widest ml-2">Full Name</label>
+                        <input type="text" name="name" placeholder="Rahul Sharma" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-accent transition-all" required>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-xs font-bold text-brand-accent uppercase tracking-widest ml-2">Phone Number</label>
+                        <input type="tel" name="phone" placeholder="+91 XXXX XXXX" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-accent transition-all" required>
+                    </div>
+                </div>
+                <div class="space-y-3 mb-10">
+                    <label class="text-xs font-bold text-brand-accent uppercase tracking-widest ml-2">Email Address</label>
+                    <input type="email" name="email" placeholder="rahul@example.com" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-accent transition-all" required>
+                </div>
+                <button type="submit" class="w-full bg-brand-accent text-white font-black py-6 rounded-2xl text-xl hover:scale-[1.02] shadow-[0_20px_40px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-3">
+                    Invest in Education Syndicate <i class="fas fa-arrow-right text-sm"></i>
+                </button>
+            </form>
         </div>
     </section>
 </x-frontend.layout>

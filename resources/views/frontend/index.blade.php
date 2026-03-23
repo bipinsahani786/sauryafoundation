@@ -434,34 +434,35 @@
                     <h2 class="text-5xl font-black text-white mb-6 tracking-tight">Join the Syndicate</h2>
                     <p class="text-gray-400 text-xl">Fill out the detailed application form for personalized callback.</p>
                 </div>
-                <form class="space-y-8">
+                <form action="{{ route('apply') }}" method="POST" class="space-y-8">
+                    @csrf
                     <div class="grid md:grid-cols-2 gap-6 md:gap-10">
                         <div class="space-y-3">
                             <label class="block text-sm font-bold text-brand-primary uppercase tracking-[0.2em] ml-2">Full Legal Name</label>
-                            <input type="text" placeholder="e.g. Rahul Sharma" class="w-full bg-brand-dark/80 border border-brand-border rounded-[1.5rem] md:rounded-[2rem] px-6 md:px-8 py-5 md:py-6 text-white placeholder:text-gray-700 focus:border-brand-primary outline-none transition-all shadow-inner" required>
+                            <input type="text" name="name" placeholder="e.g. Rahul Sharma" class="w-full bg-brand-dark/80 border border-brand-border rounded-[1.5rem] md:rounded-[2rem] px-6 md:px-8 py-5 md:py-6 text-white placeholder:text-gray-700 focus:border-brand-primary outline-none transition-all shadow-inner" required>
                         </div>
                         <div class="space-y-3">
                             <label class="block text-sm font-bold text-brand-primary uppercase tracking-[0.2em] ml-2">Contact Number</label>
-                            <input type="tel" placeholder="+91 XXXX XXXX" class="w-full bg-brand-dark/80 border border-brand-border rounded-[1.5rem] md:rounded-[2rem] px-6 md:px-8 py-5 md:py-6 text-white placeholder:text-gray-700 focus:border-brand-primary outline-none transition-all shadow-inner" required>
+                            <input type="tel" name="phone" placeholder="+91 XXXX XXXX" class="w-full bg-brand-dark/80 border border-brand-border rounded-[1.5rem] md:rounded-[2rem] px-6 md:px-8 py-5 md:py-6 text-white placeholder:text-gray-700 focus:border-brand-primary outline-none transition-all shadow-inner" required>
                         </div>
                     </div>
                     <div class="space-y-3">
                         <label class="block text-sm font-bold text-brand-primary uppercase tracking-[0.2em] ml-2">Email Address</label>
-                        <input type="email" placeholder="rahul@example.com" class="w-full bg-brand-dark/80 border border-brand-border rounded-[1.5rem] md:rounded-[2rem] px-6 md:px-8 py-5 md:py-6 text-white placeholder:text-gray-700 focus:border-brand-primary outline-none transition-all shadow-inner" required>
+                        <input type="email" name="email" placeholder="rahul@example.com" class="w-full bg-brand-dark/80 border border-brand-border rounded-[1.5rem] md:rounded-[2rem] px-6 md:px-8 py-5 md:py-6 text-white placeholder:text-gray-700 focus:border-brand-primary outline-none transition-all shadow-inner" required>
                     </div>
                     <div class="space-y-3">
                         <label class="block text-sm font-bold text-brand-primary uppercase tracking-[0.2em] ml-2">Key Sector of Interest</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <label class="has-[:checked]:bg-brand-primary/10 has-[:checked]:border-brand-primary transition-all cursor-pointer border border-brand-border p-5 md:p-6 rounded-2xl md:rounded-3xl block">
-                                <input type="radio" name="sector" class="hidden" checked>
+                                <input type="radio" name="sector" value="Marriage Halls" class="hidden" checked>
                                 <div class="text-center font-bold text-white text-sm md:text-base">Marriage Halls</div>
                             </label>
                             <label class="has-[:checked]:bg-brand-primary/10 has-[:checked]:border-brand-primary transition-all cursor-pointer border border-brand-border p-5 md:p-6 rounded-2xl md:rounded-3xl block">
-                                <input type="radio" name="sector" class="hidden">
+                                <input type="radio" name="sector" value="Edu Infrastructure" class="hidden">
                                 <div class="text-center font-bold text-white text-sm md:text-base">Edu Infrastructure</div>
                             </label>
                             <label class="has-[:checked]:bg-brand-primary/10 has-[:checked]:border-brand-primary transition-all cursor-pointer border border-brand-border p-5 md:p-6 rounded-2xl md:rounded-3xl block">
-                                <input type="radio" name="sector" class="hidden">
+                                <input type="radio" name="sector" value="Digital Coaching" class="hidden">
                                 <div class="text-center font-bold text-white text-sm md:text-base">Digital Coaching</div>
                             </label>
                         </div>

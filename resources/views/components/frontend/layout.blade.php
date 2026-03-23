@@ -9,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -38,14 +39,14 @@
         .group:hover .dropdown-menu { opacity: 1; transform: translateY(0); pointer-events: auto; }
     </style>
 </head>
-<body class="text-gray-300 font-sans antialiased overflow-x-hidden selection:bg-brand-primary selection:text-white">
+<body class="text-gray-300 font-sans antialiased overflow-x-hidden selection:bg-brand-primary selection:text-white" x-data="{ mobileMenuOpen: false }">
 
     <div class="fixed bottom-6 right-6 z-50 flex flex-col space-y-3">
         <a href="#" class="flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-[0_0_15px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform"><i class="fab fa-whatsapp text-2xl"></i></a>
         <a href="#" class="flex items-center justify-center w-14 h-14 bg-brand-primary text-white rounded-full shadow-[0_0_15px_rgba(14,165,233,0.4)] hover:scale-110 transition-transform"><i class="fas fa-phone-alt text-xl"></i></a>
     </div>
 
-    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300">
+    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300" x-data="{ mobileMenuOpen: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 cursor-pointer z-50">
@@ -55,7 +56,7 @@
                 
                 <div class="hidden lg:flex space-x-8 items-center">
                     <a href="{{ route('home') }}" class="text-sm font-medium hover:text-white transition-colors {{ request()->routeIs('home') ? 'text-white' : '' }}">Home</a>
-                    <a href="{{ route('about') }}" class="text-sm font-medium hover:text-white transition-colors {{ request()->routeIs('about') ? 'text-white' : '' }}">About</a>
+                    <a href="{{ route('about') }}" class="text-sm font-medium hover:text-white transition-colors {{ request()->routeIs('about') ? 'text-white' : '' }}">About Us</a>
                     
                     <div class="relative group py-6">
                         <button class="text-sm font-medium hover:text-white transition-colors flex items-center gap-1 {{ request()->routeIs('sectors.*') ? 'text-white' : '' }}">
@@ -71,15 +72,69 @@
                     <a href="{{ route('process') }}" class="text-sm font-medium hover:text-white transition-colors {{ request()->routeIs('process') ? 'text-white' : '' }}">Process</a>
                     <a href="{{ route('returns') }}" class="text-sm font-medium hover:text-white transition-colors {{ request()->routeIs('returns') ? 'text-white' : '' }}">Returns</a>
                     <div class="h-6 w-px bg-brand-border"></div>
-                    <a href="#" class="text-sm font-semibold text-white hover:text-brand-primary flex items-center gap-2"><i class="far fa-user-circle text-lg"></i> Panel Login</a>
-                    <a href="{{ route('home') }}#apply" class="bg-white text-brand-dark px-6 py-2.5 rounded-full text-sm font-bold hover:bg-gray-200">Join Syndicate</a>
+                    <a href="{{ route('login') }}" class="text-sm font-semibold text-white hover:text-brand-primary flex items-center gap-2 transition-colors"><i class="far fa-user-circle text-lg"></i> Panel Login</a>
+                    <a href="{{ route('home') }}#apply" class="bg-white text-brand-dark px-6 py-2.5 rounded-full text-sm font-bold hover:bg-gray-200 transition-all">Join Syndicate</a>
                 </div>
-                <button class="lg:hidden text-2xl text-white"><i class="fas fa-bars"></i></button>
+                
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden text-2xl text-white">
+                    <i :class="mobileMenuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div x-show="mobileMenuOpen" 
+             x-cloak
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-4"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-4"
+             class="lg:hidden glass-nav border-t border-brand-border p-6 absolute top-full left-0 right-0 z-40 bg-brand-dark shadow-2xl">
+            <div class="flex flex-col gap-6">
+                <a href="{{ route('home') }}" class="text-lg font-bold text-white" @click="mobileMenuOpen = false">Home</a>
+                <a href="{{ route('about') }}" class="text-lg font-bold text-white" @click="mobileMenuOpen = false">About Us</a>
+                <div class="flex flex-col gap-4 pl-4 border-l-2 border-brand-primary/30">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sectors</p>
+                    <a href="{{ route('sectors.marriage-halls') }}" @click="mobileMenuOpen = false" class="text-gray-300">Marriage Halls</a>
+                    <a href="{{ route('sectors.education') }}" @click="mobileMenuOpen = false" class="text-gray-300">Education</a>
+                    <a href="{{ route('sectors.coaching') }}" @click="mobileMenuOpen = false" class="text-gray-300">Digital Coaching</a>
+                </div>
+                <a href="{{ route('process') }}" class="text-lg font-bold text-white" @click="mobileMenuOpen = false">Process</a>
+                <a href="{{ route('returns') }}" class="text-lg font-bold text-white" @click="mobileMenuOpen = false">Returns</a>
+                <div class="h-px bg-brand-border my-2"></div>
+                <a href="{{ route('login') }}" class="text-brand-primary font-bold" @click="mobileMenuOpen = false">Member Login</a>
+                <a href="{{ route('home') }}#apply" class="w-full py-4 bg-brand-primary text-center text-white rounded-xl font-bold shadow-lg" @click="mobileMenuOpen = false">Join Syndicate</a>
             </div>
         </div>
     </nav>
 
     <main>
+        <!-- Success/Error Notifications -->
+        <div class="fixed top-24 left-1/2 -translate-x-1/2 z-[60] w-full max-w-xl px-4 pointer-events-none">
+            @if(session('success'))
+                <div class="glass-card border-brand-accent/50 p-5 rounded-2xl flex items-center gap-4 text-brand-accent shadow-2xl pointer-events-auto mb-4 animate-fade-in" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)">
+                    <i class="fas fa-check-circle text-2xl"></i>
+                    <p class="font-bold text-sm">{{ session('success') }}</p>
+                    <button @click="show = false" class="ml-auto text-gray-500 hover:text-white transition-colors"><i class="fas fa-times"></i></button>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="glass-card border-red-500/50 p-5 rounded-2xl flex items-center gap-4 text-red-500 shadow-2xl pointer-events-auto" x-data="{ show: true }" x-show="show">
+                    <i class="fas fa-exclamation-circle text-2xl"></i>
+                    <div class="text-sm">
+                        <ul class="list-none p-0 m-0">
+                            @foreach ($errors->all() as $error)
+                                <li class="font-bold">{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <button @click="show = false" class="ml-auto text-gray-500 hover:text-white transition-colors"><i class="fas fa-times"></i></button>
+                </div>
+            @endif
+        </div>
         {{ $slot }}
     </main>
 

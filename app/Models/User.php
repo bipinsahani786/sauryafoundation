@@ -22,7 +22,29 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'status',
     ];
+
+    public function isSuperAdmin()
+    {
+        return $this->role === 'superadmin';
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin' || $this->role === 'superadmin';
+    }
+
+    public function isSyndicate()
+    {
+        return $this->role === 'syndicate';
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(PlanSubscription::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
