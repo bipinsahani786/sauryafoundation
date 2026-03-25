@@ -48,7 +48,10 @@
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end gap-2">
-                                <a href="{{ route('teacher.quizzes.show', $quiz->id) }}" class="w-7 h-7 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all">
+                                <a href="{{ route('teacher.quizzes.results', $quiz->id) }}" class="w-7 h-7 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all" title="View Results">
+                                    <i class="fas fa-chart-bar"></i>
+                                </a>
+                                <a href="{{ route('teacher.quizzes.show', $quiz->id) }}" class="w-7 h-7 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all" title="Edit Questions">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <form action="{{ route('teacher.quizzes.destroy', $quiz->id) }}" method="POST" onsubmit="return confirm('Delete this exam?')">

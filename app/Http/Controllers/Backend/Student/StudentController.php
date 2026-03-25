@@ -35,6 +35,9 @@ class StudentController extends Controller
     {
         $quizzes = Quiz::where('teacher_id', auth()->user()->teacher_id)
             ->where('status', 'published')
+            ->withCount(['attempts as quiz_attempts_count' => function($query) {
+                $query->where('student_id', auth()->id());
+            }])
             ->latest()
             ->paginate(12);
             
@@ -209,9 +212,15 @@ class StudentController extends Controller
                 'status' => 'failed',
                 'completed_at' => now(),
             ]);
+            
+            return response()->json([
+                'success' => true, 
+                'redirect' => route('student.results.show', $attempt->id),
+                'message' => 'Security breach detected. Exam terminated.'
+            ]);
         }
 
-        return response()->json(['success' => true, 'message' => 'Student blocked due to security breach.']);
+        return response()->json(['success' => false, 'message' => 'No active session found.']);
     }
 
     private function autoSubmit($attempt)

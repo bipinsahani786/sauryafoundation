@@ -79,6 +79,37 @@ class QuizController extends Controller
         return back()->with('success', 'Question added.');
     }
 
+    public function results(Quiz $quiz)
+    {
+        if ($quiz->teacher_id !== auth()->id()) abort(403);
+
+        $attempts = $quiz->attempts()->with('student')
+            ->orderByDesc('score')
+            ->orderBy('time_taken_seconds')
+            ->get();
+
+        // Calculate Analytics
+        $totalStudents = auth()->user()->students()->count();
+        $attemptedStudents = $attempts->unique('student_id')->count();
+        $avgScore = $attempts->avg('score') ?? 0;
+        $maxScore = $attempts->max('score') ?? 0;
+        $successRate = $attempts->count() > 0 
+            ? ($attempts->where('score', '>=', $quiz->questions()->sum('marks') * 0.4)->count() / $attempts->count()) * 100 
+            : 0;
+        $breaches = $attempts->where('is_blocked', true)->count();
+
+        return view('backend.teacher.quizzes.results', compact(
+            'quiz', 
+            'attempts', 
+            'totalStudents', 
+            'attemptedStudents', 
+            'avgScore', 
+            'maxScore', 
+            'successRate', 
+            'breaches'
+        ));
+    }
+
     public function destroy(Quiz $quiz)
     {
         if ($quiz->teacher_id !== auth()->id()) abort(403);

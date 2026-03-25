@@ -83,23 +83,23 @@
                         <a href="{{ route('teacher.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.dashboard') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-th-large w-4"></i> <span>Dashboard</span>
                         </a>
-                        <a href="{{ route('teacher.students') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.students') ? $activeClasses : $inactiveClasses }}">
+                        <a href="{{ route('teacher.students') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.students*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-user-graduate w-4"></i> <span>My Students</span>
                         </a>
-                        <a href="{{ route('teacher.courses.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.courses.*') ? $activeClasses : $inactiveClasses }}">
+                        <a href="{{ route('teacher.courses.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.courses*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-graduation-cap w-4"></i> <span>Academy</span>
                         </a>
-                        <a href="{{ route('teacher.quizzes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.quizzes.*') ? $activeClasses : $inactiveClasses }}">
+                        <a href="{{ route('teacher.quizzes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.quizzes*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-vial w-4"></i> <span>Exam Center</span>
                         </a>
                     @elseif(Auth::user()->role === 'student')
                         <a href="{{ route('student.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.dashboard') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-th-large w-4"></i> <span>Dashboard</span>
                         </a>
-                        <a href="{{ route('student.courses') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.courses.*') ? $activeClasses : $inactiveClasses }}">
+                        <a href="{{ route('student.courses') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.courses*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-university w-4"></i> <span>My Academy</span>
                         </a>
-                        <a href="{{ route('student.exams') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.exams.*') ? $activeClasses : $inactiveClasses }}">
+                        <a href="{{ route('student.exams') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.exams*', 'student.results*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-vial-circle-check w-4"></i> <span>Test Portal</span>
                         </a>
                     @else

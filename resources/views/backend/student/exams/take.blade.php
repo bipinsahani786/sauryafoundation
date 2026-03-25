@@ -1,6 +1,17 @@
 <x-dashboard.layout>
     <x-slot name="title">Exam Terminal: {{ $quiz->title }}</x-slot>
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-accent': '#10B981',
+                    }
+                }
+            }
+        }
+    </script>
     <div id="exam-terminal" class="fixed inset-0 bg-slate-900 z-[9999] overflow-y-auto selection:bg-brand-accent selection:text-white" x-data="examEngine()">
         <!-- Top Navigation Bar -->
         <div class="sticky top-0 bg-slate-900/80 backdrop-blur-md border-b border-white/5 px-8 py-4 flex justify-between items-center z-50">
@@ -78,10 +89,9 @@
             <div class="text-center max-w-lg">
                 <i class="fas fa-exclamation-triangle text-white text-6xl mb-8 animate-bounce"></i>
                 <h2 class="text-4xl font-black text-white mb-4 tracking-tighter">SECURITY BREACH DETECTED</h2>
-                <p class="text-red-100 font-bold italic mb-8">Navigation outside the terminal or tab switching is strictly prohibited. Your actions have been logged to the coaching database.</p>
-                <button @click="resumeExam()" class="bg-white text-red-600 px-12 py-4 rounded-full font-black text-xs uppercase tracking-widest shadow-2xl">
-                    Return to Terminal
-                </button>
+                <p class="text-red-100 font-bold italic mb-8">Navigation outside the terminal or tab switching is strictly prohibited. Your session is being terminated and logged.</p>
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-white border-t-transparent mb-4"></div>
+                <p class="text-[8px] text-white/50 font-black uppercase tracking-widest">Redirecting to results...</p>
             </div>
         </div>
     </div>
@@ -106,26 +116,40 @@
                         if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'u')) e.preventDefault();
                     });
 
-                    // Tab Switch Detection
-                    window.addEventListener('blur', () => {
-                        this.cheatingAlert = true;
-                        this.cheatingCount++;
-                    });
+                    // Tab Switch / Visibility Detection
+                    // Add a delay (3s) to prevent premature breach detection during load/fullscreen transition
+                    setTimeout(() => {
+                        const handleBreach = () => {
+                            if (this.cheatingAlert) return; 
+                            
+                            this.cheatingAlert = true;
+                            this.cheatingCount++;
+                            
+                            // Immediate termination
+                            this.terminateSession('Security Breach: Tab Switch / Window Blur detected');
+                        };
+
+                        window.addEventListener('blur', handleBreach);
+                        document.addEventListener('visibilitychange', () => {
+                            if (document.visibilityState === 'hidden') handleBreach();
+                        });
+                    }, 3000);
 
                     // Timer logic
                     setInterval(() => {
                         if (this.timeLeft > 0) {
                             this.timeLeft--;
                         } else {
-                            document.getElementById('quiz-form').submit();
+                            this.terminateSession('Time Expired');
                         }
                     }, 1000);
                 },
 
                 formatTime(seconds) {
-                    const h = Math.floor(seconds / 3600);
-                    const m = Math.floor((seconds % 3600) / 60);
-                    const s = seconds % 60;
+                    const totalSeconds = Math.max(0, Math.floor(seconds));
+                    const h = Math.floor(totalSeconds / 3600);
+                    const m = Math.floor((totalSeconds % 3600) / 60);
+                    const s = totalSeconds % 60;
                     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
                 },
 
@@ -140,24 +164,23 @@
                     else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
                 },
 
-                resumeExam() {
-                    this.cheatingAlert = false;
-                    this.requestFullscreen();
-                    
-                    // Report breach to server
+                terminateSession(reason) {
+                    // Report breach and redirect
                     fetch(`{{ route('student.exams.report-breach', $quiz->id) }}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify({
-                            reason: 'Security Warning: Window Blur / Tab Switch detected'
-                        })
+                        body: JSON.stringify({ reason: reason })
                     }).then(res => res.json()).then(data => {
-                        if (data.success) {
-                            console.log('Breach logged. Session will be terminated on next violation.');
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        } else {
+                            document.getElementById('quiz-form').submit();
                         }
+                    }).catch(() => {
+                        document.getElementById('quiz-form').submit();
                     });
                 }
             }

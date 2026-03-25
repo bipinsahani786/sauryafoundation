@@ -77,6 +77,7 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     
     // Quizzes
     Route::resource('quizzes', App\Http\Controllers\Backend\Teacher\QuizController::class);
+    Route::get('quizzes/{quiz}/results', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'results'])->name('quizzes.results');
     Route::post('quizzes/{quiz}/questions', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'addQuestion'])->name('quizzes.add-question');
     
     // Courses (LMS)

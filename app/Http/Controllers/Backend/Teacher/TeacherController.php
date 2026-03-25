@@ -55,7 +55,8 @@ class TeacherController extends Controller
         
         $enrolledCourses = $student->enrolledCourses()->with('subjects.topics.contents.quiz')->get();
         $completions = $student->contentCompletions()->pluck('content_id')->toArray();
+        $quizAttempts = $student->quizAttempts()->with('quiz')->latest()->get();
         
-        return view('backend.teacher.students.progress', compact('student', 'enrolledCourses', 'completions'));
+        return view('backend.teacher.students.progress', compact('student', 'enrolledCourses', 'completions', 'quizAttempts'));
     }
 }

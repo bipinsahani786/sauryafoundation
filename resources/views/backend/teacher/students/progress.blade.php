@@ -31,6 +31,67 @@
             </div>
         </div>
 
+        <!-- Exam History -->
+        <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8">
+            <h3 class="text-lg font-black text-slate-900 mb-6 flex items-center gap-2">
+                Exam History 
+                <span class="text-[10px] text-slate-400 font-bold tracking-[0.2em] uppercase">Security Monitoring Active</span>
+            </h3>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-slate-50">
+                            <th class="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Examination</th>
+                            <th class="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date / Time</th>
+                            <th class="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Score Result</th>
+                            <th class="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Integrity Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        @forelse($quizAttempts as $attempt)
+                            <tr class="group">
+                                <td class="py-5">
+                                    <p class="text-sm font-black text-slate-900">{{ $attempt->quiz->title }}</p>
+                                    <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Duration: {{ $attempt->quiz->duration_minutes }} Min</p>
+                                </td>
+                                <td class="py-5">
+                                    <p class="text-xs font-bold text-slate-700">{{ $attempt->created_at->format('d M, Y') }}</p>
+                                    <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{{ $attempt->created_at->format('h:i A') }}</p>
+                                </td>
+                                <td class="py-5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm font-black text-slate-900">{{ $attempt->score }}<span class="text-slate-400 text-[10px]">/{{ $attempt->total_marks }}</span></span>
+                                        <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase {{ $attempt->score >= ($attempt->total_marks * 0.4) ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
+                                            {{ round(($attempt->score / max(1, $attempt->total_marks)) * 100) }}%
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="py-5">
+                                    @if($attempt->is_blocked)
+                                        <div class="flex flex-col gap-1">
+                                            <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[8px] font-black uppercase tracking-widest w-fit flex items-center gap-1.5">
+                                                <i class="fas fa-exclamation-triangle"></i> Security Breach
+                                            </span>
+                                            <p class="text-[8px] text-red-400 font-bold italic line-clamp-1">Ref: {{ $attempt->block_reason }}</p>
+                                        </div>
+                                    @else
+                                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[8px] font-black uppercase tracking-widest w-fit flex items-center gap-1.5">
+                                            <i class="fas fa-check-circle"></i> Clean Session
+                                        </span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="py-10 text-center text-slate-400 text-xs italic font-bold">No examination attempts logged for this student.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Course Progress -->
         <div class="grid grid-cols-1 gap-6">
             @forelse($enrolledCourses as $course)
