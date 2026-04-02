@@ -13,6 +13,34 @@ use App\Http\Controllers\Backend\Admin\IndustryExpertController;
 use App\Http\Controllers\Backend\SalesAgent\SalesAgentController;
 use App\Http\Controllers\Backend\Syndicate\SyndicateController;
 use App\Http\Controllers\Backend\ProfileController;
+
+// Temporary route for maintenance and storage link on shared hosting
+Route::get('/maintenance', function () {
+    try {
+        // Clear all cache
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        
+        // Manual storage link (if not already exists)
+        $target = storage_path('app/public');
+        $link = public_path('storage');
+        
+        $linkStatus = "Storage link: ";
+        if (!file_exists($link)) {
+            symlink($target, $link);
+            $linkStatus .= "Successfully created!";
+        } else {
+            $linkStatus .= "Already exists.";
+        }
+
+        return "<h3>Platform Maintenance Success</h3>
+                <p>Caches cleared successfully.</p>
+                <p>{$linkStatus}</p>
+                <br><br>
+                <small>Now you can delete this route from web.php for security.</small>";
+    } catch (\Exception $e) {
+        return "Maintenance error: " . $e->getMessage();
+    }
+});
 use App\Http\Controllers\Backend\Teacher\CourseController;
 use App\Http\Controllers\Backend\Admin\SettingController;
 
