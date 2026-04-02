@@ -51,6 +51,14 @@
                             </td>
                             <td class="px-4 py-2 text-right">
                                 <div class="flex items-center justify-end gap-1.5">
+                                    @if($user->id !== auth()->id() && auth()->user()->isSuperAdmin())
+                                        <form action="{{ route('admin.users.impersonate', $user->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="p-1.5 border border-indigo-100 rounded bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-1.5 px-3" title="View Dashboard">
+                                                <i class="fas fa-eye text-[9px]"></i> <span class="text-[8px] uppercase font-black tracking-tighter">View</span>
+                                            </button>
+                                        </form>
+                                    @endif
                                     <a href="{{ route('admin.users.edit', $user->id) }}" class="p-1.5 border border-slate-100 rounded hover:bg-white text-slate-400 hover:text-indigo-600 transition-all"><i class="fas fa-edit text-[10px]"></i></a>
                                     @if($user->id !== auth()->id())
                                         <form action="{{ route('admin.users.toggle-status', $user->id) }}" method="POST">

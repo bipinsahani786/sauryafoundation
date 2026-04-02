@@ -96,4 +96,34 @@ class UserController extends Controller
 
         return back()->with('success', 'User status updated successfully.');
     }
+
+    public function impersonate(User $user)
+    {
+        if (!auth()->user()->isSuperAdmin()) {
+            abort(403);
+        }
+
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'You cannot impersonate yourself.');
+        }
+
+        session(['impersonate_id' => $user->id]);
+        
+        // Redirect to the user's dashboard based on their role
+        $route = match($user->role) {
+            'admin', 'superadmin' => 'admin.dashboard',
+            'teacher' => 'teacher.dashboard',
+            'sales_agent' => 'sales-agent.dashboard',
+            'student' => 'student.dashboard',
+            default => 'syndicate.dashboard',
+        };
+
+        return redirect()->route($route)->with('success', "Now viewing as {$user->name}");
+    }
+
+    public function stopImpersonating()
+    {
+        session()->forget('impersonate_id');
+        return redirect()->route('admin.users.index')->with('success', 'Returned to Admin session.');
+    }
 }

@@ -24,6 +24,17 @@
     </style>
 </head>
 <body class="text-slate-700 antialiased" x-data="{ sidebarOpen: false, openMenu: null }">
+    @if(session()->has('impersonate_id'))
+        <div class="bg-indigo-600 text-white py-2 px-4 flex items-center justify-between sticky top-0 z-[100] shadow-lg animate-pulse">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-user-secret text-sm"></i>
+                <span class="text-[10px] font-black uppercase tracking-widest leading-none">Viewing mode: <span class="underline">{{ Auth::user()->name }}</span> ({{ Auth::user()->role }})</span>
+            </div>
+            <a href="{{ route('admin.users.stop-impersonating') }}" class="bg-white text-indigo-600 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter hover:bg-slate-100 transition-all">
+                Stop Viewing
+            </a>
+        </div>
+    @endif
     <!-- Mobile Sidebar Overlay -->
     <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-slate-900/50 lg:hidden"></div>
 

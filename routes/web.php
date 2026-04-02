@@ -42,6 +42,10 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/logout', 'logout')->name('logout');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/stop-impersonating', [UserController::class, 'stopImpersonating'])->name('admin.users.stop-impersonating');
+});
+
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/applications', [AdminController::class, 'applications'])->name('applications');
@@ -55,6 +59,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::resource('users', UserController::class);
     Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::post('/users/{user}/impersonate', [UserController::class, 'impersonate'])->name('users.impersonate');
 
     // Website Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
