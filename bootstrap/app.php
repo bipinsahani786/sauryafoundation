@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'syndicate' => \App\Http\Middleware\SyndicateMiddleware::class,
             'teacher' => \App\Http\Middleware\TeacherMiddleware::class,
             'student' => \App\Http\Middleware\StudentMiddleware::class,
+            'sales_agent' => \App\Http\Middleware\SalesAgentMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

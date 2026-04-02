@@ -16,11 +16,17 @@ class Course extends Model
         'thumbnail',
         'status',
         'price',
+        'class_id',
     ];
 
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function studentClass()
+    {
+        return $this->belongsTo(StudentClass::class, 'class_id');
     }
 
     public function subjects()

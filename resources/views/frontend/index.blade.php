@@ -1,70 +1,138 @@
 <x-frontend.layout>
-    <x-slot name="title">Home | Shaurya Foundation Syndicate</x-slot>
+    <x-slot name="title">Home | Shaurya Narayan Foundation</x-slot>
 
-    <!-- 1. Hero Section -->
-    <section class="relative pt-48 pb-32 min-h-[90vh] flex items-center justify-center overflow-hidden">
-        <div class="absolute top-0 -left-10 w-[500px] h-[500px] bg-brand-primary rounded-full mix-blend-multiply blur-[180px] opacity-20 animate-blob"></div>
-        <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-accent rounded-full mix-blend-multiply blur-[180px] opacity-20 animate-blob" style="animation-delay: 2s;"></div>
-        
-        <div class="max-w-6xl mx-auto px-4 relative z-10 text-center" data-aos="zoom-in">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-border bg-brand-card/50 mb-10 text-sm">
-                <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-accent"></span></span>
-                <span class="font-bold tracking-tight text-gray-200">SYNDICATE FY 2026 OPEN FOR WHITS</span>
+    <!-- 1. Dynamic Banner Slider -->
+    <section class="relative pt-20 overflow-hidden bg-brand-dark">
+        <div class="swiper bannerSwiper">
+            <div class="swiper-wrapper">
+                @forelse($banners as $banner)
+                    <div class="swiper-slide relative min-h-[70vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden">
+                        <!-- Background Image with Overlay -->
+                        <div class="absolute inset-0 z-0">
+                            <img src="{{ asset('storage/' . $banner->image_path) }}" class="w-full h-full object-cover opacity-40 scale-105 animate-slow-zoom" alt="{{ $banner->title }}">
+                            <div class="absolute inset-0 bg-gradient-to-b from-brand-dark via-transparent to-brand-dark"></div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="max-w-6xl mx-auto px-4 relative z-10 text-center">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-border bg-brand-card/50 mb-8 text-xs md:text-sm animate-fade-in-up">
+                                <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-brand-accent"></span></span>
+                                <span class="font-bold tracking-tight text-gray-200 uppercase tracking-widest">Syndicate Open FY 2026</span>
+                            </div>
+                            <h1 class="text-4xl md:text-7xl lg:text-8xl font-extrabold text-white tracking-tighter leading-tight mb-8 animate-fade-in-up" style="animation-delay: 200ms;">
+                                {!! nl2br(e($banner->title)) !!}
+                            </h1>
+                            <p class="text-lg md:text-2xl text-gray-400 font-light mb-10 max-w-3xl mx-auto leading-relaxed animate-fade-in-up" style="animation-delay: 400ms;">
+                                {{ $banner->description }}
+                            </p>
+                            @if($banner->link)
+                                <div class="flex justify-center animate-fade-in-up" style="animation-delay: 600ms;">
+                                    <a href="{{ $banner->link }}" class="px-8 md:px-12 py-4 md:py-5 bg-brand-primary text-white rounded-full font-extrabold text-lg md:text-xl hover:-translate-y-1 transition-all shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_50px_rgba(14,165,233,0.5)]">Explore Opportunity <i class="fas fa-arrow-right ml-2 text-sm"></i></a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <!-- Fallback Hero if no banners -->
+                    <div class="swiper-slide relative min-h-[85vh] flex items-center justify-center">
+                        <div class="absolute top-0 -left-10 w-[500px] h-[500px] bg-brand-primary rounded-full mix-blend-multiply blur-[180px] opacity-20 animate-blob"></div>
+                        <div class="max-w-6xl mx-auto px-4 relative z-10 text-center">
+                            <h1 class="text-6xl md:text-8xl font-extrabold text-white tracking-tighter leading-[1] mb-10">Institutional <span class="text-gradient">Real Asset</span> Syndication.</h1>
+                            <p class="text-xl md:text-2xl text-gray-400 font-light mb-12 max-w-3xl mx-auto leading-relaxed">Unlock high-yield commercial assets through community-driven capital.</p>
+                            <a href="#apply" class="px-10 py-5 bg-brand-primary text-white rounded-full font-extrabold text-xl hover:-translate-y-1 transition-all">Start Your Journey</a>
+                        </div>
+                    </div>
+                @endforelse
             </div>
-            <h1 class="text-6xl md:text-8xl font-extrabold text-white tracking-tighter leading-[1] mb-10">
-                Institutional <span class="text-gradient">Real Asset</span> <br class="hidden md:block"/> Syndication.
-            </h1>
-            <p class="text-xl md:text-2xl text-gray-400 font-light mb-12 max-w-3xl mx-auto leading-relaxed">
-                Unlock high-yield commercial assets through community-driven capital. Co-own Marriage Halls, Smart Schools, and EdTech platforms.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <a href="#apply" class="px-10 py-5 bg-brand-primary text-white rounded-full font-extrabold text-xl hover:-translate-y-1 transition-all shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_50px_rgba(14,165,233,0.5)]">Start Your Journey <i class="fas fa-arrow-right ml-2 text-sm"></i></a>
-                <a href="{{ route('process') }}" class="px-10 py-5 bg-transparent border border-brand-border text-white rounded-full font-bold text-xl hover:bg-brand-card transition-all">How it Works</a>
+            <!-- Navigation -->
+            <div class="swiper-button-next !text-white !opacity-20 hover:!opacity-100 transition-opacity hidden md:flex"></div>
+            <div class="swiper-button-prev !text-white !opacity-20 hover:!opacity-100 transition-opacity hidden md:flex"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+
+    <!-- 2. Dynamic Investment Sectors (Moved here and made dynamic) -->
+    <section class="py-24 bg-brand-card/5 border-b border-brand-border" id="sectors">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-xs">Opportunities</h2>
+                <h3 class="text-4xl md:text-5xl font-extrabold text-white mb-6">Sectors You Can Invest In.</h3>
+                <p class="text-gray-400 max-w-2xl mx-auto text-lg">We handpick recession-resistant industries to ensure safety and scale.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @forelse($sectors as $sector)
+                    <a href="{{ route('sectors.detail', $sector->slug) }}" 
+                       class="group glass-card p-4 rounded-[2.5rem] block transition-all hover:scale-[1.02]" 
+                       data-aos="fade-up" 
+                       data-aos-delay="{{ $loop->index * 100 }}">
+                        <div class="aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 relative">
+                            <img src="{{ asset('storage/' . $sector->image_path) }}" 
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60" 
+                                 alt="{{ $sector->title }}"
+                                 loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent"></div>
+                            @if($sector->tag)
+                                <div class="absolute bottom-6 left-6">
+                                    <span class="px-4 py-1.5 bg-brand-primary/20 backdrop-blur-md border border-brand-primary/30 rounded-full text-brand-primary text-xs font-bold uppercase tracking-widest">
+                                        {{ $sector->tag }}
+                                    </span>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="px-4 pb-6">
+                            <h4 class="text-2xl font-bold text-white mb-3">{{ $sector->title }}</h4>
+                            <p class="text-gray-500 text-sm mb-6 leading-relaxed">{{ $sector->description }}</p>
+                            <span class="text-brand-primary font-bold inline-flex items-center gap-2 group-hover:gap-4 transition-all uppercase text-xs tracking-widest">
+                                Learn More <i class="fas fa-arrow-right"></i>
+                            </span>
+                        </div>
+                    </a>
+                @empty
+                    <div class="col-span-full py-12 text-center text-gray-500 italic">No investment sectors configured yet.</div>
+                @endforelse
             </div>
         </div>
     </section>
 
-    <!-- 2. Trust Bar / Marquee -->
-    <div class="py-12 border-y border-brand-border bg-brand-card/30 flex overflow-hidden">
+    <!-- 3. Trust Bar / Marquee (Kept same) -->
+    <div class="py-12 border-b border-brand-border bg-brand-card/30 flex overflow-hidden">
         <div class="flex whitespace-nowrap animate-marquee items-center gap-24 px-4 opacity-50">
-            <span class="text-2xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-check-double text-brand-accent"></i> ISO-9001 Certified</span>
-            <span class="text-2xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-university text-brand-primary"></i> RERA Compliant</span>
-            <span class="text-2xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-balance-scale-right text-brand-accent"></i> Legal Trustee Backed</span>
-            <span class="text-2xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-chart-pie text-brand-primary"></i> 18%+ Projected IRR</span>
-            <span class="text-2xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-check-double text-brand-accent"></i> ISO-9001 Certified</span>
-            <span class="text-2xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-university text-brand-primary"></i> RERA Compliant</span>
+            <span class="text-xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-check-double text-brand-accent"></i> ISO-9001 Certified</span>
+            <span class="text-xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-university text-brand-primary"></i> RERA Compliant</span>
+            <span class="text-xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-balance-scale-right text-brand-accent"></i> Legal Trustee Backed</span>
+            <span class="text-xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-chart-pie text-brand-primary"></i> 18%+ Projected IRR</span>
         </div>
     </div>
 
-    <!-- 3. Key Stats Section -->
-    <section class="py-24 bg-[#010409]">
+    <!-- 4. Key Stats Section -->
+    <section class="py-16 bg-[#010409]">
         <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
             <div class="text-center" data-aos="fade-up" data-aos-delay="0">
-                <p class="text-5xl font-black text-white mb-2 tracking-tight">₹45Cr+</p>
-                <p class="text-brand-primary font-bold uppercase text-xs tracking-widest">AUM Managed</p>
+                <p class="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">₹45Cr+</p>
+                <p class="text-brand-primary font-bold uppercase text-[10px] tracking-widest">AUM Managed</p>
             </div>
             <div class="text-center" data-aos="fade-up" data-aos-delay="100">
-                <p class="text-5xl font-black text-white mb-2 tracking-tight">1200+</p>
-                <p class="text-brand-accent font-bold uppercase text-xs tracking-widest">Active Members</p>
+                <p class="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">1200+</p>
+                <p class="text-brand-accent font-bold uppercase text-[10px] tracking-widest">Active Members</p>
             </div>
             <div class="text-center" data-aos="fade-up" data-aos-delay="200">
-                <p class="text-5xl font-black text-white mb-2 tracking-tight">18.4%</p>
-                <p class="text-purple-500 font-bold uppercase text-xs tracking-widest">Average IRR</p>
+                <p class="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">18.4%</p>
+                <p class="text-purple-500 font-bold uppercase text-[10px] tracking-widest">Average IRR</p>
             </div>
             <div class="text-center" data-aos="fade-up" data-aos-delay="300">
-                <p class="text-5xl font-black text-white mb-2 tracking-tight">12+</p>
-                <p class="text-yellow-500 font-bold uppercase text-xs tracking-widest">Operational Assets</p>
+                <p class="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">12+</p>
+                <p class="text-yellow-500 font-bold uppercase text-[10px] tracking-widest">Operational Assets</p>
             </div>
         </div>
     </section>
 
-    <!-- 4. The Core Problem vs Solution -->
+    <!-- 5. The Core Problem vs Solution -->
     <section class="py-32 relative overflow-hidden bg-brand-dark">
         <div class="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-20 items-center">
             <div data-aos="fade-right">
                 <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-sm">The Paradigm Shift</h2>
                 <h3 class="text-5xl font-extrabold text-white leading-tight mb-8">Breaking the Barriers of <br>Infrastructure Investing.</h3>
-                <p class="text-xl text-gray-400 leading-relaxed mb-10">Traditionally, only the ultra-wealthy could own marriage halls or educational institutes. Shaurya Foundation democratizes this through fractional ownership.</p>
+                <p class="text-xl text-gray-400 leading-relaxed mb-10">Traditionally, only the ultra-wealthy could own marriage halls or educational institutes. Shaurya Narayan Foundation democratizes this through fractional ownership.</p>
                 <div class="space-y-6">
                     <div class="flex items-start gap-4 p-6 glass-card rounded-2xl border-l-4 border-l-red-500/50">
                         <i class="fas fa-times-circle text-red-500 text-2xl mt-1"></i>
@@ -76,7 +144,7 @@
                     <div class="flex items-start gap-4 p-6 glass-card rounded-2xl border-l-4 border-l-brand-accent/50">
                         <i class="fas fa-check-circle text-brand-accent text-2xl mt-1"></i>
                         <div>
-                            <h5 class="text-white font-bold text-lg mb-1">Shaurya Syndicate Model</h5>
+                            <h5 class="text-white font-bold text-lg mb-1">Shaurya Narayan Foundation Model</h5>
                             <p class="text-gray-500 text-sm">Participate in Crores worth of assets with accessible stake sizes.</p>
                         </div>
                     </div>
@@ -85,7 +153,7 @@
             <div class="relative" data-aos="fade-left">
                 <div class="absolute inset-0 bg-brand-primary/10 blur-[80px] rounded-full"></div>
                 <div class="glass-card p-1 rounded-3xl overflow-hidden shadow-2xl relative">
-                    <img src="{{ asset('images/marriage-1.png') }}" class="w-full h-auto opacity-80" alt="Syndicate Asset">
+                    <img src="{{ asset('images/marriage-1.png') }}" class="w-full h-auto opacity-80" alt="Syndicate Asset" loading="lazy">
                     <div class="absolute bottom-6 left-6 right-6 p-6 glass-nav rounded-2xl border border-brand-border">
                         <div class="flex justify-between items-center">
                             <div>
@@ -99,55 +167,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. Investment Sectors (Brief Overview) -->
-    <section class="py-32 bg-brand-card/10">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-20" data-aos="fade-up">
-                <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-sm">Opportunities</h2>
-                <h3 class="text-5xl font-extrabold text-white mb-6">Sectors You Can Invest In.</h3>
-                <p class="text-gray-400 max-w-2xl mx-auto text-lg">We handpick recession-resistant industries to ensure safety and scale.</p>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <a href="{{ route('sectors.marriage-halls') }}" class="group glass-card p-4 rounded-[2.5rem] block transition-all hover:scale-[1.02]" data-aos="fade-up" data-aos-delay="0">
-                    <div class="aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 relative">
-                        <img src="{{ asset('images/marriage-1.png') }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60">
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent"></div>
-                        <div class="absolute bottom-6 left-6"><span class="px-4 py-1.5 bg-brand-primary/20 backdrop-blur-md border border-brand-primary/30 rounded-full text-brand-primary text-xs font-bold uppercase tracking-widest">Yield Focused</span></div>
-                    </div>
-                    <div class="px-4 pb-6">
-                        <h4 class="text-2xl font-bold text-white mb-3">Marriage Halls & Banquets</h4>
-                        <p class="text-gray-500 text-sm mb-6 leading-relaxed">Stable rental income combined with high-turnover seasonal event yields.</p>
-                        <span class="text-brand-primary font-bold inline-flex items-center gap-2 group-hover:gap-4 transition-all">Learn More <i class="fas fa-arrow-right"></i></span>
-                    </div>
-                </a>
-                <a href="{{ route('sectors.education') }}" class="group glass-card p-4 rounded-[2.5rem] block transition-all hover:scale-[1.02]" data-aos="fade-up" data-aos-delay="100">
-                    <div class="aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 relative">
-                        <img src="{{ asset('images/edu-1.png') }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60">
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent"></div>
-                        <div class="absolute bottom-6 left-6"><span class="px-4 py-1.5 bg-brand-accent/20 backdrop-blur-md border border-brand-accent/30 rounded-full text-brand-accent text-xs font-bold uppercase tracking-widest">Stability Focused</span></div>
-                    </div>
-                    <div class="px-4 pb-6">
-                        <h4 class="text-2xl font-bold text-white mb-3">Educational Infrastructure</h4>
-                        <p class="text-gray-500 text-sm mb-6 leading-relaxed">Investing in schools and institute buildings for long-term compound growth.</p>
-                        <span class="text-brand-accent font-bold inline-flex items-center gap-2 group-hover:gap-4 transition-all">Learn More <i class="fas fa-arrow-right"></i></span>
-                    </div>
-                </a>
-                <a href="{{ route('sectors.coaching') }}" class="group glass-card p-4 rounded-[2.5rem] block transition-all hover:scale-[1.02]" data-aos="fade-up" data-aos-delay="200">
-                    <div class="aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 relative">
-                        <img src="{{ asset('images/coach-1.png') }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60">
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent"></div>
-                        <div class="absolute bottom-6 left-6"><span class="px-4 py-1.5 bg-purple-500/20 backdrop-blur-md border border-purple-500/30 rounded-full text-purple-400 text-xs font-bold uppercase tracking-widest">Growth Focused</span></div>
-                    </div>
-                    <div class="px-4 pb-6">
-                        <h4 class="text-2xl font-bold text-white mb-3">Digital Coaching Platforms</h4>
-                        <p class="text-gray-500 text-sm mb-6 leading-relaxed">High-scale hybrid models combining tech scalability with physical centers.</p>
-                        <span class="text-purple-400 font-bold inline-flex items-center gap-2 group-hover:gap-4 transition-all">Learn More <i class="fas fa-arrow-right"></i></span>
-                    </div>
-                </a>
             </div>
         </div>
     </section>
@@ -258,42 +277,23 @@
                 <h3 class="text-5xl font-extrabold text-white mb-6">Built by Industry Experts.</h3>
                 <p class="text-gray-400 max-w-2xl mx-auto text-lg">Our leadership team brings decades of experience in real estate, finance, and technology.</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-16">
-                <!-- Expert 1 -->
-                <div class="text-center group" data-aos="fade-up" data-aos-delay="0">
-                    <div class="relative w-64 h-64 mx-auto mb-8">
-                        <div class="absolute inset-0 bg-brand-primary/20 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
-                        <img src="{{ asset('images/expert-1.png') }}" class="relative w-64 h-64 rounded-full border-4 border-brand-border group-hover:border-brand-primary transition-all object-cover" alt="Amit Sharma">
-                        <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-brand-primary text-white p-3 rounded-xl shadow-xl"><i class="fab fa-linkedin-in"></i></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 lg:gap-24">
+                @foreach($experts as $index => $expert)
+                    <!-- Expert {{ $index + 1 }} -->
+                    <div class="text-center group" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                        <div class="relative w-56 h-56 md:w-64 md:h-64 mx-auto mb-8">
+                            <div class="absolute inset-0 bg-{{ $index % 2 == 0 ? 'brand-primary' : 'brand-accent' }}/20 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
+                            <img src="{{ asset('storage/' . $expert->image) }}" class="relative w-full h-full rounded-full border-4 border-brand-border group-hover:border-{{ $index % 2 == 0 ? 'brand-primary' : 'brand-accent' }} transition-all object-cover" alt="{{ $expert->name }}" loading="lazy">
+                            @if($expert->linkedin_url)
+                                <a href="{{ $expert->linkedin_url }}" target="_blank" class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-{{ $index % 2 == 0 ? 'brand-primary' : 'brand-accent' }} text-white p-3 rounded-xl shadow-xl hover:scale-110 transition-transform"><i class="fab fa-linkedin-in"></i></a>
+                            @endif
+                        </div>
+                        <h5 class="text-3xl font-black text-white mb-2">{{ $expert->name }}</h5>
+                        <p class="text-{{ $index % 2 == 0 ? 'brand-primary' : 'brand-accent' }} font-bold uppercase tracking-widest text-xs mb-4">{{ $expert->designation }}</p>
+                        <p class="text-gray-500 text-sm leading-relaxed px-4">{{ $expert->bio }}</p>
                     </div>
-                    <h5 class="text-3xl font-black text-white mb-2">Amit Sharma</h5>
-                    <p class="text-brand-primary font-bold uppercase tracking-widest text-xs mb-4">CEO & Real Estate Veteran</p>
-                    <p class="text-gray-500 text-sm leading-relaxed px-4">20+ years in asset management. Ex-Director at major REITs.</p>
-                </div>
-                <!-- Expert 2 -->
-                <div class="text-center group" data-aos="fade-up" data-aos-delay="100">
-                    <div class="relative w-64 h-64 mx-auto mb-8">
-                        <div class="absolute inset-0 bg-brand-accent/20 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
-                        <img src="{{ asset('images/expert-2.png') }}" class="relative w-64 h-64 rounded-full border-4 border-brand-border group-hover:border-brand-accent transition-all object-cover" alt="Priya Verma">
-                        <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-brand-accent text-white p-3 rounded-xl shadow-xl"><i class="fab fa-linkedin-in"></i></div>
-                    </div>
-                    <h5 class="text-3xl font-black text-white mb-2">Priya Verma</h5>
-                    <p class="text-brand-accent font-bold uppercase tracking-widest text-xs mb-4">Chief Operations Officer</p>
-                    <p class="text-gray-500 text-sm leading-relaxed px-4">Expert in hospitality management and large-scale banquet operations.</p>
-                </div>
-                <!-- Expert 3 -->
-                <div class="text-center group" data-aos="fade-up" data-aos-delay="200">
-                    <div class="relative w-64 h-64 mx-auto mb-8">
-                        <div class="absolute inset-0 bg-purple-500/20 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
-                        <img src="{{ asset('images/expert-3.png') }}" class="relative w-64 h-64 rounded-full border-4 border-brand-border group-hover:border-purple-500 transition-all object-cover" alt="Vikram Singh Rao">
-                        <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-purple-500 text-white p-3 rounded-xl shadow-xl"><i class="fab fa-linkedin-in"></i></div>
-                    </div>
-                    <h5 class="text-3xl font-black text-white mb-2">Vikram Rao</h5>
-                    <p class="text-purple-500 font-bold uppercase tracking-widest text-xs mb-4">Chief Investment Officer</p>
-                    <p class="text-gray-500 text-sm leading-relaxed px-4">Chartered Accountant with focus on distressed asset restructuring.</p>
-                </div>
+                @endforeach
             </div>
-        </div>
     </section>
 
     <!-- 9. Voices of the Syndicate (Reviews) -->
@@ -304,43 +304,27 @@
                 <h3 class="text-5xl font-extrabold text-white mb-6">Voices of the Syndicate.</h3>
             </div>
             <div class="grid lg:grid-cols-3 gap-10">
-                <div class="glass-card p-10 rounded-[3rem] border-brand-primary/20 relative" data-aos="fade-up" data-aos-delay="0">
-                    <i class="fas fa-quote-left text-brand-primary/10 text-8xl absolute top-8 left-8"></i>
-                    <div class="flex gap-1 mb-8 relative z-10 text-yellow-500"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-gray-300 mb-10 text-lg leading-relaxed relative z-10 italic">"The transparency is what sold me. Being able to track the actual bookings of the marriage hall I invested in through my personal panel is revolutionary. It's truly passive."</p>
-                    <div class="flex items-center gap-5 pt-8 border-t border-brand-border">
-                        <img src="{{ asset('images/review-1.png') }}" class="w-16 h-16 rounded-3xl object-cover border-2 border-brand-primary" alt="Rahul V.">
-                        <div>
-                            <p class="text-white font-black text-xl">Rahul Verma</p>
-                            <p class="text-brand-primary font-bold text-xs uppercase tracking-widest">Tech Entrepreneur</p>
+                @php
+                    $colors = ['brand-primary', 'brand-accent', 'purple-500'];
+                @endphp
+                @foreach($testimonials as $index => $testimonial)
+                    <div class="glass-card p-10 rounded-[3rem] border-{{ $colors[$index % 3] }}/20 relative" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                        <i class="fas fa-quote-left text-{{ $colors[$index % 3] }}/10 text-8xl absolute top-8 left-8"></i>
+                        <div class="flex gap-1 mb-8 relative z-10 text-yellow-500">
+                            @for($i = 1; $i <= 5; $i++)
+                                <i class="fas fa-star {{ $i <= $testimonial->rating ? '' : 'text-slate-600' }}"></i>
+                            @endfor
+                        </div>
+                        <p class="text-gray-300 mb-10 text-lg leading-relaxed relative z-10 italic">"{{ $testimonial->content }}"</p>
+                        <div class="flex items-center gap-5 pt-8 border-t border-brand-border">
+                            <img src="{{ $testimonial->image ? asset('storage/' . $testimonial->image) : asset('images/default-avatar.png') }}" class="w-16 h-16 rounded-3xl object-cover border-2 border-{{ $colors[$index % 3] }}" alt="{{ $testimonial->name }}" loading="lazy">
+                            <div>
+                                <p class="text-white font-black text-xl">{{ $testimonial->name }}</p>
+                                <p class="text-{{ $colors[$index % 3] }} font-bold text-xs uppercase tracking-widest">{{ $testimonial->designation }}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- Add more reviews here to fill the space -->
-                <div class="glass-card p-10 rounded-[3rem] border-brand-accent/20 relative" data-aos="fade-up" data-aos-delay="100">
-                    <i class="fas fa-quote-left text-brand-accent/10 text-8xl absolute top-8 left-8"></i>
-                    <div class="flex gap-1 mb-8 relative z-10 text-yellow-500"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-gray-300 mb-10 text-lg leading-relaxed relative z-10 italic">"Institutional real estate has always been my dream. Shaurya made it possible with just a fraction of the capital. Their asset selection process is unparalleled."</p>
-                    <div class="flex items-center gap-5 pt-8 border-t border-brand-border">
-                        <img src="{{ asset('images/review-2.png') }}" class="w-16 h-16 rounded-3xl object-cover border-2 border-brand-accent" alt="Anita D.">
-                        <div>
-                            <p class="text-white font-black text-xl">Anita Desai</p>
-                            <p class="text-brand-accent font-bold text-xs uppercase tracking-widest">HNI Investor</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="glass-card p-10 rounded-[3rem] border-purple-500/20 relative" data-aos="fade-up" data-aos-delay="200">
-                    <i class="fas fa-quote-left text-purple-500/10 text-8xl absolute top-8 left-8"></i>
-                    <div class="flex gap-1 mb-8 relative z-10 text-yellow-500"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-gray-300 mb-10 text-lg leading-relaxed relative z-10 italic">"The digital coaching model is a genius addition to the portfolio. Combining high-growth tech with infrastructure stability is brilliant asset allocation."</p>
-                    <div class="flex items-center gap-5 pt-8 border-t border-brand-border">
-                        <img src="{{ asset('images/review-3.png') }}" class="w-16 h-16 rounded-3xl object-cover border-2 border-purple-500" alt="Suresh N.">
-                        <div>
-                            <p class="text-white font-black text-xl">Suresh Nair</p>
-                            <p class="text-purple-500 font-bold text-xs uppercase tracking-widest">Finance Consultant</p>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
@@ -426,54 +410,32 @@
     </section>
 
     <!-- 13. Application Form -->
-    <section id="apply" class="py-32 bg-[#030712] relative">
-        <div class="max-w-5xl mx-auto px-4 relative z-10" data-aos="fade-up">
-            <div class="glass-card rounded-[4rem] p-12 md:p-24 border border-brand-primary/20 shadow-2xl relative overflow-hidden">
-                <div class="absolute -top-32 -left-32 w-64 h-64 bg-brand-primary/20 blur-[100px] rounded-full"></div>
-                <div class="text-center mb-16">
-                    <h2 class="text-5xl font-black text-white mb-6 tracking-tight">Join the Syndicate</h2>
-                    <p class="text-gray-400 text-xl">Fill out the detailed application form for personalized callback.</p>
-                </div>
-                <form action="{{ route('apply') }}" method="POST" class="space-y-8">
-                    @csrf
-                    <div class="grid md:grid-cols-2 gap-6 md:gap-10">
-                        <div class="space-y-3">
-                            <label class="block text-sm font-bold text-brand-primary uppercase tracking-[0.2em] ml-2">Full Legal Name</label>
-                            <input type="text" name="name" placeholder="e.g. Rahul Sharma" class="w-full bg-brand-dark/80 border border-brand-border rounded-[1.5rem] md:rounded-[2rem] px-6 md:px-8 py-5 md:py-6 text-white placeholder:text-gray-700 focus:border-brand-primary outline-none transition-all shadow-inner" required>
-                        </div>
-                        <div class="space-y-3">
-                            <label class="block text-sm font-bold text-brand-primary uppercase tracking-[0.2em] ml-2">Contact Number</label>
-                            <input type="tel" name="phone" placeholder="+91 XXXX XXXX" class="w-full bg-brand-dark/80 border border-brand-border rounded-[1.5rem] md:rounded-[2rem] px-6 md:px-8 py-5 md:py-6 text-white placeholder:text-gray-700 focus:border-brand-primary outline-none transition-all shadow-inner" required>
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="block text-sm font-bold text-brand-primary uppercase tracking-[0.2em] ml-2">Email Address</label>
-                        <input type="email" name="email" placeholder="rahul@example.com" class="w-full bg-brand-dark/80 border border-brand-border rounded-[1.5rem] md:rounded-[2rem] px-6 md:px-8 py-5 md:py-6 text-white placeholder:text-gray-700 focus:border-brand-primary outline-none transition-all shadow-inner" required>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="block text-sm font-bold text-brand-primary uppercase tracking-[0.2em] ml-2">Key Sector of Interest</label>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <label class="has-[:checked]:bg-brand-primary/10 has-[:checked]:border-brand-primary transition-all cursor-pointer border border-brand-border p-5 md:p-6 rounded-2xl md:rounded-3xl block">
-                                <input type="radio" name="sector" value="Marriage Halls" class="hidden" checked>
-                                <div class="text-center font-bold text-white text-sm md:text-base">Marriage Halls</div>
-                            </label>
-                            <label class="has-[:checked]:bg-brand-primary/10 has-[:checked]:border-brand-primary transition-all cursor-pointer border border-brand-border p-5 md:p-6 rounded-2xl md:rounded-3xl block">
-                                <input type="radio" name="sector" value="Edu Infrastructure" class="hidden">
-                                <div class="text-center font-bold text-white text-sm md:text-base">Edu Infrastructure</div>
-                            </label>
-                            <label class="has-[:checked]:bg-brand-primary/10 has-[:checked]:border-brand-primary transition-all cursor-pointer border border-brand-border p-5 md:p-6 rounded-2xl md:rounded-3xl block">
-                                <input type="radio" name="sector" value="Digital Coaching" class="hidden">
-                                <div class="text-center font-bold text-white text-sm md:text-base">Digital Coaching</div>
-                            </label>
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-brand-primary to-brand-accent text-white font-black py-6 md:py-7 rounded-[1.5rem] md:rounded-[2rem] text-xl md:text-2xl hover:scale-[1.02] active:scale-95 transition-all shadow-[0_20px_50px_rgba(14,165,233,0.35)]">
-                        Submit Member Application <i class="fas fa-rocket ml-3"></i>
-                    </button>
-                    <p class="text-center text-gray-600 text-[10px] md:text-xs">A data protection agreement is automatically generated upon submission.</p>
-                </form>
-            </div>
-        </div>
-    </section>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const bannerSwiper = new Swiper('.bannerSwiper', {
+                loop: true,
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false,
+                },
+                parallax: true,
+                speed: 1000,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                effect: 'fade',
+                fadeEffect: {
+                    crossFade: true
+                }
+            });
+        });
+    </script>
 
 </x-frontend.layout>

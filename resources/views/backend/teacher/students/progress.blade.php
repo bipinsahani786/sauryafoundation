@@ -1,5 +1,5 @@
 <x-dashboard.layout>
-    <x-slot name="title">Progress: {{ $student->name }} | Shaurya Syndicate</x-slot>
+    <x-slot name="title">Progress: {{ $student->name }} | Shaurya Narayan Foundation</x-slot>
 
     <div class="space-y-8">
         <!-- Header -->

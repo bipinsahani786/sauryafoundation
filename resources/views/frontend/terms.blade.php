@@ -1,5 +1,5 @@
 <x-frontend.layout>
-    <x-slot name="title">Terms of Use | Shaurya Foundation</x-slot>
+    <x-slot name="title">Terms of Use | Shaurya Narayan Foundation</x-slot>
 
     <section class="pt-48 pb-32">
         <div class="max-w-4xl mx-auto px-4">
@@ -8,12 +8,12 @@
             <div class="space-y-12 text-gray-400 leading-relaxed" data-aos="fade-up" data-aos-delay="100">
                 <section>
                     <h2 class="text-2xl font-bold text-white mb-4">1. Acceptance of Terms</h2>
-                    <p>By accessing or using the Shaurya Foundation website and syndicate platform, you agree to be bound by these Terms of Use and all applicable laws and regulations.</p>
+                    <p>By accessing or using the Shaurya Narayan Foundation website and syndicate platform, you agree to be bound by these Terms of Use and all applicable laws and regulations.</p>
                 </section>
 
                 <section>
                     <h2 class="text-2xl font-bold text-white mb-4">2. Eligibility</h2>
-                    <p>You must be at least 18 years of age and a resident of India or an eligible NRI to participate in the Shaurya Syndicate. By using this site, you represent and warrant that you meet all eligibility requirements.</p>
+                    <p>You must be at least 18 years of age and a resident of India or an eligible NRI to participate in the Shaurya Narayan Foundation. By using this site, you represent and warrant that you meet all eligibility requirements.</p>
                 </section>
 
                 <section>
@@ -33,7 +33,7 @@
 
                 <section>
                     <h2 class="text-2xl font-bold text-white mb-4">6. Intellectual Property</h2>
-                    <p>The website and its entire contents, features, and functionality are owned by Shaurya Foundation and are protected by international copyright, trademark, patent, and other intellectual property laws.</p>
+                    <p>The website and its entire contents, features, and functionality are owned by Shaurya Narayan Foundation and are protected by international copyright, trademark, patent, and other intellectual property laws.</p>
                 </section>
 
                 <section>
@@ -43,7 +43,7 @@
 
                 <section>
                     <h2 class="text-2xl font-bold text-white mb-4">8. Limitation of Liability</h2>
-                    <p>In no event will Shaurya Foundation, its affiliates, or their licensors, service providers, employees, agents, officers, or directors be liable for damages of any kind arising out of or in connection with your use of the website.</p>
+                    <p>In no event will Shaurya Narayan Foundation, its affiliates, or their licensors, service providers, employees, agents, officers, or directors be liable for damages of any kind arising out of or in connection with your use of the website.</p>
                 </section>
 
                 <section>

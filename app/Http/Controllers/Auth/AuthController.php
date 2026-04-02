@@ -34,6 +34,9 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
             
+            if ($user->isSalesAgent()) {
+                return redirect()->intended('/sales-agent/dashboard');
+            }
             if ($user->isAdmin()) {
                 return redirect()->intended('/admin/dashboard');
             }
@@ -62,7 +65,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:syndicate,teacher',
+            'role' => 'required|in:syndicate,teacher,sales_agent',
         ]);
 
         $user = User::create([

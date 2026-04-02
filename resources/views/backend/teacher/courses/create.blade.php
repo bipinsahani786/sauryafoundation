@@ -1,5 +1,5 @@
 <x-dashboard.layout>
-    <x-slot name="title">Create Course | Shaurya Syndicate</x-slot>
+    <x-slot name="title">Create Course | Shaurya Narayan Foundation</x-slot>
 
     <div class="max-w-2xl mx-auto py-8">
         <div class="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
@@ -22,6 +22,16 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Target Class (Grade)</label>
+                        <select name="class_id" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-3 text-sm font-bold outline-none focus:border-indigo-600 transition-all appearance-none" required>
+                            <option value="" disabled selected>Select Class</option>
+                            @foreach($classes as $class)
+                                <option value="{{ $class->id }}" {{ old('class_id') == $class->id ? 'selected' : '' }}>{{ $class->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="space-y-1.5">
                         <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Enrollment Price (₹)</label>
                         <input type="number" name="price" value="0" min="0" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-3 text-sm font-bold outline-none focus:border-indigo-600 transition-all" required>

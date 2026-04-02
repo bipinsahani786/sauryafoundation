@@ -54,6 +54,21 @@
                 </div>
             </div>
 
+            <div class="mb-8 p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 italic ml-1">Target Classes (Select multi-class to link test)</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    @foreach($classes as $class)
+                        <label class="relative flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group">
+                            <input type="checkbox" name="class_ids[]" value="{{ $class->id }}" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600">
+                            <span class="text-[10px] font-black uppercase text-slate-600 group-hover:text-indigo-600 transition-colors">{{ $class->name }}</span>
+                        </label>
+                    @endforeach
+                </div>
+                @error('class_ids')
+                    <p class="text-red-500 text-[9px] font-bold mt-2 italic">* Please select at least one class.</p>
+                @enderror
+            </div>
+
             <div class="flex justify-end pt-6 border-t border-slate-100">
                 <button type="submit" class="bg-indigo-600 text-white px-10 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100">
                     Create & Add Questions <i class="fas fa-chevron-right ml-2"></i>

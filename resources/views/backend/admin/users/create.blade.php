@@ -22,6 +22,7 @@
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block ml-1">Role</label>
                     <select name="role" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-xs font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-all" required>
                         <option value="admin" {{ (isset($user) && $user->role == 'admin') ? 'selected' : '' }}>Admin</option>
+                        <option value="sales_agent" {{ (isset($user) && $user->role == 'sales_agent') ? 'selected' : '' }}>Sales Agent</option>
                         <option value="syndicate" {{ (isset($user) && $user->role == 'syndicate') ? 'selected' : '' }}>Syndicate Member</option>
                     </select>
                 </div>

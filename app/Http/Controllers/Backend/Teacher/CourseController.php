@@ -10,6 +10,7 @@ use App\Models\Content;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\StudentClass;
 
 class CourseController extends Controller
 {
@@ -21,12 +22,14 @@ class CourseController extends Controller
 
     public function create()
     {
-        return view('backend.teacher.courses.create');
+        $classes = StudentClass::where('status', 'active')->get();
+        return view('backend.teacher.courses.create', compact('classes'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'class_id' => 'required|exists:student_classes,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
@@ -68,11 +71,54 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'body' => 'nullable|string',
             'quiz_id' => 'nullable|exists:quizzes,id',
+            'attachment' => 'nullable|file|mimes:pdf|max:10240', // 10MB Max PDF
         ]);
+
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('attachments', 'public');
+            $validated['attachment_path'] = $path;
+        }
 
         $validated['order'] = $topic->contents()->count() + 1;
         $topic->contents()->create($validated);
         
         return back()->with('success', 'Content added to topic.');
+    }
+
+    public function updateContent(Request $request, Content $content)
+    {
+        // Check ownership through course
+        if ($content->topic->subject->course->teacher_id !== Auth::id()) abort(403);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'nullable|string',
+            'quiz_id' => 'nullable|exists:quizzes,id',
+            'attachment' => 'nullable|file|mimes:pdf|max:10240',
+        ]);
+
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('attachments', 'public');
+            $validated['attachment_path'] = $path;
+        }
+
+        $content->update($validated);
+        return back()->with('success', 'Content updated.');
+    }
+
+    public function publish(Course $course)
+    {
+        if ($course->teacher_id !== Auth::id()) abort(403);
+        
+        $course->update(['status' => 'published']);
+        
+        return redirect()->route('teacher.courses.index')->with('success', 'Course published successfully! It is now visible to students.');
+    }
+
+    public function deleteContent(Content $content)
+    {
+        if ($content->topic->subject->course->teacher_id !== Auth::id()) abort(403);
+        $content->delete();
+        return back()->with('success', 'Content deleted.');
     }
 }

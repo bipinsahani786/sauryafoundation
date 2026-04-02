@@ -25,6 +25,15 @@ class User extends Authenticatable
         'role',
         'status',
         'teacher_id',
+        'wallet_balance',
+        'referred_by',
+        'bank_name',
+        'account_no',
+        'ifsc_code',
+        'account_holder_name',
+        'kyc_status',
+        'kyc_notes',
+        'class_id',
     ];
 
     public function isSuperAdmin()
@@ -35,6 +44,11 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->role === 'admin' || $this->role === 'superadmin';
+    }
+
+    public function isSalesAgent()
+    {
+        return $this->role === 'sales_agent';
     }
 
     public function isSyndicate()
@@ -52,9 +66,70 @@ class User extends Authenticatable
         return $this->role === 'student';
     }
 
+    public function isKycVerified()
+    {
+        return $this->kyc_status === 'verified';
+    }
+
+    public function payoutRequests()
+    {
+        return $this->hasMany(PayoutRequest::class);
+    }
+
+    // Hierarchy Relationships
+    public function referrer()
+    {
+        return $this->belongsTo(User::class, 'referred_by');
+    }
+
+    public function referrals()
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
+
+    // Wallet Logic
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function deposit($amount, $source_type = null, $source_id = null, $description = null)
+    {
+        $this->increment('wallet_balance', $amount);
+        return $this->transactions()->create([
+            'amount' => $amount,
+            'type' => 'credit',
+            'source_type' => $source_type,
+            'source_id' => $source_id,
+            'description' => $description,
+            'status' => 'completed',
+        ]);
+    }
+
+    public function withdraw($amount, $source_type = null, $source_id = null, $description = null)
+    {
+        if ($this->wallet_balance < $amount) {
+            throw new \Exception('Insufficient wallet balance.');
+        }
+        $this->decrement('wallet_balance', $amount);
+        return $this->transactions()->create([
+            'amount' => $amount,
+            'type' => 'debit',
+            'source_type' => $source_type,
+            'source_id' => $source_id,
+            'description' => $description,
+            'status' => 'completed',
+        ]);
+    }
+
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function studentClass()
+    {
+        return $this->belongsTo(StudentClass::class, 'class_id');
     }
 
     public function students()

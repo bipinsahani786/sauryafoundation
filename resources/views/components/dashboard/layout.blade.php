@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Dashboard' }} | Shaurya Syndicate</title>
+    <title>{{ $title ?? 'Dashboard' }} | Shaurya Narayan Foundation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -14,6 +14,10 @@
         .table-standard th { background-color: #f8fafc; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.025em; padding: 0.75rem 1.5rem; }
         .table-standard td { padding: 1rem 1.5rem; border-bottom: 1px solid #e2e8f0; }
         [x-cloak] { display: none !important; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4f46e5; }
     </style>
 </head>
 <body class="text-slate-700 antialiased" x-data="{ sidebarOpen: false, openMenu: null }">
@@ -32,7 +36,7 @@
                         <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm">
                             <i class="fas fa-shield-alt text-sm"></i>
                         </div>
-                        <span class="text-sm font-black tracking-widest text-slate-900 uppercase italic">Shaurya <span class="text-indigo-600">Syndicate</span></span>
+                        <span class="text-sm font-black tracking-widest text-slate-900 uppercase italic">Shaurya <span class="text-indigo-600">Narayan Foundation</span></span>
                     </div>
                     <button @click="sidebarOpen = false" class="lg:hidden text-slate-400">
                         <i class="fas fa-times"></i>
@@ -64,12 +68,55 @@
                             </div>
                         </div>
 
+                        <div x-data="{ open: {{ request()->routeIs('admin.banners.*') ? 'true' : 'false' }} }">
+                            <button @click="open = !open" class="w-full {{ $linkClasses }} {{ $inactiveClasses }}">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas fa-images w-4"></i> <span>Home Banners</span>
+                                </span>
+                                <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                            </button>
+                            <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1 border-l border-slate-100">
+                                <a href="{{ route('admin.banners.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.banners.index') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">View All</a>
+                                <a href="{{ route('admin.banners.create') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.banners.create') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Add New</a>
+                            </div>
+                        </div>
+
+                        <div x-data="{ open: {{ request()->routeIs('admin.home-sectors.*') ? 'true' : 'false' }} }">
+                            <button @click="open = !open" class="w-full {{ $linkClasses }} {{ $inactiveClasses }}">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas fa-briefcase w-4"></i> <span>Home Sectors</span>
+                                </span>
+                                <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                            </button>
+                            <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1 border-l border-slate-100">
+                                <a href="{{ route('admin.home-sectors.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.home-sectors.index') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">View All</a>
+                                <a href="{{ route('admin.home-sectors.create') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.home-sectors.create') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Add New</a>
+                            </div>
+                        </div>
+
+                        <div x-data="{ open: {{ request()->is('admin/testimonials*') || request()->is('admin/industry-experts*') ? 'true' : 'false' }} }">
+                            <button @click="open = !open" class="w-full {{ $linkClasses }} {{ $inactiveClasses }}">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas fa-quote-right w-4"></i> <span>Dynamic Content</span>
+                                </span>
+                                <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                            </button>
+                            <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1 border-l border-slate-100">
+                                <a href="{{ route('admin.testimonials.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.testimonials.*') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Testimonials</a>
+                                <a href="{{ route('admin.industry-experts.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.industry-experts.*') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Industry Experts</a>
+                            </div>
+                        </div>
+
                         <a href="{{ route('admin.applications') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.applications') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-users w-4"></i> <span>User Leads</span>
                         </a>
                         
                         <a href="{{ route('admin.subscriptions') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.subscriptions') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-check-circle w-4"></i> <span>Payments</span>
+                        </a>
+
+                        <a href="{{ route('admin.payouts.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.payouts.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-hand-holding-usd w-4"></i> <span>Payouts & KYC</span>
                         </a>
 
                         <a href="{{ route('admin.users.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.users.*') ? $activeClasses : $inactiveClasses }}">
@@ -83,14 +130,36 @@
                         <a href="{{ route('teacher.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.dashboard') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-th-large w-4"></i> <span>Dashboard</span>
                         </a>
-                        <a href="{{ route('teacher.students') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.students*') ? $activeClasses : $inactiveClasses }}">
-                            <i class="fas fa-user-graduate w-4"></i> <span>My Students</span>
-                        </a>
+                        <div x-data="{ open: {{ request()->routeIs('teacher.students*') ? 'true' : 'false' }} }">
+                            <button @click="open = !open" class="w-full {{ $linkClasses }} {{ request()->routeIs('teacher.students*') ? 'text-indigo-600 bg-indigo-50' : $inactiveClasses }}">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas fa-user-graduate w-4"></i> <span>My Students</span>
+                                </span>
+                                <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                            </button>
+                            <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1 border-l border-slate-100">
+                                <a href="{{ route('teacher.students') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('teacher.students') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}" id="sidebar_link_teacher_students_all">View All</a>
+                                <a href="{{ route('teacher.students.create') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('teacher.students.create') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}" id="sidebar_link_teacher_students_add">Quick Admission</a>
+                            </div>
+                        </div>
                         <a href="{{ route('teacher.courses.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.courses*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-graduation-cap w-4"></i> <span>Academy</span>
                         </a>
-                        <a href="{{ route('teacher.quizzes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.quizzes*') ? $activeClasses : $inactiveClasses }}">
+                        <a href="{{ route('teacher.quizzes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.quizzes*') ? $activeClasses : $inactiveClasses }}" id="sidebar_link_teacher_exams">
                             <i class="fas fa-vial w-4"></i> <span>Exam Center</span>
+                        </a>
+                        <a href="{{ route('teacher.wallet') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.wallet*') ? $activeClasses : $inactiveClasses }}" id="sidebar_wallet_link_teacher">
+                            <i class="fas fa-wallet w-4"></i> <span>My Wallet</span>
+                        </a>
+                    @elseif(Auth::user()->role === 'sales_agent')
+                        <a href="{{ route('sales-agent.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('sales-agent.dashboard') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-th-large w-4"></i> <span>Dashboard</span>
+                        </a>
+                        <a href="{{ route('sales-agent.merchants') }}" class="{{ $linkClasses }} {{ request()->routeIs('sales-agent.merchants*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-school w-4"></i> <span>My Merchants</span>
+                        </a>
+                        <a href="{{ route('sales-agent.wallet') }}" class="{{ $linkClasses }} {{ request()->routeIs('sales-agent.wallet*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-wallet w-4"></i> <span>My Wallet</span>
                         </a>
                     @elseif(Auth::user()->role === 'student')
                         <a href="{{ route('student.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.dashboard') ? $activeClasses : $inactiveClasses }}">
@@ -99,15 +168,21 @@
                         <a href="{{ route('student.courses') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.courses*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-university w-4"></i> <span>My Academy</span>
                         </a>
-                        <a href="{{ route('student.exams') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.exams*', 'student.results*') ? $activeClasses : $inactiveClasses }}">
+                        <a href="{{ route('student.exams') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.exams*', 'student.results*') ? $activeClasses : $inactiveClasses }}" id="sidebar_link_student_portal">
                             <i class="fas fa-vial-circle-check w-4"></i> <span>Test Portal</span>
+                        </a>
+                        <a href="{{ route('student.wallet') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.wallet*') ? $activeClasses : $inactiveClasses }}" id="sidebar_wallet_link_student">
+                            <i class="fas fa-wallet w-4"></i> <span>My Wallet</span>
                         </a>
                     @else
                         <a href="{{ route('syndicate.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('syndicate.dashboard') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-chart-pie w-4"></i> <span>Dashboard</span>
                         </a>
-                        <a href="{{ route('syndicate.plans') }}" class="{{ $linkClasses }} {{ request()->routeIs('syndicate.plans') ? $activeClasses : $inactiveClasses }}">
+                        <a href="{{ route('syndicate.plans') }}" class="{{ $linkClasses }} {{ request()->routeIs('syndicate.plans') ? $activeClasses : $inactiveClasses }}" id="sidebar_link_syndicate_plans">
                             <i class="fas fa-plus-circle w-4"></i> <span>Join Plan</span>
+                        </a>
+                        <a href="{{ route('syndicate.wallet') }}" class="{{ $linkClasses }} {{ request()->routeIs('syndicate.wallet*') ? $activeClasses : $inactiveClasses }}" id="sidebar_wallet_link_syndicate">
+                            <i class="fas fa-wallet w-4"></i> <span>My Wallet</span>
                         </a>
                     @endif
 
@@ -144,7 +219,13 @@
                     </button>
                     <h1 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">{{ $title ?? 'Dashboard' }}</h1>
                 </div>
-                <div class="text-[8px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-4 py-1.5 rounded-full border border-indigo-100 lg:block hidden">Syndicate Active</div>
+                <div class="flex items-center gap-4">
+                    <div class="text-[9px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-100 flex items-center gap-2 group hover:bg-emerald-100 transition-all cursor-pointer shadow-sm shadow-emerald-50" id="header_wallet_balance_container">
+                        <i class="fas fa-wallet text-[10px]"></i>
+                        <span id="header_wallet_balance">₹{{ number_format(Auth::user()->wallet_balance, 2) }}</span>
+                    </div>
+                    <div class="text-[8px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-4 py-1.5 rounded-full border border-indigo-100 lg:block hidden">Syndicate Active</div>
+                </div>
             </header>
 
             <div class="p-6 lg:p-10 max-w-7xl mx-auto w-full">

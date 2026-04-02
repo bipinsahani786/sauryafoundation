@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class SyndicateApplication extends Model
 {
-    protected $fillable = ['name', 'phone', 'email', 'sector', 'status', 'message'];
+    protected $fillable = ['name', 'phone', 'email', 'type', 'city', 'sector', 'status', 'message'];
 }

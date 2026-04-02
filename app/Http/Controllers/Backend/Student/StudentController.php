@@ -11,30 +11,46 @@ class StudentController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
+        $classId = $user->class_id;
+
         $stats = [
             'total_exams' => Quiz::where('status', 'published')
-                ->where('teacher_id', auth()->user()->teacher_id)
+                ->where('teacher_id', $user->teacher_id)
+                ->whereHas('studentClasses', function($q) use ($classId) {
+                    $q->where('student_classes.id', $classId);
+                })
                 ->count(),
-            'attempted_exams' => auth()->user()->quizAttempts()->count(),
-            'average_score' => auth()->user()->quizAttempts()->avg('score') ?? 0,
-            'courses_enrolled' => auth()->user()->enrolledCourses()->count(),
-            'lessons_completed' => auth()->user()->contentCompletions()->count(),
+            'attempted_exams' => $user->quizAttempts()->count(),
+            'average_score' => $user->quizAttempts()->avg('score') ?? 0,
+            'courses_enrolled' => $user->enrolledCourses()->count(),
+            'lessons_completed' => $user->contentCompletions()->count(),
         ];
 
         $upcoming_exams = Quiz::where('status', 'published')
-            ->where('teacher_id', auth()->user()->teacher_id)
+            ->where('teacher_id', $user->teacher_id)
+            ->whereHas('studentClasses', function($q) use ($classId) {
+                $q->where('student_classes.id', $classId);
+            })
             ->where('expires_at', '>', now())
             ->latest()
             ->take(5)
             ->get();
 
-        return view('backend.student.dashboard', compact('stats', 'upcoming_exams'));
+        $banners = \App\Models\Banner::where('is_active', true)->where('type', 'student')->orderBy('order')->get();
+        return view('backend.student.dashboard', compact('stats', 'upcoming_exams', 'banners'));
     }
 
     public function exams()
     {
-        $quizzes = Quiz::where('teacher_id', auth()->user()->teacher_id)
+        $user = auth()->user();
+        $classId = $user->class_id;
+
+        $quizzes = Quiz::where('teacher_id', $user->teacher_id)
             ->where('status', 'published')
+            ->whereHas('studentClasses', function($q) use ($classId) {
+                $q->where('student_classes.id', $classId);
+            })
             ->withCount(['attempts as quiz_attempts_count' => function($query) {
                 $query->where('student_id', auth()->id());
             }])
@@ -168,9 +184,12 @@ class StudentController extends Controller
 
     public function courses()
     {
-        $courses = Quiz::where('status', 'published')->count(); // Just for context, actually use Course model
-        $courses = \App\Models\Course::where('status', 'published')->withCount('students')->get();
-        $enrolledIds = auth()->user()->enrolledCourses()->pluck('courses.id')->toArray();
+        $user = auth()->user();
+        $courses = \App\Models\Course::where('class_id', $user->class_id)
+            ->where('status', 'published')
+            ->withCount('students')
+            ->get();
+        $enrolledIds = $user->enrolledCourses()->pluck('courses.id')->toArray();
         return view('backend.student.courses.index', compact('courses', 'enrolledIds'));
     }
 
@@ -231,5 +250,11 @@ class StudentController extends Controller
             'score' => 0, // Or calculate based on saved drafts if any
         ]);
         return redirect()->route('student.results.show', $attempt->id)->with('warning', 'Exam time expired. Auto-submitted.');
+    }
+
+    public function wallet()
+    {
+        $transactions = auth()->user()->transactions()->latest()->paginate(20);
+        return view('backend.student.wallet.index', compact('transactions'));
     }
 }

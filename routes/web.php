@@ -6,6 +6,11 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Backend\Admin\AdminController;
 use App\Http\Controllers\Backend\Admin\PlanController;
 use App\Http\Controllers\Backend\Admin\UserController;
+use App\Http\Controllers\Backend\Admin\BannerController;
+use App\Http\Controllers\Backend\Admin\HomeSectorController;
+use App\Http\Controllers\Backend\Admin\TestimonialController;
+use App\Http\Controllers\Backend\Admin\IndustryExpertController;
+use App\Http\Controllers\Backend\SalesAgent\SalesAgentController;
 use App\Http\Controllers\Backend\Syndicate\SyndicateController;
 use App\Http\Controllers\Backend\ProfileController;
 use App\Http\Controllers\Backend\Teacher\CourseController;
@@ -22,6 +27,7 @@ Route::controller(HomeController::class)->group(function () {
         Route::get('/marriage-halls', 'marriageHalls')->name('marriage-halls');
         Route::get('/education', 'education')->name('education');
         Route::get('/digital-coaching', 'coaching')->name('coaching');
+        Route::get('/{slug}', 'sectorDetail')->name('detail');
     });
 
     Route::post('/apply', 'apply')->name('apply');
@@ -49,10 +55,31 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('users', UserController::class);
     Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
+    // Payouts & KYC Management
+    Route::get('/payouts', [AdminController::class, 'payouts'])->name('payouts.index');
+    Route::post('/kyc/{user}/verify', [AdminController::class, 'verifyKyc'])->name('kyc.verify');
+    Route::post('/payouts/{payout}/approve', [AdminController::class, 'approvePayout'])->name('payout.approve');
+
+    // Home Banners
+    Route::resource('banners', BannerController::class);
+    Route::post('/banners/{banner}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
+
+    // Home Sectors
+    Route::resource('home-sectors', HomeSectorController::class);
+    Route::post('/home-sectors/{home_sector}/toggle-status', [HomeSectorController::class, 'toggleStatus'])->name('home-sectors.toggle-status');
+
     // Quiz Approvals
     Route::get('/quizzes', [AdminController::class, 'quizzes'])->name('quizzes.index');
     Route::post('/quizzes/{quiz}/approve', [AdminController::class, 'approveQuiz'])->name('quizzes.approve');
     Route::post('/quizzes/{quiz}/reject', [AdminController::class, 'rejectQuiz'])->name('quizzes.reject');
+
+    // Testimonials
+    Route::resource('testimonials', TestimonialController::class);
+    Route::post('/testimonials/{testimonial}/toggle-status', [TestimonialController::class, 'toggleStatus'])->name('testimonials.toggle-status');
+
+    // Industry Experts
+    Route::resource('industry-experts', IndustryExpertController::class);
+    Route::post('/industry-experts/{industry_expert}/toggle-status', [IndustryExpertController::class, 'toggleStatus'])->name('industry-experts.toggle-status');
 });
 
 // Shared Profile Route
@@ -67,24 +94,48 @@ Route::middleware(['auth', 'syndicate'])->prefix('dashboard')->name('syndicate.'
     Route::get('/plans', [SyndicateController::class, 'plans'])->name('plans');
     Route::get('/plans/{plan}/join', [SyndicateController::class, 'joinForm'])->name('plans.join');
     Route::post('/plans/{plan}/join', [SyndicateController::class, 'submitJoin'])->name('plans.submit');
+    Route::get('/wallet', [SyndicateController::class, 'wallet'])->name('wallet');
+});
+
+Route::middleware(['auth', 'sales_agent'])->prefix('sales-agent')->name('sales-agent.')->group(function () {
+    Route::get('/dashboard', [SalesAgentController::class, 'index'])->name('dashboard');
+    Route::get('/merchants', [SalesAgentController::class, 'merchants'])->name('merchants');
+    Route::post('/merchants', [SalesAgentController::class, 'storeMerchant'])->name('merchants.store');
+    Route::get('/wallet', [SalesAgentController::class, 'wallet'])->name('wallet');
+    Route::get('/kyc', [SalesAgentController::class, 'kyc'])->name('kyc');
+    Route::post('/kyc', [SalesAgentController::class, 'submitKyc'])->name('kyc.submit');
+    Route::post('/payout/request', [SalesAgentController::class, 'submitPayoutRequest'])->name('payout.submit');
 });
 
 Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'index'])->name('dashboard');
     Route::get('/students', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'students'])->name('students');
+    Route::get('/students/create', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'createStudent'])->name('students.create');
     Route::post('/students', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'addStudent'])->name('students.add');
+    Route::get('/students/{student}/edit', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'editStudent'])->name('students.edit');
+    Route::put('/students/{student}', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'updateStudent'])->name('students.update');
     Route::get('/students/{student}/progress', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'studentProgress'])->name('students.progress');
+    Route::post('/students/{student}/add-money', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'addMoney'])->name('students.add-money');
     
     // Quizzes
     Route::resource('quizzes', App\Http\Controllers\Backend\Teacher\QuizController::class);
     Route::get('quizzes/{quiz}/results', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'results'])->name('quizzes.results');
     Route::post('quizzes/{quiz}/questions', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'addQuestion'])->name('quizzes.add-question');
+
+    // Wallet & KYC
+    Route::get('/wallet', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'wallet'])->name('wallet');
+    Route::get('/kyc', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'kyc'])->name('kyc');
+    Route::post('/kyc', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'submitKyc'])->name('kyc.submit');
+    Route::post('/payout/request', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'submitPayoutRequest'])->name('payout.submit');
     
     // Courses (LMS)
     Route::resource('courses', CourseController::class);
+    Route::post('courses/{course}/publish', [CourseController::class, 'publish'])->name('courses.publish');
     Route::post('courses/{course}/subjects', [CourseController::class, 'addSubject'])->name('courses.add-subject');
     Route::post('subjects/{subject}/topics', [CourseController::class, 'addTopic'])->name('subjects.add-topic');
     Route::post('topics/{topic}/contents', [CourseController::class, 'addContent'])->name('topics.add-content');
+    Route::put('contents/{content}', [CourseController::class, 'updateContent'])->name('contents.update');
+    Route::delete('contents/{content}', [CourseController::class, 'deleteContent'])->name('contents.destroy');
 });
 
 Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
@@ -104,4 +155,7 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     Route::get('/courses/{course}', [App\Http\Controllers\Backend\Student\StudentController::class, 'showCourse'])->name('courses.show');
     Route::post('/courses/{course}/enroll', [App\Http\Controllers\Backend\Student\StudentController::class, 'enroll'])->name('courses.enroll');
     Route::post('/contents/{content}/complete', [App\Http\Controllers\Backend\Student\StudentController::class, 'completeContent'])->name('contents.complete');
+
+    // Wallet
+    Route::get('/wallet', [App\Http\Controllers\Backend\Student\StudentController::class, 'wallet'])->name('wallet');
 });

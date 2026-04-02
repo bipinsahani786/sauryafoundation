@@ -1,5 +1,5 @@
 <x-dashboard.layout>
-    <x-slot name="title">Academy | Shaurya Syndicate</x-slot>
+    <x-slot name="title">Academy | Shaurya Narayan Foundation</x-slot>
 
     <div class="space-y-8">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">

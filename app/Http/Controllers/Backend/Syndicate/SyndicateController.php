@@ -51,4 +51,10 @@ class SyndicateController extends Controller
 
         return redirect()->route('syndicate.dashboard')->with('success', 'Application submitted! Waiting for Admin approval.');
     }
+
+    public function wallet()
+    {
+        $transactions = Auth::user()->transactions()->latest()->paginate(20);
+        return view('backend.syndicate.wallet.index', compact('transactions'));
+    }
 }

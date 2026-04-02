@@ -1,22 +1,55 @@
 <x-frontend.layout>
-    <x-slot name="title">Education Infra Syndicate | Shaurya Foundation</x-slot>
+    <x-slot name="title">Education Infra Syndicate | Shaurya Narayan Foundation</x-slot>
 
-    <!-- 1. Hero -->
-    <section class="relative pt-40 pb-24 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid md:grid-cols-2 gap-20 items-center mb-32">
-                <div data-aos="fade-right">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-accent/30 bg-brand-accent/10 mb-6 text-sm">
-                        <i class="fas fa-school text-brand-accent"></i> <span class="text-brand-accent font-bold uppercase tracking-widest text-xs">Stability First</span>
+    <!-- 1. Dynamic Banner Slider -->
+    <section class="relative pt-20 overflow-hidden bg-brand-dark">
+        <div class="swiper bannerSwiper">
+            <div class="swiper-wrapper">
+                @forelse($banners as $banner)
+                    <div class="swiper-slide relative min-h-[70vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 z-0">
+                            <img src="{{ asset('storage/' . $banner->image_path) }}" class="w-full h-full object-cover opacity-40 scale-105 animate-slow-zoom" alt="{{ $banner->title }}">
+                            <div class="absolute inset-0 bg-gradient-to-b from-brand-dark via-transparent to-brand-dark"></div>
+                        </div>
+                        <div class="max-w-6xl mx-auto px-4 relative z-10 text-center">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-accent/30 bg-brand-accent/10 mb-8 text-xs md:text-sm animate-fade-in-up">
+                                <i class="fas fa-school text-brand-accent"></i> <span class="text-brand-accent font-bold uppercase tracking-widest text-[10px]">Education Infra Syndicate</span>
+                            </div>
+                            <h1 class="text-4xl md:text-7xl font-black text-white tracking-tighter leading-tight mb-8 animate-fade-in-up uppercase">
+                                {!! nl2br(e($banner->title)) !!}
+                            </h1>
+                            <p class="text-lg md:text-2xl text-gray-400 font-medium mb-10 max-w-3xl mx-auto leading-relaxed animate-fade-in-up italic">
+                                {{ $banner->description }}
+                            </p>
+                            @if($banner->link)
+                                <div class="flex justify-center animate-fade-in-up">
+                                    <a href="{{ $banner->link }}" class="px-8 md:px-12 py-4 md:py-5 bg-brand-accent text-white rounded-full font-black text-lg md:text-xl hover:-translate-y-1 transition-all shadow-lg hover:shadow-brand-accent/40 uppercase tracking-widest text-[#4f46e5]">Explore Assets <i class="fas fa-arrow-right ml-2 text-sm"></i></a>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                    <h1 class="text-6xl font-black text-white mb-8 tracking-tighter">Invest in the <br><span class="text-gradient">Schools</span> of Tomorrow.</h1>
-                    <p class="text-xl text-gray-400 leading-relaxed mb-8">Education infrastructure represents the ultimate compounding asset. We build modern smart schools and leasing them to premier K-12 operators.</p>
-                </div>
-                <div class="relative" data-aos="fade-left">
-                    <div class="absolute inset-0 bg-brand-accent/20 blur-[120px] opacity-20"></div>
-                    <img src="{{ asset('images/edu-1.png') }}" class="relative rounded-[3rem] border border-brand-border shadow-2xl" alt="Education Infra">
-                </div>
+                @empty
+                    <!-- Fallback Hero -->
+                    <div class="swiper-slide relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+                        <div class="max-w-7xl mx-auto px-4 mt-20">
+                            <div class="grid md:grid-cols-2 gap-20 items-center">
+                                <div data-aos="fade-right">
+                                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-accent/30 bg-brand-accent/10 mb-6 text-sm text-[10px] uppercase font-black tracking-widest text-[#4f46e5]">
+                                        <i class="fas fa-school text-brand-accent"></i> Stability First
+                                    </div>
+                                    <h1 class="text-6xl font-black text-white mb-8 tracking-tighter uppercase leading-[1.1]">Invest in the <br><span class="text-gradient font-bold">Schools</span> of Tomorrow.</h1>
+                                    <p class="text-xl text-gray-400 leading-relaxed font-medium italic">Education infrastructure represents the ultimate compounding asset. We build modern smart schools and leasing them to premier K-12 operators.</p>
+                                </div>
+                                <div class="relative" data-aos="fade-left">
+                                    <div class="absolute inset-0 bg-brand-accent/20 blur-[120px] opacity-20"></div>
+                                    <img src="{{ asset('images/edu-1.png') }}" class="relative rounded-[3rem] border border-brand-border shadow-2xl opacity-80" alt="Education Infra">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforelse
             </div>
+            <div class="swiper-pagination"></div>
         </div>
     </section>
 
@@ -35,7 +68,7 @@
         <div class="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-20 items-center">
             <div data-aos="fade-right">
                 <h3 class="text-4xl font-black text-white mb-8">A Legacy Asset Class.</h3>
-                <p class="text-gray-500 text-lg leading-relaxed mb-8">Education is a fundamental right and a massive commercial opportunity. With Shaurya Foundation, you co-own the physical bricks-and-mortar foundations of education, backed by long-term institutional leases.</p>
+                <p class="text-gray-500 text-lg leading-relaxed mb-8">Education is a fundamental right and a massive commercial opportunity. With Shaurya Narayan Foundation, you co-own the physical bricks-and-mortar foundations of education, backed by long-term institutional leases.</p>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="p-6 glass-card rounded-2xl border-brand-border"><p class="text-white font-bold mb-1">Fee Stability</p><p class="text-xs text-gray-500">Fees increase 10% annually.</p></div>
                     <div class="p-6 glass-card rounded-2xl border-brand-border"><p class="text-white font-bold mb-1">Land Hubs</p><p class="text-xs text-gray-500">Usually prime institutional land.</p></div>
@@ -141,36 +174,5 @@
         </div>
     </section>
 
-    <!-- 10. Application Form -->
-    <section id="apply" class="py-40 relative bg-brand-dark overflow-hidden">
-        <div class="absolute inset-0 bg-brand-accent/5"></div>
-        <div class="max-w-4xl mx-auto px-4 relative z-10">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h4 class="text-5xl font-black text-white mb-6">Invest in Education</h4>
-                <p class="text-gray-400 text-xl">Submit your details to receive the school portfolio syndicate memo.</p>
-            </div>
-            
-            <form action="{{ route('apply') }}" method="POST" class="glass-card p-10 md:p-16 rounded-[3rem] border border-brand-accent/20" data-aos="zoom-in">
-                @csrf
-                <input type="hidden" name="sector" value="Edu Infrastructure">
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-brand-accent uppercase tracking-widest ml-2">Full Name</label>
-                        <input type="text" name="name" placeholder="Rahul Sharma" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-accent transition-all" required>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-brand-accent uppercase tracking-widest ml-2">Phone Number</label>
-                        <input type="tel" name="phone" placeholder="+91 XXXX XXXX" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-accent transition-all" required>
-                    </div>
-                </div>
-                <div class="space-y-3 mb-10">
-                    <label class="text-xs font-bold text-brand-accent uppercase tracking-widest ml-2">Email Address</label>
-                    <input type="email" name="email" placeholder="rahul@example.com" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-accent transition-all" required>
-                </div>
-                <button type="submit" class="w-full bg-brand-accent text-white font-black py-6 rounded-2xl text-xl hover:scale-[1.02] shadow-[0_20px_40px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-3">
-                    Invest in Education Syndicate <i class="fas fa-arrow-right text-sm"></i>
-                </button>
-            </form>
-        </div>
-    </section>
+
 </x-frontend.layout>

@@ -1,22 +1,55 @@
 <x-frontend.layout>
-    <x-slot name="title">Marriage Halls Syndicate | Shaurya Foundation</x-slot>
+    <x-slot name="title">Marriage Halls Syndicate | Shaurya Narayan Foundation</x-slot>
 
-    <!-- 1. Hero -->
-    <section class="relative pt-40 pb-24 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid md:grid-cols-2 gap-16 items-center mb-32">
-                <div data-aos="fade-right">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 mb-6 text-sm">
-                        <i class="fas fa-hotel text-brand-primary"></i> <span class="text-brand-primary font-bold uppercase tracking-widest text-xs">Premium Asset Class</span>
+    <!-- 1. Dynamic Banner Slider -->
+    <section class="relative pt-20 overflow-hidden bg-brand-dark">
+        <div class="swiper bannerSwiper">
+            <div class="swiper-wrapper">
+                @forelse($banners as $banner)
+                    <div class="swiper-slide relative min-h-[70vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 z-0">
+                            <img src="{{ asset('storage/' . $banner->image_path) }}" class="w-full h-full object-cover opacity-40 scale-105 animate-slow-zoom" alt="{{ $banner->title }}">
+                            <div class="absolute inset-0 bg-gradient-to-b from-brand-dark via-transparent to-brand-dark"></div>
+                        </div>
+                        <div class="max-w-6xl mx-auto px-4 relative z-10 text-center">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 mb-8 text-xs md:text-sm animate-fade-in-up">
+                                <i class="fas fa-hotel text-brand-primary"></i> <span class="text-brand-primary font-bold uppercase tracking-widest text-[10px]">Premium Asset Syndicate</span>
+                            </div>
+                            <h1 class="text-4xl md:text-7xl font-black text-white tracking-tighter leading-tight mb-8 animate-fade-in-up uppercase">
+                                {!! nl2br(e($banner->title)) !!}
+                            </h1>
+                            <p class="text-lg md:text-2xl text-gray-400 font-medium mb-10 max-w-3xl mx-auto leading-relaxed animate-fade-in-up italic">
+                                {{ $banner->description }}
+                            </p>
+                            @if($banner->link)
+                                <div class="flex justify-center animate-fade-in-up">
+                                    <a href="{{ $banner->link }}" class="px-8 md:px-12 py-4 md:py-5 bg-brand-primary text-white rounded-full font-black text-lg md:text-xl hover:-translate-y-1 transition-all shadow-lg hover:shadow-brand-primary/40 uppercase tracking-widest">Inquire Now <i class="fas fa-arrow-right ml-2 text-sm"></i></a>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                    <h1 class="text-6xl font-black text-white mb-8 tracking-tighter">Own India's <br><span class="text-gradient">₹5,00,000Cr</span> Wedding Market.</h1>
-                    <p class="text-xl text-gray-400 leading-relaxed mb-8">Marriage halls in India are recession-proof, high-cash-flow assets. Our syndicate acquires prime land and builds elite banquets in explosive urban clusters.</p>
-                </div>
-                <div class="relative" data-aos="fade-left">
-                    <div class="absolute inset-0 bg-brand-primary/20 blur-[120px] opacity-20"></div>
-                    <img src="{{ asset('images/marriage-1.png') }}" class="relative rounded-[3rem] border border-brand-border shadow-2xl" alt="Marriage Hall">
-                </div>
+                @empty
+                    <!-- Fallback Hero -->
+                    <div class="swiper-slide relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+                        <div class="max-w-7xl mx-auto px-4 mt-20">
+                            <div class="grid md:grid-cols-2 gap-16 items-center">
+                                <div data-aos="fade-right">
+                                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 mb-6 text-sm text-[10px] uppercase font-black tracking-widest text-[#4f46e5]">
+                                        <i class="fas fa-hotel text-brand-primary"></i> Premium Asset Class
+                                    </div>
+                                    <h1 class="text-6xl font-black text-white mb-8 tracking-tighter uppercase leading-[1.1]">Own India's <br><span class="text-gradient">₹5,00,000Cr</span> Wedding Market.</h1>
+                                    <p class="text-xl text-gray-400 leading-relaxed font-medium italic">Marriage halls in India are recession-proof, high-cash-flow assets. Our syndicate acquires prime land and builds elite banquets in explosive urban clusters.</p>
+                                </div>
+                                <div class="relative" data-aos="fade-left">
+                                    <div class="absolute inset-0 bg-brand-primary/20 blur-[120px] opacity-20"></div>
+                                    <img src="{{ asset('images/marriage-1.png') }}" class="relative rounded-[3rem] border border-brand-border shadow-2xl opacity-80" alt="Marriage Hall">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforelse
             </div>
+            <div class="swiper-pagination"></div>
         </div>
     </section>
 
@@ -78,7 +111,7 @@
     <section class="py-32 border-y border-brand-border">
         <div class="max-w-5xl mx-auto px-4 text-center">
             <h3 class="text-3xl font-bold text-white mb-8">We Handle Everything.</h3>
-            <p class="text-gray-500 text-lg mb-12">From facility management to marketing the venue across social media and wedding portals, Shaurya Foundation's ops team ensures a 90%+ occupancy during peak seasons.</p>
+            <p class="text-gray-500 text-lg mb-12">From facility management to marketing the venue across social media and wedding portals, Shaurya Narayan Foundation's ops team ensures a 90%+ occupancy during peak seasons.</p>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div class="p-6 glass-card rounded-2xl border-brand-border text-xs font-bold text-gray-400">Marketing & Sales</div>
                 <div class="p-6 glass-card rounded-2xl border-brand-border text-xs font-bold text-gray-400">Staff Hiring</div>
@@ -147,36 +180,5 @@
         </div>
     </section>
 
-    <!-- 10. Application Form -->
-    <section id="apply" class="py-40 relative bg-brand-dark overflow-hidden">
-        <div class="absolute inset-0 bg-brand-primary/5"></div>
-        <div class="max-w-4xl mx-auto px-4 relative z-10">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h4 class="text-5xl font-black text-white mb-6">Invest in Banquets</h4>
-                <p class="text-gray-400 text-xl">Submit your details to receive the site-specific investment memo.</p>
-            </div>
-            
-            <form action="{{ route('apply') }}" method="POST" class="glass-card p-10 md:p-16 rounded-[3rem] border border-brand-primary/20" data-aos="zoom-in">
-                @csrf
-                <input type="hidden" name="sector" value="Marriage Halls">
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-brand-primary uppercase tracking-widest ml-2">Full Name</label>
-                        <input type="text" name="name" placeholder="Rahul Sharma" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-primary transition-all" required>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-brand-primary uppercase tracking-widest ml-2">Phone Number</label>
-                        <input type="tel" name="phone" placeholder="+91 XXXX XXXX" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-primary transition-all" required>
-                    </div>
-                </div>
-                <div class="space-y-3 mb-10">
-                    <label class="text-xs font-bold text-brand-primary uppercase tracking-widest ml-2">Email Address</label>
-                    <input type="email" name="email" placeholder="rahul@example.com" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-primary transition-all" required>
-                </div>
-                <button type="submit" class="w-full bg-brand-primary text-white font-black py-6 rounded-2xl text-xl hover:scale-[1.02] shadow-[0_20px_40px_rgba(14,165,233,0.3)] transition-all flex items-center justify-center gap-3">
-                    Apply for Marriage Hall Syndicate <i class="fas fa-arrow-right text-sm"></i>
-                </button>
-            </form>
-        </div>
-    </section>
+
 </x-frontend.layout>

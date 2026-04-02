@@ -11,8 +11,9 @@
             <table class="w-full text-left table-standard">
                 <thead class="bg-slate-50 text-slate-400 font-bold uppercase tracking-widest text-[9px]">
                     <tr>
+                        <th class="px-4 py-2 bg-slate-50 border-b">Type</th>
                         <th class="px-4 py-2 bg-slate-50 border-b">Name</th>
-                        <th class="px-4 py-2 bg-slate-50 border-b">Contact</th>
+                        <th class="px-4 py-2 bg-slate-50 border-b">Contact / City</th>
                         <th class="px-4 py-2 bg-slate-50 border-b">Sector</th>
                         <th class="px-4 py-2 bg-slate-50 border-b text-center">Date</th>
                         <th class="px-4 py-2 bg-slate-50 border-b text-right">Action</th>
@@ -22,6 +23,9 @@
                     @forelse($applications as $app)
                         <tr class="hover:bg-slate-50/50 transition-all font-medium">
                             <td class="px-4 py-2">
+                                <span class="px-2 py-0.5 {{ $app->type == 'Syndicate' ? 'bg-amber-50 text-amber-600 border-amber-100' : ($app->type == 'Volunteer' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-blue-50 text-blue-600 border-blue-100') }} rounded text-[8px] font-black uppercase border">{{ $app->type }}</span>
+                            </td>
+                            <td class="px-4 py-2">
                                 <div class="flex items-center gap-2">
                                     <div class="w-6 h-6 rounded bg-slate-50 border border-slate-100 flex items-center justify-center text-indigo-600 font-bold text-[9px]">{{ substr($app->name, 0, 1) }}</div>
                                     <span class="text-slate-900 font-bold text-xs">{{ $app->name }}</span>
@@ -29,10 +33,10 @@
                             </td>
                             <td class="px-4 py-2">
                                 <p class="text-slate-700 font-bold">{{ $app->email }}</p>
-                                <p class="text-[9px] text-slate-400">{{ $app->phone }}</p>
+                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest"><i class="fas fa-phone-alt mr-1"></i> {{ $app->phone }} | <i class="fas fa-map-marker-alt mr-1"></i> {{ $app->city ?? 'N/A' }}</p>
                             </td>
                             <td class="px-4 py-2">
-                                <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[8px] font-bold uppercase border border-indigo-100">{{ $app->sector }}</span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[8px] font-bold uppercase border border-slate-200">{{ $app->sector }}</span>
                             </td>
                             <td class="px-4 py-2 text-center text-slate-500 font-bold uppercase">
                                 {{ $app->created_at->format('d M y') }}

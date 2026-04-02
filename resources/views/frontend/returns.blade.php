@@ -1,5 +1,5 @@
 <x-frontend.layout>
-    <x-slot name="title">ROI & Returns | Shaurya Foundation</x-slot>
+    <x-slot name="title">ROI & Returns | Shaurya Narayan Foundation</x-slot>
 
     <!-- 1. Hero -->
     <section class="relative pt-48 pb-32 bg-[#02040a] overflow-hidden">
@@ -25,7 +25,7 @@
                     <p class="text-gray-500 text-sm">Low yield. High management fees. Passive rental only.</p>
                 </div>
                 <div class="glass-card p-10 rounded-3xl border-t-4 border-t-brand-accent/30 bg-brand-accent/5" data-aos="fade-up" data-aos-delay="200">
-                    <h5 class="text-brand-accent font-black mb-6 uppercase tracking-widest text-sm">Shaurya Syndicate</h5>
+                    <h5 class="text-brand-accent font-black mb-6 uppercase tracking-widest text-sm">Shaurya Narayan Foundation</h5>
                     <div class="text-4xl font-black text-brand-accent mb-4">18% - 24%</div>
                     <p class="text-gray-400 text-sm font-bold italic">Rental Yield + Operational Alpha + Capital Growth.</p>
                 </div>
@@ -170,37 +170,6 @@
         </div>
     </section>
 
-    <!-- 10. Application Form -->
-    <section id="apply" class="py-40 relative bg-brand-dark overflow-hidden">
-        <div class="absolute inset-0 bg-brand-primary/5"></div>
-        <div class="max-w-4xl mx-auto px-4 relative z-10">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h4 class="text-5xl font-black text-white mb-6">Start Earning Yield</h4>
-                <p class="text-gray-400 text-xl">Submit your details to receive the latest ROI matrix and asset performance data.</p>
-            </div>
-            
-            <form action="{{ route('apply') }}" method="POST" class="glass-card p-10 md:p-16 rounded-[3rem] border border-brand-primary/20" data-aos="zoom-in">
-                @csrf
-                <input type="hidden" name="sector" value="Returns Inquiry">
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-brand-primary uppercase tracking-widest ml-2">Full Name</label>
-                        <input type="text" name="name" placeholder="Rahul Sharma" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-primary transition-all" required>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-brand-primary uppercase tracking-widest ml-2">Phone Number</label>
-                        <input type="tel" name="phone" placeholder="+91 XXXX XXXX" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-primary transition-all" required>
-                    </div>
-                </div>
-                <div class="space-y-3 mb-10">
-                    <label class="text-xs font-bold text-brand-primary uppercase tracking-widest ml-2">Email Address</label>
-                    <input type="email" name="email" placeholder="rahul@example.com" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-primary transition-all" required>
-                </div>
-                <button type="submit" class="w-full bg-brand-primary text-white font-black py-6 rounded-2xl text-xl hover:scale-[1.02] shadow-[0_20px_40px_rgba(14,165,233,0.3)] transition-all flex items-center justify-center gap-3">
-                    Unlock Yield Projections <i class="fas fa-chart-line text-sm"></i>
-                </button>
-            </form>
-        </div>
-    </section>
+
 
 </x-frontend.layout>

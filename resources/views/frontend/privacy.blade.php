@@ -1,5 +1,5 @@
 <x-frontend.layout>
-    <x-slot name="title">Privacy Policy | Shaurya Foundation</x-slot>
+    <x-slot name="title">Privacy Policy | Shaurya Narayan Foundation</x-slot>
 
     <section class="pt-48 pb-32">
         <div class="max-w-4xl mx-auto px-4">
@@ -8,7 +8,7 @@
             <div class="space-y-12 text-gray-400 leading-relaxed" data-aos="fade-up" data-aos-delay="100">
                 <section>
                     <h2 class="text-2xl font-bold text-white mb-4">1. Introduction</h2>
-                    <p>At Shaurya Foundation, we respect your privacy and are committed to protecting it through our compliance with this policy. This policy describes the types of information we may collect from you or that you may provide when you visit our website.</p>
+                    <p>At Shaurya Narayan Foundation, we respect your privacy and are committed to protecting it through our compliance with this policy. This policy describes the types of information we may collect from you or that you may provide when you visit our website.</p>
                 </section>
 
                 <section>

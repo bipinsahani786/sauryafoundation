@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use App\Models\StudentClass;
 
 class QuizController extends Controller
 {
@@ -17,12 +18,15 @@ class QuizController extends Controller
 
     public function create()
     {
-        return view('backend.teacher.quizzes.create');
+        $classes = StudentClass::where('status', 'active')->get();
+        return view('backend.teacher.quizzes.create', compact('classes'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'class_ids' => 'required|array|min:1',
+            'class_ids.*' => 'exists:student_classes,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
@@ -39,6 +43,8 @@ class QuizController extends Controller
             'status' => $status,
             'expires_at' => $validated['end_time'] ?? null,
         ]));
+
+        $quiz->studentClasses()->sync($validated['class_ids']);
 
         return redirect()->route('teacher.quizzes.show', $quiz->id)->with('success', 'Quiz created successfully. Now add questions.');
     }

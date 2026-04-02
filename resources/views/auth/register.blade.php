@@ -1,5 +1,5 @@
 <x-frontend.layout>
-    <x-slot name="title">Join Syndicate | Shaurya Syndicate</x-slot>
+    <x-slot name="title">Join Syndicate | Shaurya Narayan Foundation</x-slot>
 
     <div class="relative min-h-[85vh] flex items-center justify-center pt-24 pb-12 px-4 overflow-hidden">
         <!-- Background Blobs -->
@@ -17,13 +17,13 @@
 
                     <div class="flex p-1 bg-brand-dark/80 rounded-2xl border border-brand-border/50 mb-2">
                         <button type="button" @click="role = 'syndicate'" :class="role === 'syndicate' ? 'bg-gradient-to-r from-brand-accent to-brand-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'" class="flex-1 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300">
-                            Syndicate
+                            Syndicate Access
                         </button>
-                        <button type="button" @click="role = 'teacher'" :class="role === 'teacher' ? 'bg-gradient-to-r from-brand-accent to-brand-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'" class="flex-1 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300">
+                        <button type="button" @click="role = 'teacher'" :class="role === 'teacher' ? 'bg-gradient-to-r from-brand-accent to-brand-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'" class="hidden flex-1 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300">
                             Teacher
                         </button>
                     </div>
-                    <p class="text-[8px] text-brand-accent/60 font-medium italic tracking-tight" x-show="role === 'teacher'">* Direct access for coaching professionals.</p>
+                    <p class="hidden text-[8px] text-brand-accent/60 font-medium italic tracking-tight" x-show="role === 'teacher'">* Direct access for coaching professionals.</p>
                     <p class="text-[8px] text-brand-accent/60 font-medium italic tracking-tight" x-show="role === 'syndicate'">* For investment & portfolio management.</p>
                 </div>
 

@@ -1,12 +1,12 @@
 <x-frontend.layout>
-    <x-slot name="title">About Us | Shaurya Foundation</x-slot>
+    <x-slot name="title">About Us | Shaurya Narayan Foundation</x-slot>
 
     <!-- 1. Hero Section -->
     <section class="relative pt-40 pb-24 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
             <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-sm" data-aos="fade-up">Our Story</h2>
             <h1 class="text-6xl md:text-8xl font-black text-white mb-8 tracking-tighter" data-aos="fade-up" data-aos-delay="100">Legacy Built on <br><span class="text-gradient">Transparency.</span></h1>
-            <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="200">Shaurya Foundation was established to bridge the gap between retail capital and institutional-grade real estate assets in India.</p>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="200">Shaurya Narayan Foundation was established to bridge the gap between retail capital and institutional-grade real estate assets in India.</p>
         </div>
     </section>
 
@@ -102,43 +102,26 @@
     <section class="py-32 bg-brand-dark overflow-hidden">
         <div class="max-w-7xl mx-auto px-4">
             <h3 class="text-5xl font-black text-white text-center mb-24">The Visionaries</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-20">
-                <div class="text-center group" data-aos="fade-up">
-                    <div class="relative w-64 h-64 mx-auto mb-10 overflow-hidden rounded-[3rem] border-2 border-brand-border">
-                        <img src="{{ asset('images/expert-1.png') }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 lg:gap-20">
+                @php
+                    $colors = ['brand-primary', 'brand-accent', 'purple-400'];
+                @endphp
+                @foreach($experts as $index => $expert)
+                    <div class="text-center group" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                        <div class="relative w-56 h-56 md:w-64 md:h-64 mx-auto mb-10 overflow-hidden rounded-[3rem] border-2 border-brand-border">
+                            <img src="{{ asset('storage/' . $expert->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <h5 class="text-3xl font-black text-white mb-2">{{ $expert->name }}</h5>
+                        <p class="text-{{ $colors[$index % 3] }} font-bold tracking-[0.3em] uppercase text-xs mb-6">{{ $expert->designation }}</p>
+                        <p class="text-gray-500 px-8 text-sm leading-relaxed mb-6 italic">"{{ $expert->bio }}"</p>
+                        <div class="flex justify-center gap-4 text-gray-500">
+                            @if($expert->linkedin_url)
+                                <a href="{{ $expert->linkedin_url }}" target="_blank" class="hover:text-{{ $colors[$index % 3] }}"><i class="fab fa-linkedin"></i></a>
+                            @endif
+                            <a href="#" class="hover:text-white"><i class="fab fa-twitter"></i></a>
+                        </div>
                     </div>
-                    <h5 class="text-3xl font-black text-white mb-2">Amit Sharma</h5>
-                    <p class="text-brand-primary font-bold tracking-[0.3em] uppercase text-xs mb-6">CEO & Founder</p>
-                    <p class="text-gray-500 px-8 text-sm leading-relaxed mb-6 italic">"Our goal is simple: make prime commercial assets accessible to every serious Indian investor."</p>
-                    <div class="flex justify-center gap-4 text-gray-500">
-                        <a href="#" class="hover:text-brand-primary"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="hover:text-white"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-                <div class="text-center group" data-aos="fade-up" data-aos-delay="100">
-                    <div class="relative w-64 h-64 mx-auto mb-10 overflow-hidden rounded-[3rem] border-2 border-brand-border">
-                        <img src="{{ asset('images/expert-2.png') }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    </div>
-                    <h5 class="text-3xl font-black text-white mb-2">Priya Verma</h5>
-                    <p class="text-brand-accent font-bold tracking-[0.3em] uppercase text-xs mb-6">COO</p>
-                    <p class="text-gray-500 px-8 text-sm leading-relaxed mb-6 italic">"Operation excellence is the foundation of our high-yield promise to the syndicate."</p>
-                    <div class="flex justify-center gap-4 text-gray-500">
-                        <a href="#" class="hover:text-brand-accent"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="hover:text-white"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-                <div class="text-center group" data-aos="fade-up" data-aos-delay="200">
-                    <div class="relative w-64 h-64 mx-auto mb-10 overflow-hidden rounded-[3rem] border-2 border-brand-border">
-                        <img src="{{ asset('images/expert-3.png') }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    </div>
-                    <h5 class="text-3xl font-black text-white mb-2">Vikram राव</h5>
-                    <p class="text-purple-400 font-bold tracking-[0.3em] uppercase text-xs mb-6">CIO</p>
-                    <p class="text-gray-500 px-8 text-sm leading-relaxed mb-6 italic">"Risk mitigation is the first step towards generating lasting generational wealth."</p>
-                    <div class="flex justify-center gap-4 text-gray-500">
-                        <a href="#" class="hover:text-purple-400"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="hover:text-white"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
@@ -168,7 +151,7 @@
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="glass-card p-10 rounded-3xl hover:border-brand-primary transition-all cursor-pointer">
                     <div class="text-brand-primary font-black mb-4">ECONOMIC TIMES</div>
-                    <h6 class="text-xl font-bold text-white mb-3">"Shaurya Foundation Surpasses ₹50Cr Milestone in Asset Tokenization."</h6>
+                    <h6 class="text-xl font-bold text-white mb-3">"Shaurya Narayan Foundation Surpasses ₹50Cr Milestone in Asset Tokenization."</h6>
                     <p class="text-gray-500 text-sm">A deep dive into how fractional ownership is winning over retail investors in India.</p>
                 </div>
                 <div class="glass-card p-10 rounded-3xl hover:border-brand-accent transition-all cursor-pointer">
@@ -210,36 +193,5 @@
         </div>
     </section>
 
-    <!-- 10. Application Form -->
-    <section id="apply" class="py-40 relative bg-brand-dark overflow-hidden">
-        <div class="absolute inset-0 bg-brand-primary/5"></div>
-        <div class="max-w-4xl mx-auto px-4 relative z-10">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h4 class="text-5xl font-black text-white mb-6">Join the Mission</h4>
-                <p class="text-gray-400 text-xl">Start your fractional ownership journey with Shaurya today.</p>
-            </div>
-            
-            <form action="{{ route('apply') }}" method="POST" class="glass-card p-10 md:p-16 rounded-[3rem] border border-brand-primary/20" data-aos="zoom-in">
-                @csrf
-                <input type="hidden" name="sector" value="General Inquiry">
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-brand-primary uppercase tracking-widest ml-2">Full Name</label>
-                        <input type="text" name="name" placeholder="Rahul Sharma" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-primary transition-all" required>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-brand-primary uppercase tracking-widest ml-2">Phone Number</label>
-                        <input type="tel" name="phone" placeholder="+91 XXXX XXXX" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-primary transition-all" required>
-                    </div>
-                </div>
-                <div class="space-y-3 mb-10">
-                    <label class="text-xs font-bold text-brand-primary uppercase tracking-widest ml-2">Email Address</label>
-                    <input type="email" name="email" placeholder="rahul@example.com" class="w-full bg-brand-dark/50 border border-brand-border rounded-2xl px-8 py-5 text-white outline-none focus:border-brand-primary transition-all" required>
-                </div>
-                <button type="submit" class="w-full bg-brand-primary text-white font-black py-6 rounded-2xl text-xl hover:scale-[1.02] shadow-[0_20px_40px_rgba(14,165,233,0.3)] transition-all flex items-center justify-center gap-3">
-                    Submit Member Application <i class="fas fa-arrow-right text-sm"></i>
-                </button>
-            </form>
-        </div>
-    </section>
+
 </x-frontend.layout>

@@ -2,9 +2,50 @@
     <x-slot name="title">Student Terminal</x-slot>
 
     <div class="mb-8">
-        <h2 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Academic Dashboard</h2>
-        <p class="text-xs text-slate-900 font-extrabold italic">Welcome back, <span class="text-indigo-600">{{ auth()->user()->name }}</span>.</p>
+        <h2 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1 italic">Academic Dashboard</h2>
+        <p class="text-xs text-slate-900 font-extrabold italic uppercase tracking-widest">Welcome back, <span class="text-indigo-600">{{ auth()->user()->name }}</span>.</p>
     </div>
+
+    @if($banners->count() > 0)
+        <!-- Dynamic Banners Section -->
+        <div class="mb-10 relative group overflow-hidden rounded-[2rem] border border-slate-200 shadow-sm" id="student_banner_container">
+            <div class="flex transition-transform duration-500 ease-out" id="banner_slider">
+                @foreach($banners as $banner)
+                    <div class="min-w-full relative aspect-[21/9] md:aspect-[25/7] flex items-center overflow-hidden">
+                        <!-- Image Overlay Background -->
+                        <div class="absolute inset-0 z-0">
+                            <img src="{{ asset('storage/' . $banner->image_path) }}" class="w-full h-full object-cover opacity-80" alt="{{ $banner->title }}" id="banner_img_{{ $banner->id }}">
+                            <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/40 to-transparent"></div>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="relative z-10 px-8 md:px-12 max-w-2xl">
+                            <h3 class="text-2xl md:text-4xl font-black text-white mb-3 tracking-tighter leading-tight uppercase italic" id="banner_title_{{ $banner->id }}">
+                                {{ $banner->title }}
+                            </h3>
+                            <p class="text-xs md:text-sm text-slate-200 font-medium mb-6 opacity-90 max-w-md italic leading-relaxed" id="banner_desc_{{ $banner->id }}">
+                                {{ $banner->description }}
+                            </p>
+                            @if($banner->link)
+                                <a href="{{ $banner->link }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-xl shadow-slate-900/20 active:scale-95" id="banner_link_{{ $banner->id }}">
+                                    Explore Now <i class="fas fa-chevron-right text-[8px]"></i>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            
+            @if($banners->count() > 1)
+                <!-- Navigation Dots -->
+                <div class="absolute bottom-6 right-10 flex gap-2 z-20">
+                    @foreach($banners as $index => $banner)
+                        <button class="w-2 h-2 rounded-full @if($loop->first) bg-white @else bg-white/30 @endif transition-all" id="banner_dot_{{ $index }}"></button>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    @endif
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">

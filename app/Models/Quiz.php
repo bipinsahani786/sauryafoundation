@@ -42,4 +42,9 @@ class Quiz extends Model
     {
         return $this->hasMany(Content::class);
     }
+
+    public function studentClasses()
+    {
+        return $this->belongsToMany(StudentClass::class, 'class_quiz', 'quiz_id', 'student_class_id')->withTimestamps();
+    }
 }

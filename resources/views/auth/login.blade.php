@@ -1,5 +1,5 @@
 <x-frontend.layout>
-    <x-slot name="title">Member Login | Shaurya Syndicate</x-slot>
+    <x-slot name="title">Member Login | Shaurya Narayan Foundation</x-slot>
 
     <div class="relative min-h-[85vh] flex items-center justify-center pt-24 pb-12 px-4 overflow-hidden">
         <!-- Background Blobs -->
