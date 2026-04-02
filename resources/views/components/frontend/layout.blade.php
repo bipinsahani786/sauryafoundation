@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Shaurya Narayan Foundation' }}</title>
+    <title>{{ $title ?? ($siteSettings['site_name'] ?? 'Shaurya Narayan Foundation') }}</title>
+    @if(isset($siteSettings['site_favicon']))
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $siteSettings['site_favicon']) }}">
+    @endif
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -77,10 +80,10 @@
             <i class="fas fa-edit text-xl"></i>
             <span class="absolute right-full mr-4 px-3 py-1 bg-brand-card border border-brand-border rounded-lg text-[10px] font-black uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Join Syndicate</span>
         </button>
-        <a href="https://wa.me/911244567890" target="_blank"
+        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $siteSettings['site_whatsapp'] ?? '911244567890') }}" target="_blank"
             class="flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-[0_0_15px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform"><i
                 class="fab fa-whatsapp text-2xl"></i></a>
-        <a href="tel:+911244567890"
+        <a href="tel:{{ preg_replace('/[^0-9+]/', '', $siteSettings['site_phone'] ?? '+911244567890') }}"
             class="flex items-center justify-center w-14 h-14 bg-brand-card border border-brand-border text-white rounded-full shadow-[0_0_15px_rgba(30,41,59,0.4)] hover:scale-110 transition-transform"><i
                 class="fas fa-phone-alt text-xl"></i></a>
     </div>
@@ -106,7 +109,7 @@
             </button>
 
             <div class="mb-8 md:mb-10 text-left pr-10 md:pr-0">
-                <h3 class="text-xl md:text-3xl font-black text-white mb-2 leading-tight tracking-tight">Join Shaurya Narayan</h3>
+                <h3 class="text-xl md:text-3xl font-black text-white mb-2 leading-tight tracking-tight">Join {{ $siteSettings['site_name'] ?? 'Shaurya Narayan' }}</h3>
                 <p class="text-gray-400 text-[10px] md:text-sm font-bold uppercase tracking-widest">Become a part of the mission</p>
             </div>
 
@@ -118,11 +121,15 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 cursor-pointer z-50">
-                    <div
-                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg">
-                        <i class="fas fa-shield-alt text-white text-xl"></i>
-                    </div>
-                    <span class="text-2xl font-bold text-white tracking-tight">Shaurya Narayan Foundation<span
+                    @if(isset($siteSettings['site_logo']))
+                        <img src="{{ asset('storage/' . $siteSettings['site_logo']) }}" alt="Logo" class="h-10 object-contain">
+                    @else
+                        <div
+                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg">
+                            <i class="fas fa-shield-alt text-white text-xl"></i>
+                        </div>
+                    @endif
+                    <span class="text-2xl font-bold text-white tracking-tight">{{ $siteSettings['site_name'] ?? 'Shaurya Narayan Foundation' }}<span
                             class="text-brand-primary">.</span></span>
                 </a>
 
@@ -310,26 +317,30 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
                 <div class="col-span-1 lg:col-span-1">
                     <div class="flex items-center gap-2 mb-6">
-                        <div
-                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg">
-                            <i class="fas fa-shield-alt text-white text-xl"></i>
-                        </div>
-                        <span class="text-2xl font-bold text-white tracking-tight">Shaurya Narayan<span
+                        @if(isset($siteSettings['site_logo']))
+                            <img src="{{ asset('storage/' . $siteSettings['site_logo']) }}" alt="Logo" class="h-10 object-contain">
+                        @else
+                            <div
+                                class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg">
+                                <i class="fas fa-shield-alt text-white text-xl"></i>
+                            </div>
+                        @endif
+                        <span class="text-2xl font-bold text-white tracking-tight">{{ $siteSettings['site_name'] ?? 'Shaurya Narayan' }}<span
                                 class="text-brand-primary">.</span></span>
                     </div>
                     <p class="text-gray-400 mb-8 leading-relaxed">Pioneering the future of real-world asset tokenization
                         and fractional ownership in India. Building wealth through transparency and community scale.</p>
                     <div class="flex gap-4">
-                        <a href="#"
+                        <a href="{{ $siteSettings['social_linkedin'] ?? '#' }}" target="_blank"
                             class="w-10 h-10 rounded-full bg-brand-card border border-brand-border flex items-center justify-center text-gray-400 hover:text-brand-primary hover:border-brand-primary transition-all"><i
                                 class="fab fa-linkedin-in"></i></a>
-                        <a href="#"
+                        <a href="{{ $siteSettings['social_twitter'] ?? '#' }}" target="_blank"
                             class="w-10 h-10 rounded-full bg-brand-card border border-brand-border flex items-center justify-center text-gray-400 hover:text-brand-primary hover:border-brand-primary transition-all"><i
                                 class="fab fa-twitter"></i></a>
-                        <a href="#"
+                        <a href="{{ $siteSettings['social_instagram'] ?? '#' }}" target="_blank"
                             class="w-10 h-10 rounded-full bg-brand-card border border-brand-border flex items-center justify-center text-gray-400 hover:text-brand-primary hover:border-brand-primary transition-all"><i
                                 class="fab fa-instagram"></i></a>
-                        <a href="#"
+                        <a href="{{ $siteSettings['social_facebook'] ?? '#' }}" target="_blank"
                             class="w-10 h-10 rounded-full bg-brand-card border border-brand-border flex items-center justify-center text-gray-400 hover:text-brand-primary hover:border-brand-primary transition-all"><i
                                 class="fab fa-facebook-f"></i></a>
                     </div>
@@ -376,23 +387,22 @@
                     <div class="space-y-6">
                         <div class="flex items-start gap-4">
                             <i class="fas fa-map-marker-alt text-brand-primary mt-1"></i>
-                            <p class="text-gray-400 text-sm leading-relaxed">Level 4, Shaurya Narayan Heights, <br>Cyber
-                                City, Gurgaon, <br>Haryana - 122002</p>
+                            <p class="text-gray-400 text-sm leading-relaxed whitespace-pre-line">{{ $siteSettings['site_address'] ?? "Level 4, Shaurya Narayan Heights, Cyber City, Gurgaon, Haryana - 122002" }}</p>
                         </div>
                         <div class="flex items-center gap-4">
                             <i class="fas fa-phone-alt text-brand-primary"></i>
-                            <p class="text-gray-400 text-sm">+91 124 456 7890</p>
+                            <p class="text-gray-400 text-sm">{{ $siteSettings['site_phone'] ?? '+91 124 456 7890' }}</p>
                         </div>
                         <div class="flex items-center gap-4">
                             <i class="fas fa-envelope text-brand-primary"></i>
-                            <p class="text-gray-400 text-sm">invest@shaurya.in</p>
+                            <p class="text-gray-400 text-sm">{{ $siteSettings['site_email'] ?? 'invest@shaurya.in' }}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="pt-8 border-t border-brand-border flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-gray-500 text-sm">&copy; 2026 Shaurya Narayan Foundation. All rights reserved.</p>
+                <p class="text-gray-500 text-sm">&copy; {{ date('Y') }} {{ $siteSettings['site_name'] ?? 'Shaurya Narayan Foundation' }}. All rights reserved.</p>
                 <div class="flex gap-8">
                     <a href="{{ route('privacy') }}"
                         class="text-gray-500 hover:text-white text-xs transition-colors">Privacy Policy</a>

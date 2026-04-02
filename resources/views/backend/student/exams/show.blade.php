@@ -45,15 +45,47 @@
                 <div class="border-t border-slate-100 pt-8 flex items-center justify-between">
                     <div>
                         <p class="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1">Access Status</p>
-                        <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Authorized</span>
+                        @php
+                            $isUpcoming = $quiz->start_time && $quiz->start_time->isFuture();
+                            $isExpired = $quiz->end_time && $quiz->end_time->isPast();
+                            $isLive = !$isUpcoming && !$isExpired;
+                        @endphp
+
+                        @if($isExpired)
+                            <span class="text-[10px] font-black text-red-600 uppercase tracking-widest">Window Closed</span>
+                        @elseif($isUpcoming)
+                            <span class="text-[10px] font-black text-amber-600 uppercase tracking-widest">Awaiting Launch</span>
+                        @else
+                            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Authorized</span>
+                        @endif
                     </div>
                     
-                    <form action="{{ route('student.exams.start', $quiz->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="bg-indigo-600 text-white px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100">
-                            Initialize Engine <i class="fas fa-bolt ml-2"></i>
+                    @if($isLive || !$quiz->start_time)
+                        @if(!$isEnrolled)
+                            <form action="{{ route('student.exams.enroll', $quiz->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-emerald-600 text-white px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-emerald-100 flex flex-col items-center">
+                                    <span>Enroll Now <i class="fas fa-shopping-cart ml-2"></i></span>
+                                    @if($quiz->price > 0)
+                                        <span class="text-[8px] opacity-80 mt-1 whitespace-nowrap">Amount: ₹{{ number_format($quiz->price) }}</span>
+                                    @else
+                                        <span class="text-[8px] opacity-80 mt-1 uppercase tracking-[0.2em]">Free Access</span>
+                                    @endif
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('student.exams.start', $quiz->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-indigo-600 text-white px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100">
+                                    Initialize Engine <i class="fas fa-bolt ml-2"></i>
+                                </button>
+                            </form>
+                        @endif
+                    @else
+                        <button disabled class="bg-slate-100 text-slate-400 px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] cursor-not-allowed border border-slate-200">
+                            Terminal Locked <i class="fas fa-lock ml-2"></i>
                         </button>
-                    </form>
+                    @endif
                 </div>
             </div>
         </div>

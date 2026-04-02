@@ -6,7 +6,7 @@
         <p class="text-xs text-slate-400 font-bold italic">Define the core parameters of your assessment.</p>
     </div>
 
-    <form action="{{ route('teacher.quizzes.store') }}" method="POST">
+    <form action="{{ route('admin.quizzes.store') }}" method="POST">
         @csrf
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -54,32 +54,54 @@
                 </div>
             </div>
 
-            <div x-data="{ isContest: false }" class="mb-8 p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 italic ml-1">Target Classes (Select multi-class to link test)</label>
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
-                    @foreach($classes as $class)
-                        <label class="relative flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group">
-                            <input type="checkbox" name="class_ids[]" value="{{ $class->id }}" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600">
-                            <span class="text-[10px] font-black uppercase text-slate-600 group-hover:text-indigo-600 transition-colors">{{ $class->name }}</span>
-                        </label>
-                    @endforeach
+            <div x-data="{ isGlobal: false, isContest: false }" class="mb-8 p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Global Checkbox -->
+                    <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group">
+                        <input type="checkbox" name="is_global" value="1" x-model="isGlobal" class="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600">
+                        <div>
+                            <span class="block text-xs font-black uppercase text-slate-900 leading-none">Global Exam</span>
+                            <span class="text-[9px] text-slate-500 font-bold italic">Available to all students across all classes.</span>
+                        </div>
+                    </label>
+                    
+                    <!-- Contest Checkbox -->
+                    <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-purple-600 transition-all group">
+                        <input type="checkbox" name="is_contest" value="1" x-model="isContest" class="w-5 h-5 rounded border-slate-300 text-purple-600 focus:ring-purple-600">
+                        <div>
+                            <span class="block text-xs font-black uppercase text-slate-900 leading-none">Multi-Level Contest Parent</span>
+                            <span class="text-[9px] text-slate-500 font-bold italic">This exam manages levels and promotions.</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-emerald-600 transition-all group shadow-sm">
+                        <input type="checkbox" name="is_practice_set" value="1" class="w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600">
+                        <div>
+                            <span class="block text-xs font-black uppercase text-slate-900 leading-none">Practice Set Mode</span>
+                            <span class="text-[9px] text-slate-500 font-bold italic">Shuffled questions, grows daily, unlimited attempts.</span>
+                        </div>
+                    </label>
                 </div>
 
+                <div x-show="!isGlobal" x-transition>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 italic ml-1">Target Classes (Select multi-class to link test)</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
+                        @foreach($classes as $class)
+                            <label class="relative flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group">
+                                <input type="checkbox" name="class_ids[]" value="{{ $class->id }}" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600">
+                                <span class="text-[10px] font-black uppercase text-slate-600 group-hover:text-indigo-600 transition-colors">{{ $class->name }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Multi-Level Contest Configuration -->
                 <div class="space-y-6 pt-6 border-t border-slate-200">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-1 rounded-full bg-purple-600"></div>
                         <h3 class="text-[12px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Multi-Level Contest Logic</h3>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-emerald-600 transition-all group shadow-sm">
-                            <input type="checkbox" name="is_practice_set" value="1" class="w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600">
-                            <div>
-                                <span class="block text-xs font-black uppercase text-slate-900 leading-none">Practice Set Mode</span>
-                                <span class="text-[9px] text-slate-500 font-bold italic">Shuffled questions, grows daily, unlimited attempts.</span>
-                            </div>
-                        </label>
-
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-purple-600 transition-all group shadow-sm">
                             <input type="checkbox" name="is_contest" value="1" x-model="isContest" class="w-5 h-5 rounded border-slate-300 text-purple-600 focus:ring-purple-600">
                             <div>

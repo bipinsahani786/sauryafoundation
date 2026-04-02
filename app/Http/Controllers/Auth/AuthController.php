@@ -56,7 +56,8 @@ class AuthController extends Controller
 
     public function showRegister()
     {
-        return view('auth.register');
+        $classes = \App\Models\StudentClass::where('status', 'active')->get();
+        return view('auth.register', compact('classes'));
     }
 
     public function register(Request $request)
@@ -65,7 +66,8 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:syndicate,teacher,sales_agent',
+            'role' => 'required|in:syndicate,teacher,sales_agent,student',
+            'class_id' => 'required_if:role,student|nullable|exists:student_classes,id',
         ]);
 
         $user = User::create([
@@ -73,12 +75,17 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
+            'class_id' => $validated['class_id'] ?? null,
+            'status' => 'active',
         ]);
 
         Auth::login($user);
 
         if ($user->isTeacher()) {
             return redirect('/teacher/dashboard');
+        }
+        if ($user->isStudent()) {
+            return redirect('/student/dashboard');
         }
         return redirect('/dashboard');
     }

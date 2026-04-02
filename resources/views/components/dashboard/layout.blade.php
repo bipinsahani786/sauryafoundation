@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Dashboard' }} | Shaurya Narayan Foundation</title>
+    <title>{{ $title ?? 'Dashboard' }} | {{ $siteSettings['site_name'] ?? 'Shaurya Narayan Foundation' }}</title>
+    @if(isset($siteSettings['site_favicon']))
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $siteSettings['site_favicon']) }}">
+    @endif
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -24,19 +27,23 @@
     <!-- Mobile Sidebar Overlay -->
     <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-slate-900/50 lg:hidden"></div>
 
-    <div class="flex min-h-screen">
+    <div class="flex h-screen overflow-hidden bg-slate-50">
         <!-- Sidebar -->
         <aside 
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform lg:translate-x-0 lg:static transition-transform duration-200 ease-in-out flex flex-col">
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform lg:translate-x-0 lg:static transition-transform duration-200 ease-in-out flex flex-col overflow-y-auto custom-scrollbar">
             
             <div class="p-6">
                 <div class="flex items-center justify-between mb-8">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm">
-                            <i class="fas fa-shield-alt text-sm"></i>
-                        </div>
-                        <span class="text-sm font-black tracking-widest text-slate-900 uppercase italic">Shaurya <span class="text-indigo-600">Narayan Foundation</span></span>
+                        @if(isset($siteSettings['site_logo']))
+                            <img src="{{ asset('storage/' . $siteSettings['site_logo']) }}" alt="Logo" class="h-8 object-contain">
+                        @else
+                            <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+                                <i class="fas fa-shield-alt text-sm"></i>
+                            </div>
+                        @endif
+                        <span class="text-[10px] font-black tracking-widest text-slate-900 uppercase italic leading-tight">{{ $siteSettings['site_name'] ?? 'Shaurya Narayan' }}</span>
                     </div>
                     <button @click="sidebarOpen = false" class="lg:hidden text-slate-400">
                         <i class="fas fa-times"></i>
@@ -123,8 +130,20 @@
                             <i class="fas fa-user-shield w-4"></i> <span>Users</span>
                         </a>
 
-                        <a href="{{ route('admin.quizzes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.quizzes.*') ? $activeClasses : $inactiveClasses }}">
+                        <a href="{{ route('admin.quiz-approvals') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.quiz-approvals') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-file-invoice-dollar w-4"></i> <span>Verify Exams</span>
+                        </a>
+                        
+                        <a href="{{ route('admin.quizzes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.quizzes.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-vial w-4"></i> <span>Manage Exams</span>
+                        </a>
+
+                        <a href="{{ route('admin.student-classes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.student-classes.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-school w-4"></i> <span>Academic Classes</span>
+                        </a>
+
+                        <a href="{{ route('admin.settings.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.settings.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-cog w-4 font-black"></i> <span class="font-black italic">Site Settings</span>
                         </a>
                     @elseif(Auth::user()->role === 'teacher')
                         <a href="{{ route('teacher.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.dashboard') ? $activeClasses : $inactiveClasses }}">
@@ -210,9 +229,9 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-slate-50">
+        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar">
             <!-- Top Header -->
-            <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-30">
+            <header class="h-14 shrink-0 bg-white border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-30">
                 <div class="flex items-center gap-4">
                     <button @click="sidebarOpen = true" class="lg:hidden text-slate-400">
                         <i class="fas fa-bars"></i>
@@ -242,6 +261,13 @@
                         @foreach($errors->all() as $error)
                             <p class="text-[10px] font-bold"><i class="fas fa-exclamation-triangle mr-1"></i> {{ $error }}</p>
                         @endforeach
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="mb-6 p-4 bg-red-50 border border-red-100 rounded-lg flex items-center gap-3 text-red-700 shadow-sm">
+                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                        <p class="text-xs font-bold">{{ session('error') }}</p>
                     </div>
                 @endif
 

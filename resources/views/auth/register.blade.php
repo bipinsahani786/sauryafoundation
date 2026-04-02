@@ -17,19 +17,33 @@
 
                     <div class="flex p-1 bg-brand-dark/80 rounded-2xl border border-brand-border/50 mb-2">
                         <button type="button" @click="role = 'syndicate'" :class="role === 'syndicate' ? 'bg-gradient-to-r from-brand-accent to-brand-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'" class="flex-1 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300">
-                            Syndicate Access
+                            Syndicate
                         </button>
-                        <button type="button" @click="role = 'teacher'" :class="role === 'teacher' ? 'bg-gradient-to-r from-brand-accent to-brand-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'" class="hidden flex-1 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300">
-                            Teacher
+                        <button type="button" @click="role = 'student'" :class="role === 'student' ? 'bg-gradient-to-r from-brand-accent to-brand-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'" class="flex-1 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300">
+                            Student
                         </button>
                     </div>
-                    <p class="hidden text-[8px] text-brand-accent/60 font-medium italic tracking-tight" x-show="role === 'teacher'">* Direct access for coaching professionals.</p>
                     <p class="text-[8px] text-brand-accent/60 font-medium italic tracking-tight" x-show="role === 'syndicate'">* For investment & portfolio management.</p>
+                    <p class="text-[8px] text-brand-accent/60 font-medium italic tracking-tight" x-show="role === 'student'">* Enroll in courses and examinations.</p>
                 </div>
 
                 <form action="{{ route('register') }}" method="POST" class="space-y-4">
                     @csrf
                     <input type="hidden" name="role" :value="role">
+
+                    <!-- Dynamic Class Selection for Students -->
+                    <div x-show="role === 'student'" x-transition class="space-y-1.5 pb-2">
+                        <label class="block text-[9px] font-black text-brand-accent uppercase tracking-[0.2em] ml-3">Academic Grade (Class)</label>
+                        <select name="class_id" class="w-full bg-brand-dark/50 border border-brand-border rounded-full px-5 py-3 text-white focus:border-brand-accent outline-none transition-all shadow-inner font-bold text-xs appearance-none cursor-pointer">
+                            <option value="" disabled selected>-- Select Your Class --</option>
+                            @foreach($classes as $class)
+                                <option value="{{ $class->id }}">{{ $class->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('class_id')
+                            <p class="text-rose-500 text-[8px] font-bold mt-1 ml-3 italic">* Required for students</p>
+                        @enderror
+                    </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1.5">

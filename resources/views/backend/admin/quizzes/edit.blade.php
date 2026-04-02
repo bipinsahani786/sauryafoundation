@@ -1,0 +1,140 @@
+<x-dashboard.layout>
+    <x-slot name="title">Edit Examination: {{ $quiz->title }}</x-slot>
+
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h2 class="text-xl font-black text-slate-900 tracking-tight">Update Examination Settings</h2>
+            <p class="text-xs text-slate-400 font-bold italic">Modify the parameters of your assessment.</p>
+        </div>
+        <a href="{{ route('admin.quizzes.index') }}" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i> Back to List
+        </a>
+    </div>
+
+    <form action="{{ route('admin.quizzes.update', $quiz->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="space-y-4">
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Examination Title</label>
+                        <input type="text" name="title" value="{{ $quiz->title }}" placeholder="e.g. Advanced Mathematics Quiz" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 placeholder:text-slate-300 focus:border-indigo-600 outline-none transition-all font-bold" required>
+                    </div>
+                    
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Description</label>
+                        <textarea name="description" rows="4" placeholder="Brief overview of the exam..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 placeholder:text-slate-300 focus:border-indigo-600 outline-none transition-all font-bold">{{ $quiz->description }}</textarea>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Pricing (INR)</label>
+                            <input type="number" name="price" value="{{ $quiz->price }}" step="0.01" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold" required>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Duration (Mins)</label>
+                            <input type="number" name="duration_minutes" value="{{ $quiz->duration_minutes }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold" required>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Start Window</label>
+                            <input type="datetime-local" name="start_time" value="{{ $quiz->start_time ? $quiz->start_time->format('Y-m-d\TH:i') : '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">End Window</label>
+                            <input type="datetime-local" name="end_time" value="{{ $quiz->end_time ? $quiz->end_time->format('Y-m-d\TH:i') : '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Attempts Limit</label>
+                        <input type="number" name="attempts_limit" value="{{ $quiz->attempts_limit }}" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold" required>
+                    </div>
+                </div>
+            </div>
+
+            <div x-data="{ isGlobal: {{ $quiz->is_global ? 'true' : 'false' }}, isContest: {{ $quiz->is_contest ? 'true' : 'false' }} }" class="mb-8 p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group shadow-sm">
+                        <input type="checkbox" name="is_global" value="1" x-model="isGlobal" class="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600">
+                        <div>
+                            <span class="block text-xs font-black uppercase text-slate-900 leading-none">Global Exam</span>
+                            <span class="text-[9px] text-slate-500 font-bold italic">Available to all students across all classes.</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-purple-600 transition-all group shadow-sm">
+                        <input type="checkbox" name="is_contest" value="1" x-model="isContest" class="w-5 h-5 rounded border-slate-300 text-purple-600 focus:ring-purple-600">
+                        <div>
+                            <span class="block text-xs font-black uppercase text-slate-900 leading-none">Root Contest Parent</span>
+                            <span class="text-[9px] text-slate-500 font-bold italic">This is Level 1. It manages subsequent promotions.</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-emerald-600 transition-all group shadow-sm">
+                        <input type="checkbox" name="is_practice_set" value="1" {{ $quiz->is_practice_set ? 'checked' : '' }} class="w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600">
+                        <div>
+                            <span class="block text-xs font-black uppercase text-slate-900 leading-none">Practice Set Mode</span>
+                            <span class="text-[9px] text-slate-500 font-bold italic">Shuffled questions, grows daily, unlimited attempts.</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div x-show="!isGlobal" x-transition>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 italic ml-1">Target Classes</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
+                        @foreach($classes as $class)
+                            <label class="relative flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group">
+                                <input type="checkbox" name="class_ids[]" value="{{ $class->id }}" {{ in_array($class->id, $selectedClasses) ? 'checked' : '' }} class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600">
+                                <span class="text-[10px] font-black uppercase text-slate-600 group-hover:text-indigo-600 transition-colors">{{ $class->name }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="space-y-6 pt-6 border-t border-slate-200">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-1 rounded-full bg-purple-600"></div>
+                        <h3 class="text-[12px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Multi-Level Contest Logic</h3>
+                    </div>
+
+                    <div x-show="!isContest" class="space-y-1.5 max-w-md">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Parent Contest (Level 1)</label>
+                        <select name="parent_id" class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-xs font-bold text-slate-900 focus:border-indigo-600 outline-none">
+                            <option value="">Standalone (No Parent)</option>
+                            @foreach($parentQuizzes as $parent)
+                                <option value="{{ $parent->id }}" {{ $quiz->parent_id == $parent->id ? 'selected' : '' }}>{{ $parent->title }} (ROOT)</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Current Level Number</label>
+                            <input type="number" name="level_number" value="{{ $quiz->level_number }}" min="1" max="10" placeholder="e.g. 1" class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-xs font-bold text-slate-900 focus:border-indigo-600 outline-none transition-all">
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Promotion % to Next Level</label>
+                            <input type="number" name="promotion_percentage" value="{{ $quiz->promotion_percentage }}" min="0" max="100" placeholder="e.g. 50" class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-xs font-bold text-slate-900 focus:border-indigo-600 outline-none transition-all">
+                        </div>
+
+                        <div x-show="isContest" class="space-y-1.5">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Total Winners to Select</label>
+                            <input type="number" name="winner_count" value="{{ $quiz->winner_count }}" min="1" placeholder="e.g. 3" class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-xs font-bold text-slate-900 focus:border-indigo-600 outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-6 border-t border-slate-100">
+                <button type="submit" class="bg-indigo-600 text-white px-10 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100">
+                    Update Settings <i class="fas fa-save ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</x-dashboard.layout>

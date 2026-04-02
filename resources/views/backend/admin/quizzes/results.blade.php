@@ -9,15 +9,15 @@
                 <p class="text-xs text-slate-400 font-bold italic">Deep analytics and student performance matrix for {{ $quiz->title }}.</p>
             </div>
             <div class="flex items-center gap-4">
-                @if($quiz->is_contest || $quiz->parent_id)
-                <form action="{{ route('teacher.quizzes.promote', $quiz->id) }}" method="POST">
+                @if($quiz->is_contest && $quiz->promotion_percentage)
+                <form action="{{ route('admin.quizzes.promote', $quiz->id) }}" method="POST">
                     @csrf
-                    <button type="submit" onclick="return confirm('Calculate results and promote based on set percentage?');" class="bg-purple-600 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-purple-200">
+                    <button type="submit" onclick="return confirm('Calculate results and promote top {{ $quiz->promotion_percentage }}% to the next level?');" class="bg-purple-600 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-purple-200">
                         <i class="fas fa-trophy mr-1"></i> Calculate & Promote
                     </button>
                 </form>
                 @endif
-                <a href="{{ route('teacher.quizzes.index') }}" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-all">
+                <a href="{{ route('admin.quizzes.index') }}" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-all">
                     <i class="fas fa-arrow-left mr-1"></i> Back to Terminal
                 </a>
             </div>

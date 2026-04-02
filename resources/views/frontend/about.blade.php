@@ -1,5 +1,5 @@
 <x-frontend.layout>
-    <x-slot name="title">About Us | Shaurya Narayan Foundation</x-slot>
+    <x-slot name="title">About Us | {{ $siteSettings['site_name'] ?? 'Shaurya Narayan Foundation' }}</x-slot>
 
     <!-- 1. Hero Section -->
     <section class="relative pt-40 pb-24 overflow-hidden">

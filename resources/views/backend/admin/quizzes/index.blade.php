@@ -1,71 +1,121 @@
 <x-dashboard.layout>
-    <x-slot name="title">Exam Verification</x-slot>
+    <x-slot name="title">Manage global exams</x-slot>
 
-    <div class="mb-6 flex justify-between items-center">
+    <div class="mb-6 flex justify-between items-center bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <div>
-            <h2 class="text-xl font-black text-slate-900 tracking-tight">Paid Exam Approvals</h2>
-            <p class="text-xs text-slate-400 font-bold italic">Verify and authorize monetized assessments from teachers.</p>
+            <h2 class="text-xl font-black text-slate-900 tracking-tight">Global / Class Exams</h2>
+            <p class="text-xs text-slate-400 font-bold mt-1">Manage global assessments and multi-level contests you created.</p>
         </div>
+        <a href="{{ route('admin.quizzes.create') }}" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-indigo-200">
+            Create Exam
+        </a>
     </div>
 
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden text-[10px]">
-        <table class="w-full text-left table-standard">
-            <thead class="bg-slate-50 text-slate-400 font-bold uppercase tracking-[0.2em] text-[9px]">
-                <tr>
-                    <th class="px-6 py-4">Examination / Teacher</th>
-                    <th class="px-6 py-4 text-center">Price</th>
-                    <th class="px-6 py-4 text-center">Questions</th>
-                    <th class="px-6 py-4 text-right">Status</th>
-                    <th class="px-6 py-4 text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 italic transition-all font-medium">
-                @forelse($quizzes as $quiz)
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-6 py-4">
-                            <div class="font-bold text-slate-900 text-xs">{{ $quiz->title }}</div>
-                            <div class="text-[9px] text-indigo-600 font-black uppercase tracking-widest">By Profile: {{ $quiz->teacher->name }}</div>
-                        </td>
-                        <td class="px-6 py-4 text-center font-bold text-emerald-600 italic">₹{{ number_format($quiz->price) }}</td>
-                        <td class="px-6 py-4 text-center font-bold text-slate-900">{{ $quiz->questions()->count() }}</td>
-                        <td class="px-6 py-4 text-right">
-                            <span class="px-2 py-0.5 rounded text-[8px] font-bold uppercase border
-                                {{ $quiz->status == 'published' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : ($quiz->status == 'pending' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-slate-50 text-slate-500 border-slate-100') }}">
-                                {{ $quiz->status }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            @if($quiz->status == 'pending')
-                                <div class="flex justify-end gap-2">
-                                    <form action="{{ route('admin.quizzes.approve', $quiz->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-emerald-100">
-                                            Approve
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('admin.quizzes.reject', $quiz->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="bg-red-600 text-white px-3 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-red-100">
-                                            Reject
-                                        </button>
-                                    </form>
+    <div class="space-y-12">
+        @php
+            $rootQuizzes = $quizzes->where('parent_id', null);
+            $standaloneQuizzes = $quizzes->where('parent_id', null)->where('is_contest', false)->where('level_number', '!=', 1);
+            $contestRoots = $rootQuizzes->where('is_contest', true);
+        @endphp
+
+        <!-- Contest Pipelines -->
+        @foreach($contestRoots as $root)
+            <div class="space-y-6">
+                <div class="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg">
+                            <i class="fas fa-sitemap text-xs"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase tracking-widest text-indigo-600">Contest Pipeline</h4>
+                            <p class="text-xs font-bold text-slate-900">{{ $root->title }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                         <span class="px-3 py-1 bg-white border border-indigo-100 rounded-full text-[8px] font-black text-indigo-600 uppercase tracking-widest">
+                            MASTER ROOT
+                         </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    @php
+                        $hierarchy = collect([$root])->concat(\App\Models\Quiz::where('parent_id', $root->id)->orderBy('level_number')->get());
+                    @endphp
+
+                    @foreach($hierarchy as $quiz)
+                        <div class="bg-white rounded-[2.5rem] border {{ $quiz->id == $root->id ? 'border-indigo-200 ring-4 ring-indigo-50' : 'border-slate-200' }} shadow-sm overflow-hidden flex flex-col group hover:shadow-xl transition-all relative">
+                            <div class="p-8 border-b border-slate-100 bg-white relative">
+                                <div class="absolute top-6 right-6 flex flex-col gap-1 items-end">
+                                    <span class="px-2 py-1 rounded {{ $quiz->level_number == 1 ? 'bg-purple-100 text-purple-700' : 'bg-emerald-100 text-emerald-700' }} text-[8px] font-black uppercase tracking-widest leading-none">
+                                        LEVEL {{ $quiz->level_number ?? 1 }}
+                                    </span>
+                                    @if($quiz->status == 'published')
+                                        <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-600 text-[6px] font-black uppercase tracking-widest leading-none border border-emerald-100">Live</span>
+                                    @endif
                                 </div>
-                            @else
-                                <span class="text-slate-300 italic">No Action Needed</span>
-                            @endif
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium italic">No pending monetized assessments found.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-        @if($quizzes->hasPages())
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
-                {{ $quizzes->links() }}
+                                
+                                <h3 class="font-black text-slate-900 text-lg mb-1 pr-20 tracking-tighter">{{ $quiz->title }}</h3>
+                                <p class="text-[10px] text-slate-400 font-bold italic line-clamp-1">{{ $quiz->description ?? 'Multi-stage assessment.' }}</p>
+                            </div>
+                            
+                            <div class="p-8 grid grid-cols-2 gap-6 bg-white border-b border-slate-50">
+                                <div>
+                                    <div class="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1">Pass %</div>
+                                    <div class="text-indigo-600 font-black text-sm italic">{{ $quiz->promotion_percentage ?? 'Winner' }}%</div>
+                                </div>
+                                <div>
+                                    <div class="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1">Price</div>
+                                    <div class="text-slate-900 font-black text-sm italic">₹{{ number_format($quiz->price) }}</div>
+                                </div>
+                            </div>
+
+                            <div class="p-6 bg-slate-50 flex flex-wrap gap-2 mt-auto">
+                                <a href="{{ route('admin.quizzes.edit', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 text-slate-700 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">
+                                    Edit
+                                </a>
+                                <a href="{{ route('admin.quizzes.show', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 text-slate-700 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">
+                                    Ques ({{ $quiz->questions_count ?? $quiz->questions()->count() }})
+                                </a>
+                                <a href="{{ route('admin.quizzes.results', $quiz->id) }}" class="w-full text-center bg-indigo-600 text-white px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-indigo-100">
+                                    Manage Results & Promotion
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endforeach
+
+        <!-- Standalone Quizzes -->
+        @if($standaloneQuizzes->count() > 0)
+            <div class="space-y-6 pt-12 border-t border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center">
+                        <i class="fas fa-file-alt text-xs"></i>
+                    </div>
+                    <p class="text-xs font-black uppercase tracking-widest text-slate-400 italic">Standalone Assessments</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    @foreach($standaloneQuizzes as $quiz)
+                        <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-xl transition-all h-full">
+                            <div class="p-8 border-b border-slate-100 bg-white">
+                                <h3 class="font-black text-slate-900 text-lg mb-1 tracking-tighter">{{ $quiz->title }}</h3>
+                                <p class="text-[10px] text-slate-400 font-bold italic line-clamp-1">{{ $quiz->description ?? 'Regular examination.' }}</p>
+                            </div>
+                            <div class="p-6 bg-slate-50 mt-auto flex gap-2">
+                                <a href="{{ route('admin.quizzes.edit', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">Edit</a>
+                                <a href="{{ route('admin.quizzes.show', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">Setup</a>
+                                <a href="{{ route('admin.quizzes.results', $quiz->id) }}" class="flex-1 text-center bg-indigo-600 text-white px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all">Results</a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         @endif
+    </div>
+    
+    <div class="mt-8">
+        {{ $quizzes->links() }}
     </div>
 </x-dashboard.layout>

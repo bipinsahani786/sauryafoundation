@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Backend\Teacher;
+namespace App\Http\Controllers\Backend\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\Question;
-use Illuminate\Http\Request;
 use App\Models\StudentClass;
+use App\Models\QuizAttempt;
+use Illuminate\Http\Request;
 
 class QuizController extends Controller
 {
@@ -15,21 +16,23 @@ class QuizController extends Controller
         $quizzes = Quiz::where('teacher_id', auth()->id())
             ->withCount('enrollments')
             ->latest()
-            ->paginate(10);
-        return view('backend.teacher.quizzes.index', compact('quizzes'));
+            ->paginate(15);
+        return view('backend.admin.quizzes.index', compact('quizzes'));
     }
 
     public function create()
     {
         $classes = StudentClass::where('status', 'active')->get();
+        // Load only parent quizzes to attach as level if necessary
         $parentQuizzes = Quiz::where('is_contest', true)->get();
-        return view('backend.teacher.quizzes.create', compact('classes', 'parentQuizzes'));
+        return view('backend.admin.quizzes.create', compact('classes', 'parentQuizzes'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'class_ids' => 'required|array|min:1',
+            'is_global' => 'nullable|boolean',
+            'class_ids' => 'required_without:is_global|array',
             'class_ids.*' => 'exists:student_classes,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -48,34 +51,41 @@ class QuizController extends Controller
 
         $status = $validated['price'] > 0 ? 'pending' : 'published';
 
-        $quiz = Quiz::create(array_merge($validated, [
-            'teacher_id' => auth()->id(),
+        $quiz = Quiz::create([
+            'teacher_id' => auth()->id(), // Admin is acting as creator
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'price' => $validated['price'],
             'status' => $status,
+            'duration_minutes' => $validated['duration_minutes'],
+            'attempts_limit' => $validated['attempts_limit'],
+            'start_time' => $validated['start_time'] ?? null,
+            'end_time' => $validated['end_time'] ?? null,
             'expires_at' => $validated['end_time'] ?? null,
+            'is_global' => $request->has('is_global'),
             'is_contest' => $request->has('is_contest'),
             'parent_id' => $validated['parent_id'] ?? null,
             'level_number' => $validated['level_number'] ?? null,
             'promotion_percentage' => $validated['promotion_percentage'] ?? null,
             'winner_count' => $validated['winner_count'] ?? null,
             'is_practice_set' => $request->has('is_practice_set'),
-        ]));
+        ]);
 
-        $quiz->studentClasses()->sync($validated['class_ids']);
+        if (!$request->has('is_global') && isset($validated['class_ids'])) {
+            $quiz->studentClasses()->sync($validated['class_ids']);
+        }
 
-        return redirect()->route('teacher.quizzes.show', $quiz->id)->with('success', 'Quiz created successfully. Now add questions.');
+        return redirect()->route('admin.quizzes.show', $quiz->id)->with('success', 'Quiz created successfully. Now add questions.');
     }
 
     public function show(Quiz $quiz)
     {
-        if ($quiz->teacher_id !== auth()->id()) abort(403);
         $questions = $quiz->questions;
-        return view('backend.teacher.quizzes.show', compact('quiz', 'questions'));
+        return view('backend.admin.quizzes.show', compact('quiz', 'questions'));
     }
 
     public function addQuestion(Request $request, Quiz $quiz)
     {
-        if ($quiz->teacher_id !== auth()->id()) abort(403);
-
         $validated = $request->validate([
             'question_text' => 'required|string',
             'option_0' => 'required|string',
@@ -103,15 +113,11 @@ class QuizController extends Controller
 
     public function results(Quiz $quiz)
     {
-        if ($quiz->teacher_id !== auth()->id()) abort(403);
-
         $attempts = $quiz->attempts()->with('student')
             ->orderByDesc('score')
             ->orderBy('time_taken_seconds')
             ->get();
 
-        // Calculate Analytics
-        $totalStudents = auth()->user()->students()->count();
         $attemptedStudents = $attempts->unique('student_id')->count();
         $avgScore = $attempts->avg('score') ?? 0;
         $maxScore = $attempts->max('score') ?? 0;
@@ -119,12 +125,13 @@ class QuizController extends Controller
             ? ($attempts->where('score', '>=', $quiz->questions()->sum('marks') * 0.4)->count() / $attempts->count()) * 100 
             : 0;
         $breaches = $attempts->where('is_blocked', true)->count();
+        $totalStudents = $quiz->enrollments()->count();
 
-        return view('backend.teacher.quizzes.results', compact(
+        return view('backend.admin.quizzes.results', compact(
             'quiz', 
             'attempts', 
-            'totalStudents', 
             'attemptedStudents', 
+            'totalStudents',
             'avgScore', 
             'maxScore', 
             'successRate', 
@@ -132,17 +139,113 @@ class QuizController extends Controller
         ));
     }
 
+    public function calculateAndPromote(Quiz $quiz)
+    {
+        if (!$quiz->promotion_percentage) {
+            return back()->with('error', 'No promotion percentage set for this quiz.');
+        }
+
+        // Get the next level quiz
+        $nextLevelQuiz = Quiz::where('parent_id', $quiz->parent_id ?? $quiz->id)
+            ->where('level_number', ($quiz->level_number ?? 1) + 1)
+            ->first();
+
+        if (!$nextLevelQuiz) {
+            return back()->with('warning', 'No next level found. This is likely the final level.');
+        }
+
+        // Get top unique student attempts
+        $attempts = $quiz->attempts()
+            ->where('status', 'completed')
+            ->where('is_blocked', false)
+            ->orderByDesc('score')
+            ->orderBy('time_taken_seconds')
+            ->get()
+            ->unique('student_id');
+
+        $totalQualifying = ceil($attempts->count() * ($quiz->promotion_percentage / 100));
+        
+        $promotedStudents = $attempts->take($totalQualifying)->pluck('student_id');
+
+        $promotedCount = 0;
+        foreach ($promotedStudents as $studentId) {
+            \App\Models\QuizEnrollment::firstOrCreate([
+                'student_id' => $studentId,
+                'quiz_id' => $nextLevelQuiz->id,
+            ], [
+                'paid_amount' => 0, // Promotions are always free
+                'status' => 'active'
+            ]);
+            $promotedCount++;
+        }
+
+        return back()->with('success', "Promotion complete: {$promotedCount} students moved to Level {$nextLevelQuiz->level_number}.");
+    }
+
+    public function edit(Quiz $quiz)
+    {
+        $classes = StudentClass::where('status', 'active')->get();
+        $parentQuizzes = Quiz::where('is_contest', true)->where('id', '!=', $quiz->id)->get();
+        $selectedClasses = $quiz->studentClasses->pluck('id')->toArray();
+        return view('backend.admin.quizzes.edit', compact('quiz', 'classes', 'parentQuizzes', 'selectedClasses'));
+    }
+
+    public function update(Request $request, Quiz $quiz)
+    {
+        $validated = $request->validate([
+            'is_global' => 'nullable|boolean',
+            'class_ids' => 'required_without:is_global|array',
+            'class_ids.*' => 'exists:student_classes,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'duration_minutes' => 'required|integer|min:1',
+            'start_time' => 'nullable|date',
+            'end_time' => 'nullable|date|after:start_time',
+            'attempts_limit' => 'required|integer|min:0',
+            'is_contest' => 'nullable|boolean',
+            'parent_id' => 'nullable|exists:quizzes,id',
+            'level_number' => 'nullable|integer|min:1',
+            'promotion_percentage' => 'nullable|integer|min:1|max:100',
+            'winner_count' => 'nullable|integer|min:1',
+            'is_practice_set' => 'nullable|boolean',
+        ]);
+
+        $quiz->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'price' => $validated['price'],
+            'duration_minutes' => $validated['duration_minutes'],
+            'attempts_limit' => $validated['attempts_limit'],
+            'start_time' => $validated['start_time'] ?? null,
+            'end_time' => $validated['end_time'] ?? null,
+            'expires_at' => $validated['end_time'] ?? null,
+            'is_global' => $request->has('is_global'),
+            'is_contest' => $request->has('is_contest'),
+            'parent_id' => $validated['parent_id'] ?? null,
+            'level_number' => $validated['level_number'] ?? null,
+            'promotion_percentage' => $validated['promotion_percentage'] ?? null,
+            'winner_count' => $validated['winner_count'] ?? null,
+            'is_practice_set' => $request->has('is_practice_set'),
+        ]);
+
+        if (!$request->has('is_global')) {
+            $quiz->studentClasses()->sync($validated['class_ids']);
+        } else {
+            $quiz->studentClasses()->detach();
+        }
+
+        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz updated successfully.');
+    }
+
     public function destroy(Quiz $quiz)
     {
-        if ($quiz->teacher_id !== auth()->id()) abort(403);
         $quiz->delete();
-        return redirect()->route('teacher.quizzes.index')->with('success', 'Quiz deleted.');
+        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz deleted.');
     }
 
     public function addBulkQuestions(Request $request, Quiz $quiz)
     {
-        if ($quiz->teacher_id !== auth()->id()) abort(403);
-
         $request->validate([
             'upload_type' => 'required|in:csv,text',
         ]);
@@ -224,62 +327,14 @@ class QuizController extends Controller
     {
         if ($quiz->teacher_id !== auth()->id()) abort(403);
         $quiz->update(['status' => 'published']);
-        return back()->with('success', 'Exam published.');
+        return back()->with('success', 'Exam has been published successfully.');
     }
 
     public function unpublish(Quiz $quiz)
     {
         if ($quiz->teacher_id !== auth()->id()) abort(403);
         $quiz->update(['status' => 'pending']);
-        return back()->with('success', 'Exam unpublished.');
-    }
-
-    public function calculateAndPromote(Quiz $quiz)
-    {
-        if ($quiz->teacher_id !== auth()->id()) abort(403);
-        
-        if (!$quiz->is_contest && !$quiz->parent_id) {
-            return back()->with('error', 'This quiz is not part of a contest.');
-        }
-
-        if (!$quiz->promotion_percentage) {
-            return back()->with('error', 'No promotion percentage set for this level.');
-        }
-
-        // Get the next level quiz
-        $nextLevelQuiz = Quiz::where('parent_id', $quiz->parent_id ?? $quiz->id)
-            ->where('level_number', ($quiz->level_number ?? 1) + 1)
-            ->first();
-
-        if (!$nextLevelQuiz) {
-            return back()->with('warning', 'No next level found. This is likely the final level.');
-        }
-
-        // Get unique student attempts
-        $attempts = $quiz->attempts()
-            ->where('status', 'completed')
-            ->where('is_blocked', false)
-            ->orderByDesc('score')
-            ->orderBy('time_taken_seconds')
-            ->get()
-            ->unique('student_id');
-
-        $totalQualifying = ceil($attempts->count() * ($quiz->promotion_percentage / 100));
-        $promotedStudents = $attempts->take($totalQualifying)->pluck('student_id');
-
-        $promotedCount = 0;
-        foreach ($promotedStudents as $studentId) {
-            \App\Models\QuizEnrollment::firstOrCreate([
-                'student_id' => $studentId,
-                'quiz_id' => $nextLevelQuiz->id,
-            ], [
-                'paid_amount' => 0,
-                'status' => 'active'
-            ]);
-            $promotedCount++;
-        }
-
-        return back()->with('success', "Promotion complete: {$promotedCount} students moved to Level {$nextLevelQuiz->level_number}.");
+        return back()->with('success', 'Exam has been unpublished successfully.');
     }
 
     public function downloadSampleCSV()
@@ -320,58 +375,5 @@ class QuizController extends Controller
         if ($question->quiz->teacher_id !== auth()->id()) abort(403);
         $question->delete();
         return back()->with('success', 'Question deleted successfully.');
-    }
-
-    public function edit(Quiz $quiz)
-    {
-        if ($quiz->teacher_id !== auth()->id()) abort(403);
-        $classes = StudentClass::where('status', 'active')->get();
-        $parentQuizzes = Quiz::where('is_contest', true)->get();
-        $selectedClasses = $quiz->studentClasses->pluck('id')->toArray();
-        return view('backend.teacher.quizzes.edit', compact('quiz', 'classes', 'parentQuizzes', 'selectedClasses'));
-    }
-
-    public function update(Request $request, Quiz $quiz)
-    {
-        if ($quiz->teacher_id !== auth()->id()) abort(403);
-
-        $validated = $request->validate([
-            'class_ids' => 'required|array|min:1',
-            'class_ids.*' => 'exists:student_classes,id',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'duration_minutes' => 'required|integer|min:1',
-            'start_time' => 'nullable|date',
-            'end_time' => 'nullable|date|after:start_time',
-            'attempts_limit' => 'required|integer|min:0',
-            'is_contest' => 'nullable|boolean',
-            'parent_id' => 'nullable|exists:quizzes,id',
-            'level_number' => 'nullable|integer|min:1',
-            'promotion_percentage' => 'nullable|integer|min:1|max:100',
-            'winner_count' => 'nullable|integer|min:1',
-            'is_practice_set' => 'nullable|boolean',
-        ]);
-
-        $quiz->update([
-            'title' => $validated['title'],
-            'description' => $validated['description'] ?? null,
-            'price' => $validated['price'],
-            'duration_minutes' => $validated['duration_minutes'],
-            'attempts_limit' => $validated['attempts_limit'],
-            'start_time' => $validated['start_time'] ?? null,
-            'end_time' => $validated['end_time'] ?? null,
-            'expires_at' => $validated['end_time'] ?? null,
-            'is_contest' => $request->has('is_contest'),
-            'parent_id' => $validated['parent_id'] ?? null,
-            'level_number' => $validated['level_number'] ?? null,
-            'promotion_percentage' => $validated['promotion_percentage'] ?? null,
-            'winner_count' => $validated['winner_count'] ?? null,
-            'is_practice_set' => $request->has('is_practice_set'),
-        ]);
-
-        $quiz->studentClasses()->sync($validated['class_ids']);
-
-        return redirect()->route('teacher.quizzes.index')->with('success', 'Quiz updated successfully.');
     }
 }

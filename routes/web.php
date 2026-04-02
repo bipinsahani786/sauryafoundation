@@ -14,6 +14,7 @@ use App\Http\Controllers\Backend\SalesAgent\SalesAgentController;
 use App\Http\Controllers\Backend\Syndicate\SyndicateController;
 use App\Http\Controllers\Backend\ProfileController;
 use App\Http\Controllers\Backend\Teacher\CourseController;
+use App\Http\Controllers\Backend\Admin\SettingController;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
@@ -55,10 +56,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('users', UserController::class);
     Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
+    // Website Settings
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
     // Payouts & KYC Management
     Route::get('/payouts', [AdminController::class, 'payouts'])->name('payouts.index');
     Route::post('/kyc/{user}/verify', [AdminController::class, 'verifyKyc'])->name('kyc.verify');
     Route::post('/payouts/{payout}/approve', [AdminController::class, 'approvePayout'])->name('payout.approve');
+
+    // Dynamic Classes Management
+    Route::resource('student-classes', \App\Http\Controllers\Backend\Admin\StudentClassController::class);
+    Route::post('/student-classes/{student_class}/toggle-status', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'toggleStatus'])->name('student-classes.toggle-status');
 
     // Home Banners
     Route::resource('banners', BannerController::class);
@@ -69,9 +78,20 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/home-sectors/{home_sector}/toggle-status', [HomeSectorController::class, 'toggleStatus'])->name('home-sectors.toggle-status');
 
     // Quiz Approvals
-    Route::get('/quizzes', [AdminController::class, 'quizzes'])->name('quizzes.index');
-    Route::post('/quizzes/{quiz}/approve', [AdminController::class, 'approveQuiz'])->name('quizzes.approve');
-    Route::post('/quizzes/{quiz}/reject', [AdminController::class, 'rejectQuiz'])->name('quizzes.reject');
+    Route::get('/quiz-approvals', [AdminController::class, 'quizzes'])->name('quiz-approvals');
+    Route::post('/quiz-approvals/{quiz}/approve', [AdminController::class, 'approveQuiz'])->name('quiz-approvals.approve');
+    Route::post('/quiz-approvals/{quiz}/reject', [AdminController::class, 'rejectQuiz'])->name('quiz-approvals.reject');
+
+    // Admin Quizzes (Manage Exams)
+    Route::resource('quizzes', \App\Http\Controllers\Backend\Admin\QuizController::class);
+    Route::get('/quizzes/{quiz}/results', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'results'])->name('quizzes.results');
+    Route::get('/quizzes/sample-csv', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'downloadSampleCSV'])->name('quizzes.sample-csv');
+    Route::post('/quizzes/{quiz}/questions', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'addQuestion'])->name('quizzes.add-question');
+    Route::post('/quizzes/{quiz}/bulk-questions', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'addBulkQuestions'])->name('quizzes.bulk-questions');
+    Route::post('/quizzes/{quiz}/publish', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'publish'])->name('quizzes.publish');
+    Route::post('/quizzes/{quiz}/unpublish', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'unpublish'])->name('quizzes.unpublish');
+    Route::post('/quizzes/{quiz}/promote', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'calculateAndPromote'])->name('quizzes.promote');
+    Route::delete('/questions/{question}', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'deleteQuestion'])->name('questions.destroy');
 
     // Testimonials
     Route::resource('testimonials', TestimonialController::class);
@@ -119,8 +139,14 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     
     // Quizzes
     Route::resource('quizzes', App\Http\Controllers\Backend\Teacher\QuizController::class);
+    Route::get('quizzes/sample-csv', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'downloadSampleCSV'])->name('quizzes.sample-csv');
     Route::get('quizzes/{quiz}/results', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'results'])->name('quizzes.results');
     Route::post('quizzes/{quiz}/questions', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'addQuestion'])->name('quizzes.add-question');
+    Route::post('quizzes/{quiz}/bulk-questions', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'addBulkQuestions'])->name('quizzes.bulk-questions');
+    Route::post('quizzes/{quiz}/publish', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'publish'])->name('quizzes.publish');
+    Route::post('quizzes/{quiz}/unpublish', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'unpublish'])->name('quizzes.unpublish');
+    Route::post('quizzes/{quiz}/promote', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'calculateAndPromote'])->name('quizzes.promote');
+    Route::delete('questions/{question}', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'deleteQuestion'])->name('questions.destroy');
 
     // Wallet & KYC
     Route::get('/wallet', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'wallet'])->name('wallet');
@@ -144,6 +170,7 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     // Exams & Security
     Route::get('/exams', [App\Http\Controllers\Backend\Student\StudentController::class, 'exams'])->name('exams');
     Route::get('/exams/{quiz}', [App\Http\Controllers\Backend\Student\StudentController::class, 'showExam'])->name('exams.show');
+    Route::post('/exams/{quiz}/enroll', [App\Http\Controllers\Backend\Student\StudentController::class, 'enrollExam'])->name('exams.enroll');
     Route::post('/exams/{quiz}/start', [App\Http\Controllers\Backend\Student\StudentController::class, 'startExam'])->name('exams.start');
     Route::get('/exams/{quiz}/take', [App\Http\Controllers\Backend\Student\StudentController::class, 'takeExam'])->name('exams.take');
     Route::post('/exams/{quiz}/submit', [App\Http\Controllers\Backend\Student\StudentController::class, 'submitExam'])->name('exams.submit');

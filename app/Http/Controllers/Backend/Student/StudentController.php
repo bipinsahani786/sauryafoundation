@@ -16,9 +16,11 @@ class StudentController extends Controller
 
         $stats = [
             'total_exams' => Quiz::where('status', 'published')
-                ->where('teacher_id', $user->teacher_id)
-                ->whereHas('studentClasses', function($q) use ($classId) {
-                    $q->where('student_classes.id', $classId);
+                ->where(function($q) use ($classId, $user) {
+                    $q->where('is_global', true)
+                      ->orWhereHas('studentClasses', function($sq) use ($classId) {
+                          $sq->where('student_classes.id', $classId);
+                      });
                 })
                 ->count(),
             'attempted_exams' => $user->quizAttempts()->count(),
@@ -28,9 +30,11 @@ class StudentController extends Controller
         ];
 
         $upcoming_exams = Quiz::where('status', 'published')
-            ->where('teacher_id', $user->teacher_id)
-            ->whereHas('studentClasses', function($q) use ($classId) {
-                $q->where('student_classes.id', $classId);
+            ->where(function($q) use ($classId, $user) {
+                $q->where('is_global', true)
+                  ->orWhereHas('studentClasses', function($sq) use ($classId) {
+                      $sq->where('student_classes.id', $classId);
+                  });
             })
             ->where('expires_at', '>', now())
             ->latest()
@@ -46,29 +50,103 @@ class StudentController extends Controller
         $user = auth()->user();
         $classId = $user->class_id;
 
-        $quizzes = Quiz::where('teacher_id', $user->teacher_id)
-            ->where('status', 'published')
-            ->whereHas('studentClasses', function($q) use ($classId) {
-                $q->where('student_classes.id', $classId);
+        $allQuizzes = Quiz::where('status', 'published')
+            ->where(function($q) use ($classId, $user) {
+                $q->where('is_global', true)
+                  ->orWhereHas('studentClasses', function($sq) use ($classId) {
+                      $sq->where('student_classes.id', $classId);
+                  });
             })
             ->withCount(['attempts as quiz_attempts_count' => function($query) {
                 $query->where('student_id', auth()->id());
             }])
             ->latest()
-            ->paginate(12);
+            ->get();
             
-        return view('backend.student.exams.index', compact('quizzes'));
+        // Categorize
+        $liveExams = $allQuizzes->filter(function($q) {
+            return $q->start_time !== null;
+        });
+
+        $practiceQuizzes = $allQuizzes->filter(function($q) {
+            return $q->start_time === null;
+        });
+            
+        return view('backend.student.exams.index', compact('liveExams', 'practiceQuizzes'));
     }
 
     public function showExam(Quiz $quiz)
     {
-        if ($quiz->teacher_id !== auth()->user()->teacher_id) abort(403);
-        return view('backend.student.exams.show', compact('quiz'));
+        // Check if student has access
+        $user = auth()->user();
+        if (!$quiz->is_global && !$quiz->studentClasses()->where('student_classes.id', $user->class_id)->exists()) {
+             abort(403);
+        }
+        
+        $isEnrolled = $user->quizEnrollments()->where('quiz_id', $quiz->id)->exists();
+        return view('backend.student.exams.show', compact('quiz', 'isEnrolled'));
+    }
+
+    public function enrollExam(Quiz $quiz)
+    {
+        $user = auth()->user();
+        
+        if (!$quiz->is_global && !$quiz->studentClasses()->where('student_classes.id', $user->class_id)->exists()) {
+             abort(403);
+        }
+
+        // Timing Check for Live Exams
+        if ($quiz->end_time && $quiz->end_time->isPast()) {
+            return back()->with('error', 'This exam has expired and is no longer available for enrollment.');
+        }
+
+        if ($user->quizEnrollments()->where('quiz_id', $quiz->id)->exists()) {
+            return back()->with('info', 'You are already enrolled.');
+        }
+
+        if ($quiz->parent_id && $quiz->level_number > 1) {
+            return back()->with('error', 'You cannot directly enroll in advanced levels. You must qualify from previous levels.');
+        }
+
+        if ($quiz->price > 0) {
+            try {
+                $user->withdraw($quiz->price, Quiz::class, $quiz->id, 'Enrollment for Quiz: ' . $quiz->title);
+            } catch (\Exception $e) {
+                return back()->with('error', 'Insufficient wallet balance for this exam.');
+            }
+        }
+
+        $enrollment = $user->quizEnrollments()->create([
+            'quiz_id' => $quiz->id,
+            'paid_amount' => $quiz->price,
+            'status' => 'active'
+        ]);
+
+        if ($quiz->price > 0) {
+            (new \App\Services\CommissionService())->distribute($enrollment);
+        }
+
+        return back()->with('success', 'Enrolled successfully! You can now start the exam.');
     }
 
     public function startExam(Quiz $quiz)
     {
-        if ($quiz->teacher_id !== auth()->user()->teacher_id) abort(403);
+        $user = auth()->user();
+        
+        // Timing Check for Live Exams
+        if ($quiz->start_time) {
+            if ($quiz->start_time->isFuture()) {
+                return back()->with('error', 'This exam has not started yet. Please wait for the scheduled time.');
+            }
+            if ($quiz->end_time && $quiz->end_time->isPast()) {
+                return back()->with('error', 'This exam window has closed. You can no longer start it.');
+            }
+        }
+
+        // Ensure enrolled
+        if (!$user->quizEnrollments()->where('quiz_id', $quiz->id)->exists()) {
+            return back()->with('error', 'You must enroll first.');
+        }
 
         // Check attempt limit
         $completedCount = auth()->user()->quizAttempts()
@@ -76,7 +154,7 @@ class StudentController extends Controller
             ->where('status', 'completed')
             ->count();
         
-        if ($quiz->attempts_limit > 0 && $completedCount >= $quiz->attempts_limit) {
+        if (!$quiz->is_practice_set && $quiz->attempts_limit > 0 && $completedCount >= $quiz->attempts_limit) {
             return back()->with('error', 'You have reached the maximum number of attempts for this exam.');
         }
 
@@ -104,7 +182,11 @@ class StudentController extends Controller
 
     public function takeExam(Quiz $quiz)
     {
-        if ($quiz->teacher_id !== auth()->user()->teacher_id) abort(403);
+        $user = auth()->user();
+        
+        if (!$user->quizEnrollments()->where('quiz_id', $quiz->id)->exists()) {
+            abort(403);
+        }
         
         $attempt = QuizAttempt::where('student_id', auth()->id())
             ->where('quiz_id', $quiz->id)
@@ -123,7 +205,9 @@ class StudentController extends Controller
             return $this->autoSubmit($attempt);
         }
 
-        $questions = $quiz->questions()->get();
+        $questions = $quiz->is_practice_set 
+            ? $quiz->questions()->inRandomOrder()->get() 
+            : $quiz->questions()->get();
         return view('backend.student.exams.take', compact('quiz', 'questions', 'remainingSeconds'));
     }
 
@@ -176,10 +260,27 @@ class StudentController extends Controller
         
         $rank = QuizAttempt::where('quiz_id', $attempt->quiz_id)
             ->where('status', 'completed')
-            ->where('score', '>', $attempt->score)
+            ->where('is_blocked', false)
+            ->where(function ($query) use ($attempt) {
+                $query->where('score', '>', $attempt->score)
+                    ->orWhere(function ($q) use ($attempt) {
+                        $q->where('score', $attempt->score)
+                            ->where('time_taken_seconds', '<', $attempt->time_taken_seconds);
+                    });
+            })
             ->count() + 1;
             
-        return view('backend.student.exams.result', compact('attempt', 'rank'));
+        $leaderboard = QuizAttempt::where('quiz_id', $attempt->quiz_id)
+            ->where('status', 'completed')
+            ->where('is_blocked', false)
+            ->with('student')
+            ->orderByDesc('score')
+            ->orderBy('time_taken_seconds')
+            ->get()
+            ->unique('student_id')
+            ->take(10);
+            
+        return view('backend.student.exams.result', compact('attempt', 'rank', 'leaderboard'));
     }
 
     public function courses()

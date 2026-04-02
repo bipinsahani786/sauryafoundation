@@ -22,10 +22,18 @@
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block ml-1">Role</label>
                     <select name="role" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-xs font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-all" required>
                         <option value="admin" {{ (isset($user) && $user->role == 'admin') ? 'selected' : '' }}>Admin</option>
+                        <option value="teacher" {{ (isset($user) && $user->role == 'teacher') ? 'selected' : '' }}>Teacher</option>
                         <option value="sales_agent" {{ (isset($user) && $user->role == 'sales_agent') ? 'selected' : '' }}>Sales Agent</option>
+                        <option value="student" {{ (isset($user) && $user->role == 'student') ? 'selected' : '' }}>Student</option>
                         <option value="syndicate" {{ (isset($user) && $user->role == 'syndicate') ? 'selected' : '' }}>Syndicate Member</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block ml-1">Commission Percentage (%)</label>
+                <input type="number" step="0.01" name="commission_percent" value="{{ $user->commission_percent ?? old('commission_percent', 0) }}" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-xs font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-all">
+                <p class="text-[9px] text-slate-400 italic font-medium ml-1">Applied to Teachers (on quiz sales) and Sales Agents (on teacher referrals).</p>
             </div>
 
             <div class="space-y-1.5">

@@ -28,7 +28,8 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
-            'role' => ['required', 'in:admin,syndicate,sales_agent'],
+            'role' => ['required', 'in:admin,syndicate,sales_agent,teacher,student'],
+            'commission_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ]);
 
         User::create([
@@ -36,6 +37,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'commission_percent' => $request->commission_percent ?? 0,
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
@@ -51,13 +53,15 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'role' => ['required', 'in:admin,syndicate,sales_agent'],
+            'role' => ['required', 'in:admin,syndicate,sales_agent,teacher,student'],
+            'commission_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
+            'commission_percent' => $request->commission_percent ?? 0,
         ]);
 
         if ($request->filled('password')) {

@@ -48,7 +48,7 @@ class AdminController extends Controller
     public function quizzes()
     {
         $quizzes = Quiz::where('price', '>', 0)->latest()->paginate(10);
-        return view('backend.admin.quizzes.index', compact('quizzes'));
+        return view('backend.admin.quizzes.approvals', compact('quizzes'));
     }
 
     public function approveQuiz(Quiz $quiz)

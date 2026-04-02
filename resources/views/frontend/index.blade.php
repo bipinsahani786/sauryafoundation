@@ -1,5 +1,5 @@
 <x-frontend.layout>
-    <x-slot name="title">Home | Shaurya Narayan Foundation</x-slot>
+    <x-slot name="title">Home | {{ $siteSettings['site_name'] ?? 'Shaurya Narayan Foundation' }}</x-slot>
 
     <!-- 1. Dynamic Banner Slider -->
     <section class="relative pt-20 overflow-hidden bg-brand-dark">

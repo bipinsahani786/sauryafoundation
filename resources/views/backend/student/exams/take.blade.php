@@ -107,8 +107,12 @@
                 cheatingCount: 0,
 
                 init() {
-                    // Fullscreen Request
-                    this.requestFullscreen();
+                    // Fullscreen Request with Error Handling
+                    try {
+                        this.requestFullscreen();
+                    } catch (e) {
+                        console.warn("Fullscreen deferred: " + e.message);
+                    }
                     
                     // Prevention
                     document.addEventListener('contextmenu', e => e.preventDefault());

@@ -34,7 +34,13 @@ class User extends Authenticatable
         'kyc_status',
         'kyc_notes',
         'class_id',
+        'commission_percent',
     ];
+
+    public function commissions()
+    {
+        return $this->hasMany(Commission::class);
+    }
 
     public function isSuperAdmin()
     {
@@ -145,6 +151,11 @@ class User extends Authenticatable
     public function quizAttempts()
     {
         return $this->hasMany(QuizAttempt::class, 'student_id');
+    }
+
+    public function quizEnrollments()
+    {
+        return $this->hasMany(QuizEnrollment::class, 'student_id');
     }
 
     public function enrolledCourses()

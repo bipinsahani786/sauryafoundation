@@ -40,7 +40,7 @@
                 <div x-show="addType === 'single'">
                     <p class="text-[10px] text-indigo-100 mb-6 font-medium italic opacity-80 uppercase tracking-widest leading-relaxed">Insert multiple-choice data below.</p>
                     
-                    <form action="{{ route('teacher.quizzes.add-question', $quiz->id) }}" method="POST" class="space-y-4">
+                    <form action="{{ route('admin.quizzes.add-question', $quiz->id) }}" method="POST" class="space-y-4">
                         @csrf
                         <div class="space-y-1.5">
                             <label class="block text-[8px] font-black text-white/60 uppercase tracking-widest ml-1">Question Body</label>
@@ -101,7 +101,7 @@
                         </button>
                     </div>
 
-                    <form action="{{ route('teacher.quizzes.bulk-questions', $quiz->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <form action="{{ route('admin.quizzes.bulk-questions', $quiz->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                         @csrf
                         <input type="hidden" name="upload_type" value="csv">
                         
@@ -114,7 +114,7 @@
                         <div class="bg-indigo-700 p-3 rounded-lg text-[9px] font-bold text-indigo-200 flex flex-col gap-2">
                             <div class="flex justify-between items-center bg-indigo-800/50 p-2 rounded border border-indigo-400/30">
                                 <span class="text-white"><i class="fas fa-download mr-1"></i> Official Template</span>
-                                <a href="{{ route('teacher.quizzes.sample-csv') }}" class="bg-emerald-500 hover:bg-emerald-600 text-white px-2 py-0.5 rounded text-[7px] transition-all shadow-sm uppercase tracking-tighter">Download CSV</a>
+                                <a href="{{ route('admin.quizzes.sample-csv') }}" class="bg-emerald-500 hover:bg-emerald-600 text-white px-2 py-0.5 rounded text-[7px] transition-all shadow-sm uppercase tracking-tighter">Download CSV</a>
                             </div>
                             <div class="flex justify-between items-center opacity-80 pt-1">
                                 <span>Format: Question, A, B, C, D, Correct (0-3), Marks</span>
@@ -138,7 +138,7 @@
                         </button>
                     </div>
 
-                    <form action="{{ route('teacher.quizzes.bulk-questions', $quiz->id) }}" method="POST" class="space-y-4">
+                    <form action="{{ route('admin.quizzes.bulk-questions', $quiz->id) }}" method="POST" class="space-y-4">
                         @csrf
                         <input type="hidden" name="upload_type" value="text">
                         
@@ -168,7 +168,7 @@
                     <div class="flex justify-between items-start mb-4">
                         <span class="w-6 h-6 bg-slate-100 text-slate-500 rounded-lg flex items-center justify-center font-black text-[10px]">{{ $index + 1 }}</span>
                         <div class="flex gap-2">
-                            <form action="{{ route('teacher.questions.destroy', $question->id) }}" method="POST" onsubmit="return confirm('Delete this question?')">
+                            <form action="{{ route('admin.questions.destroy', $question->id) }}" method="POST" onsubmit="return confirm('Delete this question?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="text-slate-300 hover:text-red-600 transition-colors">
                                     <i class="fas fa-trash-alt"></i>
