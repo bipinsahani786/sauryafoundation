@@ -15,32 +15,32 @@ use App\Http\Controllers\Backend\Syndicate\SyndicateController;
 use App\Http\Controllers\Backend\ProfileController;
 
 // Temporary route for maintenance and storage link on shared hosting
-Route::get('/maintenance', function () {
-    try {
-        // Clear all cache
-        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
-        
-        // Manual storage link (if not already exists)
-        $target = storage_path('app/public');
-        $link = public_path('storage');
-        
-        $linkStatus = "Storage link: ";
-        if (!file_exists($link)) {
-            symlink($target, $link);
-            $linkStatus .= "Successfully created!";
-        } else {
-            $linkStatus .= "Already exists.";
-        }
+// Route::get('/maintenance', function () {
+//     try {
+//         // Clear all cache
+//         \Illuminate\Support\Facades\Artisan::call('optimize:clear');
 
-        return "<h3>Platform Maintenance Success</h3>
-                <p>Caches cleared successfully.</p>
-                <p>{$linkStatus}</p>
-                <br><br>
-                <small>Now you can delete this route from web.php for security.</small>";
-    } catch (\Exception $e) {
-        return "Maintenance error: " . $e->getMessage();
-    }
-});
+//         // Manual storage link (if not already exists)
+//         $target = storage_path('app/public');
+//         $link = public_path('storage');
+
+//         $linkStatus = "Storage link: ";
+//         if (!file_exists($link)) {
+//             symlink($target, $link);
+//             $linkStatus .= "Successfully created!";
+//         } else {
+//             $linkStatus .= "Already exists.";
+//         }
+
+//         return "<h3>Platform Maintenance Success</h3>
+//                 <p>Caches cleared successfully.</p>
+//                 <p>{$linkStatus}</p>
+//                 <br><br>
+//                 <small>Now you can delete this route from web.php for security.</small>";
+//     } catch (\Exception $e) {
+//         return "Maintenance error: " . $e->getMessage();
+//     }
+// });
 use App\Http\Controllers\Backend\Teacher\CourseController;
 use App\Http\Controllers\Backend\Admin\SettingController;
 
@@ -77,10 +77,10 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/applications', [AdminController::class, 'applications'])->name('applications');
-    
+
     Route::resource('plans', PlanController::class);
     Route::post('/plans/{plan}/toggle-status', [PlanController::class, 'toggleStatus'])->name('plans.toggle-status');
-    
+
     Route::get('/subscriptions', [AdminController::class, 'subscriptions'])->name('subscriptions');
     Route::post('/subscriptions/{subscription}/approve', [AdminController::class, 'approveSubscription'])->name('subscriptions.approve');
     Route::post('/subscriptions/{subscription}/reject', [AdminController::class, 'rejectSubscription'])->name('subscriptions.reject');
@@ -169,7 +169,7 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     Route::put('/students/{student}', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'updateStudent'])->name('students.update');
     Route::get('/students/{student}/progress', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'studentProgress'])->name('students.progress');
     Route::post('/students/{student}/add-money', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'addMoney'])->name('students.add-money');
-    
+
     // Quizzes
     Route::resource('quizzes', App\Http\Controllers\Backend\Teacher\QuizController::class);
     Route::get('quizzes/sample-csv', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'downloadSampleCSV'])->name('quizzes.sample-csv');
@@ -186,7 +186,7 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     Route::get('/kyc', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'kyc'])->name('kyc');
     Route::post('/kyc', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'submitKyc'])->name('kyc.submit');
     Route::post('/payout/request', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'submitPayoutRequest'])->name('payout.submit');
-    
+
     // Courses (LMS)
     Route::resource('courses', CourseController::class);
     Route::post('courses/{course}/publish', [CourseController::class, 'publish'])->name('courses.publish');
@@ -199,7 +199,7 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
 
 Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Backend\Student\StudentController::class, 'index'])->name('dashboard');
-    
+
     // Exams & Security
     Route::get('/exams', [App\Http\Controllers\Backend\Student\StudentController::class, 'exams'])->name('exams');
     Route::get('/exams/{quiz}', [App\Http\Controllers\Backend\Student\StudentController::class, 'showExam'])->name('exams.show');
@@ -209,7 +209,7 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     Route::post('/exams/{quiz}/submit', [App\Http\Controllers\Backend\Student\StudentController::class, 'submitExam'])->name('exams.submit');
     Route::post('/exams/{quiz}/report-breach', [App\Http\Controllers\Backend\Student\StudentController::class, 'reportBreach'])->name('exams.report-breach');
     Route::get('/results/{attempt}', [App\Http\Controllers\Backend\Student\StudentController::class, 'showResult'])->name('results.show');
-    
+
     // LMS Courses
     Route::get('/courses', [App\Http\Controllers\Backend\Student\StudentController::class, 'courses'])->name('courses');
     Route::get('/courses/{course}', [App\Http\Controllers\Backend\Student\StudentController::class, 'showCourse'])->name('courses.show');
