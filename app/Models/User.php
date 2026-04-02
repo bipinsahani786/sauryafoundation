@@ -35,6 +35,7 @@ class User extends Authenticatable
         'kyc_notes',
         'class_id',
         'commission_percent',
+        'profile_photo_path',
     ];
 
     public function commissions()

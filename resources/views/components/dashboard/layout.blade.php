@@ -224,7 +224,15 @@
 
             <div class="mt-auto p-6 border-t border-slate-100">
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-black text-[10px] uppercase shadow-sm">{{ substr(Auth::user()->name, 0, 1) }}</div>
+                    <div class="relative group">
+                        @if(Auth::user()->profile_photo_path)
+                            <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" class="w-9 h-9 rounded-full object-cover border border-slate-200 shadow-sm transition-all group-hover:scale-105">
+                        @else
+                            <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-black text-[10px] uppercase shadow-sm group-hover:bg-indigo-50 transition-all">
+                                {{ substr(Auth::user()->name, 0, 1) }}
+                            </div>
+                        @endif
+                    </div>
                     <div class="min-w-0">
                         <p class="text-slate-900 font-black text-[10px] uppercase tracking-wider truncate">{{ Auth::user()->name }}</p>
                         <p class="text-slate-400 text-[8px] uppercase font-black tracking-[0.2em]">{{ Auth::user()->role }}</p>

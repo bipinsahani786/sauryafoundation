@@ -14,7 +14,7 @@
     <form action="{{ route('admin.student-classes.update', $studentClass->id) }}" method="POST">
         @csrf
         @method('PUT')
-        <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden p-10 max-w-2xl">
+        <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden p-10 max-w-5xl">
             <div class="space-y-8">
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic">Class Designation Name</label>

@@ -6,7 +6,7 @@
         <p class="text-xs text-slate-400 font-medium">Add a new investment sector card to the landing page.</p>
     </div>
 
-    <div class="max-w-2xl">
+    <div class="max-w-5xl">
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <form action="{{ route('admin.home-sectors.store') }}" method="POST" enctype="multipart/form-data" class="p-8">
                 @csrf
@@ -24,7 +24,15 @@
 
                     <div>
                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Icon (FontAwesome Class)</label>
-                        <input type="text" name="icon" value="{{ old('icon') }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" placeholder="e.g. fas fa-hotel">
+                        <div class="flex items-center gap-4">
+                            <div class="flex-1">
+                                <input type="text" name="icon" id="icon_input" value="{{ old('icon') }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" placeholder="e.g. fas fa-hotel">
+                            </div>
+                            <div class="w-12 h-12 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center text-indigo-600 text-xl shadow-sm">
+                                <i id="icon_preview" class="fas fa-question-circle"></i>
+                            </div>
+                        </div>
+                        <p class="text-[9px] text-slate-400 mt-1 italic">Example: <span class="font-bold underline cursor-pointer" onclick="document.getElementById('icon_input').value='fas fa-city'; document.getElementById('icon_input').dispatchEvent(new Event('input'))">fas fa-city</span>, <span class="font-bold underline cursor-pointer" onclick="document.getElementById('icon_input').value='fas fa-users-cog'; document.getElementById('icon_input').dispatchEvent(new Event('input'))">fas fa-users-cog</span></p>
                     </div>
 
                     <div>
@@ -33,8 +41,10 @@
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Full Page Content (HTML/Text)</label>
-                        <textarea name="content" rows="6" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" placeholder="Detailed content for the sector page">{{ old('content') }}</textarea>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Full Page Content (Rich Text)</label>
+                        <div class="prose-editor">
+                            <textarea name="content" id="editor">{{ old('content') }}</textarea>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-6">
@@ -89,4 +99,43 @@
             </form>
         </div>
     </div>
+    <style>
+        .ck-editor__editable_inline {
+            min-height: 300px;
+            background-color: #f8fafc !important;
+        }
+        .ck-editor__main {
+            color: #1e293b;
+        }
+    </style>
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // CKEditor initialization
+            const editorElement = document.querySelector('#editor');
+            if (editorElement) {
+                ClassicEditor
+                    .create(editorElement, {
+                        toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'insertTable', 'undo', 'redo'],
+                    })
+                    .catch(error => {
+                        console.error('CKEditor Error:', error);
+                    });
+            }
+
+            // Icon Preview logic
+            const iconInput = document.getElementById('icon_input');
+            const iconPreview = document.getElementById('icon_preview');
+
+            if (iconInput && iconPreview) {
+                const updateIcon = () => {
+                    const val = iconInput.value.trim();
+                    iconPreview.className = val || 'fas fa-question-circle';
+                };
+
+                iconInput.addEventListener('input', updateIcon);
+                updateIcon(); // Initial preview
+            }
+        });
+    </script>
 </x-dashboard.layout>

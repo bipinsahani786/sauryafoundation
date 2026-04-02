@@ -17,7 +17,8 @@ class BannerController extends Controller
 
     public function create()
     {
-        return view('backend.admin.banners.create');
+        $sectors = \App\Models\HomeSector::where('is_active', true)->whereNotNull('slug')->get();
+        return view('backend.admin.banners.create', compact('sectors'));
     }
 
     public function store(Request $request)
@@ -43,7 +44,8 @@ class BannerController extends Controller
 
     public function edit(Banner $banner)
     {
-        return view('backend.admin.banners.edit', compact('banner'));
+        $sectors = \App\Models\HomeSector::where('is_active', true)->whereNotNull('slug')->get();
+        return view('backend.admin.banners.edit', compact('banner', 'sectors'));
     }
 
     public function update(Request $request, Banner $banner)

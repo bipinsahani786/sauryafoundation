@@ -73,14 +73,15 @@ class HomeController extends Controller
     public function sectorDetail($slug)
     {
         $sector = HomeSector::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $banners = Banner::where('is_active', true)->where('type', $slug)->orderBy('order')->get();
         
         // Check if a specific view exists for this sector (e.g., frontend.marriage-halls)
         $viewName = 'frontend.' . $slug;
         if (view()->exists($viewName)) {
-            return view($viewName, compact('sector'));
+            return view($viewName, compact('sector', 'banners'));
         }
 
-        return view('frontend.sector-show', compact('sector'));
+        return view('frontend.sector-show', compact('sector', 'banners'));
     }
 
     public function apply(Request $request)

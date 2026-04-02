@@ -6,7 +6,7 @@
         <p class="text-xs text-slate-400 font-medium">Add a new dynamic banner for the landing page.</p>
     </div>
 
-    <div class="max-w-2xl">
+    <div class="max-w-5xl">
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <form action="{{ route('admin.banners.store') }}" method="POST" enctype="multipart/form-data" class="p-8">
                 @csrf
@@ -18,12 +18,16 @@
                         </div>
                         <div>
                             <label id="label_banner_type" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Banner Destination (Page)</label>
-                            <select name="type" id="banner_type" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all font-bold">
-                                <option value="home" {{ old('type') == 'home' ? 'selected' : '' }}>Public Home Page</option>
-                                <option value="student" {{ old('type') == 'student' ? 'selected' : '' }}>Student Dashboard</option>
-                                <option value="marriage-halls" {{ old('type') == 'marriage-halls' ? 'selected' : '' }}>Marriage Halls Landing</option>
-                                <option value="education" {{ old('type') == 'education' ? 'selected' : '' }}>Education Landing</option>
-                                <option value="coaching" {{ old('type') == 'coaching' ? 'selected' : '' }}>Digital Coaching Landing</option>
+                            <select name="type" id="banner_type" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all font-bold uppercase tracking-widest">
+                                <optgroup label="Core Pages">
+                                    <option value="home" {{ old('type') == 'home' ? 'selected' : '' }}>Public Home Page</option>
+                                    <option value="student" {{ old('type') == 'student' ? 'selected' : '' }}>Student Dashboard</option>
+                                </optgroup>
+                                <optgroup label="Sectors / Industries">
+                                    @foreach($sectors as $sector)
+                                        <option value="{{ $sector->slug }}" {{ old('type') == $sector->slug ? 'selected' : '' }}>{{ $sector->title }}</option>
+                                    @endforeach
+                                </optgroup>
                             </select>
                         </div>
                     </div>

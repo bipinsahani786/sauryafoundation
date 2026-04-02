@@ -1,28 +1,77 @@
 <x-frontend.layout>
     <x-slot name="title">{{ $sector->title }} | Shaurya Narayan Foundation</x-slot>
 
-    <!-- 1. Dynamic Hero -->
-    <section class="relative pt-40 pb-24 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid md:grid-cols-2 gap-16 items-center mb-32">
-                <div data-aos="fade-right">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 mb-6 text-sm">
-                        <i class="{{ $sector->icon ?? 'fas fa-chart-line' }} text-brand-primary"></i> 
-                        <span class="text-brand-primary font-bold uppercase tracking-widest text-xs">{{ $sector->tag ?? 'Premium Asset Class' }}</span>
-                    </div>
-                    <h1 class="text-6xl font-black text-white mb-8 tracking-tighter">{{ $sector->title }}</h1>
-                    <p class="text-xl text-gray-400 leading-relaxed mb-8">{{ $sector->description }}</p>
-                    <a href="#apply" class="inline-flex items-center gap-3 bg-white text-brand-dark px-8 py-4 rounded-full font-bold hover:bg-gray-200 transition-all shadow-xl">
-                        Invest in this Sector <i class="fas fa-arrow-right"></i>
-                    </a>
+    <!-- 1. Dynamic Hero / Banner Slider -->
+    @if(isset($banners) && $banners->count() > 0)
+        <section class="relative pt-20 overflow-hidden bg-brand-dark">
+            <div class="swiper bannerSwiper">
+                <div class="swiper-wrapper">
+                    @foreach($banners as $banner)
+                        <div class="swiper-slide relative min-h-[60vh] md:min-h-[80vh] flex items-center justify-center overflow-hidden">
+                            <div class="absolute inset-0 z-0">
+                                <img src="{{ asset('storage/' . $banner->image_path) }}" class="w-full h-full object-cover opacity-30 scale-105" alt="{{ $banner->title }}">
+                                <div class="absolute inset-0 bg-gradient-to-b from-brand-dark via-transparent to-brand-dark"></div>
+                            </div>
+                            <div class="max-w-6xl mx-auto px-4 relative z-10 text-center">
+                                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 mb-8 text-xs animate-fade-in-up">
+                                    <i class="{{ $sector->icon ?? 'fas fa-chart-line' }} text-brand-primary"></i> 
+                                    <span class="text-brand-primary font-bold uppercase tracking-widest">{{ $sector->title }}</span>
+                                </div>
+                                <h1 class="text-4xl md:text-7xl font-black text-white tracking-tighter leading-[1.1] mb-8 animate-fade-in-up uppercase">
+                                    {!! nl2br(e($banner->title)) !!}
+                                </h1>
+                                <p class="text-lg md:text-2xl text-gray-400 font-medium mb-10 max-w-3xl mx-auto leading-relaxed animate-fade-in-up italic">
+                                    {{ $banner->description }}
+                                </p>
+                                @if($banner->link)
+                                    <div class="flex justify-center animate-fade-in-up">
+                                        <a href="{{ $banner->link }}" class="px-8 md:px-12 py-4 md:py-5 bg-white text-brand-dark rounded-full font-black text-lg md:text-xl hover:-translate-y-1 transition-all shadow-xl uppercase tracking-widest">Explore Opportunities <i class="fas fa-arrow-right ml-2 text-sm"></i></a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-                <div class="relative" data-aos="fade-left">
-                    <div class="absolute inset-0 bg-brand-primary/20 blur-[120px] opacity-20"></div>
-                    <img src="{{ asset('storage/' . $sector->image_path) }}" class="relative rounded-[3rem] border border-brand-border shadow-2xl w-full object-cover aspect-[4/3]" alt="{{ $sector->title }}">
+                <div class="swiper-pagination"></div>
+            </div>
+        </section>
+    @else
+        <section class="relative pt-40 pb-24 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid md:grid-cols-2 gap-16 items-center mb-32">
+                    <div data-aos="fade-right">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 mb-6 text-sm">
+                            <i class="{{ $sector->icon ?? 'fas fa-chart-line' }} text-brand-primary"></i> 
+                            <span class="text-brand-primary font-bold uppercase tracking-widest text-xs">{{ $sector->tag ?? 'Premium Asset Class' }}</span>
+                        </div>
+                        <h1 class="text-6xl font-black text-white mb-8 tracking-tighter leading-tight">{{ $sector->title }}</h1>
+                        <p class="text-xl text-gray-400 leading-relaxed mb-8 italic">{{ $sector->description }}</p>
+                        <a href="#apply" class="inline-flex items-center gap-3 bg-white text-brand-dark px-8 py-4 rounded-full font-bold hover:bg-gray-200 transition-all shadow-xl uppercase tracking-widest text-sm">
+                            Invest in this Sector <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="relative" data-aos="fade-left">
+                        <div class="absolute inset-0 bg-brand-primary/20 blur-[120px] opacity-20"></div>
+                        <img src="{{ asset('storage/' . $sector->image_path) }}" class="relative rounded-[3rem] border border-brand-border shadow-2xl w-full object-cover aspect-[4/3] opacity-80" alt="{{ $sector->title }}">
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new Swiper(".bannerSwiper", {
+                autoplay: { delay: 5000, disableOnInteraction: false },
+                pagination: { el: ".swiper-pagination", clickable: true },
+                effect: "fade",
+                fadeEffect: { crossFade: true },
+                loop: true,
+            });
+        });
+    </script>
+    @endpush
 
     <!-- 2. Sector Stats -->
     <section class="py-24 bg-brand-card/5 border-y border-brand-border">
