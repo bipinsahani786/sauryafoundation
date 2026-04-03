@@ -100,6 +100,20 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class);
     }
 
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class);
+    }
+
+    public function hasPermission($permission)
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        return $this->permissions->contains('name', $permission);
+    }
+
     public function deposit($amount, $source_type = null, $source_id = null, $description = null)
     {
         $this->increment('wallet_balance', $amount);

@@ -53,7 +53,35 @@ class SalesAgentController extends Controller
         $user = auth()->user();
         $transactions = $user->transactions()->latest()->paginate(20);
         $payoutRequests = $user->payoutRequests()->latest()->get();
-        return view('backend.sales_agent.wallet.index', compact('transactions', 'payoutRequests'));
+        $topupRequests = \App\Models\WalletTopupRequest::where('user_id', $user->id)->latest()->get();
+        return view('backend.sales_agent.wallet.index', compact('transactions', 'payoutRequests', 'topupRequests'));
+    }
+
+    public function topup()
+    {
+        $settings = \App\Models\Setting::getAll();
+        return view('backend.common.wallet.topup', compact('settings'));
+    }
+
+    public function submitTopup(Request $request)
+    {
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:1',
+            'utr_number' => 'required|string|unique:wallet_topup_requests,utr_number',
+            'proof_image' => 'required|image|max:2048',
+        ]);
+
+        $path = $request->file('proof_image')->store('topups', 'public');
+
+        \App\Models\WalletTopupRequest::create([
+            'user_id' => auth()->id(),
+            'amount' => $validated['amount'],
+            'utr_number' => $validated['utr_number'],
+            'proof_image' => $path,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('sales-agent.wallet')->with('success', 'Top-up request submitted successfully.');
     }
 
     public function kyc()

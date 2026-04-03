@@ -73,6 +73,7 @@
                             <i class="fas fa-home w-4"></i> <span>Dashboard</span>
                         </a>
 
+                        @if(Auth::user()->hasPermission('view_plans'))
                         <div x-data="{ open: {{ request()->routeIs('admin.plans.*') ? 'true' : 'false' }} }">
                             <button @click="open = !open" class="w-full {{ $linkClasses }} {{ $inactiveClasses }}">
                                 <span class="flex items-center gap-3">
@@ -82,10 +83,14 @@
                             </button>
                             <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1 border-l border-slate-100">
                                 <a href="{{ route('admin.plans.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.plans.index') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">View All</a>
+                                @if(Auth::user()->hasPermission('create_plans'))
                                 <a href="{{ route('admin.plans.create') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.plans.create') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Add New</a>
+                                @endif
                             </div>
                         </div>
+                        @endif
 
+                        @if(Auth::user()->hasPermission('view_banners'))
                         <div x-data="{ open: {{ request()->routeIs('admin.banners.*') ? 'true' : 'false' }} }">
                             <button @click="open = !open" class="w-full {{ $linkClasses }} {{ $inactiveClasses }}">
                                 <span class="flex items-center gap-3">
@@ -95,10 +100,14 @@
                             </button>
                             <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1 border-l border-slate-100">
                                 <a href="{{ route('admin.banners.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.banners.index') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">View All</a>
+                                @if(Auth::user()->hasPermission('create_banners'))
                                 <a href="{{ route('admin.banners.create') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.banners.create') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Add New</a>
+                                @endif
                             </div>
                         </div>
+                        @endif
 
+                        @if(Auth::user()->hasPermission('view_sectors'))
                         <div x-data="{ open: {{ request()->routeIs('admin.home-sectors.*') ? 'true' : 'false' }} }">
                             <button @click="open = !open" class="w-full {{ $linkClasses }} {{ $inactiveClasses }}">
                                 <span class="flex items-center gap-3">
@@ -108,10 +117,14 @@
                             </button>
                             <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1 border-l border-slate-100">
                                 <a href="{{ route('admin.home-sectors.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.home-sectors.index') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">View All</a>
+                                @if(Auth::user()->hasPermission('create_sectors'))
                                 <a href="{{ route('admin.home-sectors.create') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.home-sectors.create') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Add New</a>
+                                @endif
                             </div>
                         </div>
+                        @endif
 
+                        @if(Auth::user()->hasPermission('view_testimonials') || Auth::user()->hasPermission('view_industry_experts'))
                         <div x-data="{ open: {{ request()->is('admin/testimonials*') || request()->is('admin/industry-experts*') ? 'true' : 'false' }} }">
                             <button @click="open = !open" class="w-full {{ $linkClasses }} {{ $inactiveClasses }}">
                                 <span class="flex items-center gap-3">
@@ -120,27 +133,58 @@
                                 <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1 border-l border-slate-100">
+                                @if(Auth::user()->hasPermission('view_testimonials'))
                                 <a href="{{ route('admin.testimonials.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.testimonials.*') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Testimonials</a>
+                                @endif
+                                @if(Auth::user()->hasPermission('view_industry_experts'))
                                 <a href="{{ route('admin.industry-experts.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.industry-experts.*') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Industry Experts</a>
+                                @endif
                             </div>
                         </div>
+                        @endif
 
+                        @if(Auth::user()->hasPermission('view_applications'))
                         <a href="{{ route('admin.applications') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.applications') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-users w-4"></i> <span>User Leads</span>
                         </a>
+                        @endif
                         
+                        @if(Auth::user()->hasPermission('view_subscriptions'))
                         <a href="{{ route('admin.subscriptions') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.subscriptions') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-check-circle w-4"></i> <span>Payments</span>
                         </a>
+                        @endif
 
+                        @if(Auth::user()->hasPermission('view_payouts'))
                         <a href="{{ route('admin.payouts.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.payouts.*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-hand-holding-usd w-4"></i> <span>Payouts & KYC</span>
                         </a>
+                        @endif
 
+                        @if(Auth::user()->hasPermission('view_wallet'))
+                        <div x-data="{ open: {{ request()->routeIs('admin.wallet.*') || request()->routeIs('admin.wallet.topups.*') ? 'true' : 'false' }} }">
+                            <button @click="open = !open" class="w-full {{ $linkClasses }} {{ $inactiveClasses }}">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas fa-wallet w-4"></i> <span>Wallet & Topups</span>
+                                </span>
+                                <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                            </button>
+                            <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1 border-l border-slate-100">
+                                <a href="{{ route('admin.wallet.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.wallet.index') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Manual Adjust</a>
+                                @if(Auth::user()->hasPermission('view_topup_requests'))
+                                <a href="{{ route('admin.wallet.topups.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.wallet.topups.*') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Top-up Requests</a>
+                                @endif
+                            </div>
+                        </div>
+                        @endif
+
+                        @if(Auth::user()->hasPermission('view_users'))
                         <a href="{{ route('admin.users.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.users.*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-user-shield w-4"></i> <span>Users</span>
                         </a>
+                        @endif
 
+                        @if(Auth::user()->hasPermission('view_exams'))
                         <a href="{{ route('admin.quiz-approvals') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.quiz-approvals') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-file-invoice-dollar w-4"></i> <span>Verify Exams</span>
                         </a>
@@ -148,14 +192,19 @@
                         <a href="{{ route('admin.quizzes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.quizzes.*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-vial w-4"></i> <span>Manage Exams</span>
                         </a>
+                        @endif
 
+                        @if(Auth::user()->hasPermission('view_classes'))
                         <a href="{{ route('admin.student-classes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.student-classes.*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-school w-4"></i> <span>Academic Classes</span>
                         </a>
+                        @endif
 
+                        @if(Auth::user()->hasPermission('view_settings'))
                         <a href="{{ route('admin.settings.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.settings.*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-cog w-4 font-black"></i> <span class="font-black italic">Site Settings</span>
                         </a>
+                        @endif
                     @elseif(Auth::user()->role === 'teacher')
                         <a href="{{ route('teacher.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.dashboard') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-th-large w-4"></i> <span>Dashboard</span>

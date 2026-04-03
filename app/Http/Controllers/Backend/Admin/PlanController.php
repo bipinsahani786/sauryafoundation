@@ -19,6 +19,11 @@ class PlanController extends Controller
         return view('backend.admin.plans.create');
     }
 
+    public function show(Plan $plan)
+    {
+        return redirect()->route('admin.plans.edit', $plan);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

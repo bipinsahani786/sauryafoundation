@@ -12,7 +12,7 @@
             @csrf
             @if(isset($user)) @method('PUT') @endif
             
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4" x-data="{ role: '{{ $user->role ?? old('role', 'admin') }}' }">
                 <div class="space-y-1.5">
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block ml-1">Full Name</label>
                     <input type="text" name="name" value="{{ $user->name ?? old('name') }}" placeholder="John Doe" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-xs font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-all" required>
@@ -20,13 +20,63 @@
 
                 <div class="space-y-1.5">
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block ml-1">Role</label>
-                    <select name="role" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-xs font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-all" required>
+                    <select name="role" x-model="role" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-xs font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-all" required>
                         <option value="admin" {{ (isset($user) && $user->role == 'admin') ? 'selected' : '' }}>Admin</option>
                         <option value="teacher" {{ (isset($user) && $user->role == 'teacher') ? 'selected' : '' }}>Teacher</option>
                         <option value="sales_agent" {{ (isset($user) && $user->role == 'sales_agent') ? 'selected' : '' }}>Sales Agent</option>
                         <option value="student" {{ (isset($user) && $user->role == 'student') ? 'selected' : '' }}>Student</option>
                         <option value="syndicate" {{ (isset($user) && $user->role == 'syndicate') ? 'selected' : '' }}>Syndicate Member</option>
                     </select>
+                </div>
+
+                <!-- Permissions Section (Only for Admin) -->
+                <div class="col-span-2 mt-4 space-y-4 p-6 bg-slate-50 rounded-xl border border-slate-200" x-show="role === 'admin'" x-cloak x-transition>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-[11px] font-black text-slate-900 uppercase tracking-[0.2em]">Staff Permissions</label>
+                        <span class="text-[9px] font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100 italic">Access Control</span>
+                    </div>
+                    <p class="text-[9px] text-slate-400 font-medium italic mb-4">Grant specific access rights to this admin staff member.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        @foreach($permissions->groupBy('group') as $group => $groupPermissions)
+                            <div class="space-y-4" x-data="{ 
+                                allChecked: false,
+                                init() {
+                                    this.updateAllChecked();
+                                },
+                                updateAllChecked() {
+                                    const checkboxes = Array.from($el.querySelectorAll('input[type=checkbox]:not(.select-all)'));
+                                    this.allChecked = checkboxes.length > 0 && checkboxes.every(c => c.checked);
+                                },
+                                toggleGroup() {
+                                    const checkboxes = $el.querySelectorAll('input[type=checkbox]:not(.select-all)');
+                                    checkboxes.forEach(c => c.checked = this.allChecked);
+                                }
+                            }">
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                                    <span class="text-[9px] font-black text-slate-800 uppercase tracking-widest">{{ $group }}</span>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" x-model="allChecked" @change="toggleGroup()" class="select-all w-3 h-3 rounded text-indigo-600 focus:ring-0 border-slate-300">
+                                        <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Select All</span>
+                                    </label>
+                                </div>
+                                <div class="grid grid-cols-1 gap-2">
+                                    @foreach($groupPermissions as $permission)
+                                        <label class="flex items-center gap-3 p-2.5 bg-white rounded-xl border border-slate-100 hover:border-indigo-100 transition-all cursor-pointer group">
+                                            <input type="checkbox" name="permissions[]" value="{{ $permission->id }}" 
+                                                @change="updateAllChecked()"
+                                                class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300"
+                                                {{ (isset($user) && $user->permissions->contains($permission->id)) ? 'checked' : '' }}>
+                                            <div class="flex flex-col">
+                                                <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest group-hover:text-indigo-600">{{ $permission->label }}</span>
+                                                <span class="text-[7px] font-bold text-slate-300 uppercase tracking-tighter transition-colors group-hover:text-indigo-300">{{ str_replace('_', ' ', $permission->name) }}</span>
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 

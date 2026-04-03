@@ -21,6 +21,11 @@ class BannerController extends Controller
         return view('backend.admin.banners.create', compact('sectors'));
     }
 
+    public function show(Banner $banner)
+    {
+        return redirect()->route('admin.banners.edit', $banner);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

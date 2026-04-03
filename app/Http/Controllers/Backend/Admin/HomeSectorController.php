@@ -20,6 +20,11 @@ class HomeSectorController extends Controller
         return view('backend.admin.home_sectors.create');
     }
 
+    public function show(HomeSector $homeSector)
+    {
+        return redirect()->route('admin.home-sectors.edit', $homeSector);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

@@ -6,9 +6,11 @@
             <h2 class="text-lg font-bold text-slate-900 tracking-tight">User Management</h2>
             <p class="text-[10px] text-slate-400 font-medium italic">Manage Admins and Syndicate Members.</p>
         </div>
+        @if(Auth::user()->hasPermission('create_users'))
         <a href="{{ route('admin.users.create') }}" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-indigo-700 transition-all">
             <i class="fas fa-user-plus mr-1"></i> Add New User
         </a>
+        @endif
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden text-[10px]">
@@ -51,7 +53,7 @@
                             </td>
                             <td class="px-4 py-2 text-right">
                                 <div class="flex items-center justify-end gap-1.5">
-                                    @if($user->id !== auth()->id() && auth()->user()->isSuperAdmin())
+                                    @if($user->id !== auth()->id() && Auth::user()->hasPermission('impersonate_users'))
                                         <form action="{{ route('admin.users.impersonate', $user->id) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="p-1.5 border border-indigo-100 rounded bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-1.5 px-3" title="View Dashboard">
@@ -59,19 +61,30 @@
                                             </button>
                                         </form>
                                     @endif
+                                    @if(Auth::user()->hasPermission('view_wallet'))
+                                    <a href="{{ route('admin.wallet.index', ['user_id' => $user->id, 'user_name' => $user->name]) }}" class="p-1.5 border border-emerald-100 rounded bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all transition-all flex items-center justify-center" title="Add/Deduct Money">
+                                        <i class="fas fa-wallet text-[10px]"></i>
+                                    </a>
+                                    @endif
+                                    @if(Auth::user()->hasPermission('edit_users'))
                                     <a href="{{ route('admin.users.edit', $user->id) }}" class="p-1.5 border border-slate-100 rounded hover:bg-white text-slate-400 hover:text-indigo-600 transition-all"><i class="fas fa-edit text-[10px]"></i></a>
+                                    @endif
                                     @if($user->id !== auth()->id())
+                                        @if(Auth::user()->hasPermission('edit_users'))
                                         <form action="{{ route('admin.users.toggle-status', $user->id) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="p-1.5 border {{ $user->status == 'active' ? 'border-emerald-100 text-emerald-600 hover:bg-emerald-50' : 'border-red-100 text-red-600 hover:bg-red-50' }} rounded transition-all" title="Toggle Status">
                                                 <i class="fas {{ $user->status == 'active' ? 'fa-user-check' : 'fa-user-slash' }} text-[10px]"></i>
                                             </button>
                                         </form>
+                                        @endif
+                                        @if(Auth::user()->hasPermission('delete_users'))
                                         <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Delete this user account?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-1.5 border border-slate-100 rounded hover:bg-white text-slate-400 hover:text-red-600 transition-all"><i class="fas fa-trash-alt text-[10px]"></i></button>
                                         </form>
+                                        @endif
                                     @endif
                                 </div>
                             </td>

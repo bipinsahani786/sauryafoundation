@@ -21,6 +21,9 @@
                     <div class="px-6 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[9px] font-black uppercase tracking-widest italic">
                         <i class="fas fa-circle-check text-emerald-400 mr-2"></i> Verified Investor
                     </div>
+                    <a href="{{ route('syndicate.wallet.topup') }}" class="px-6 py-2 rounded-full bg-white text-indigo-950 text-[9px] font-black uppercase tracking-widest hover:bg-emerald-400 hover:text-white transition-all shadow-xl active:scale-95">
+                        <i class="fas fa-plus-circle mr-2"></i> Add Capital
+                    </a>
                 </div>
             </div>
         </div>
@@ -104,6 +107,49 @@
                 {{ $transactions->links() }}
             </div>
         @endif
+    </div>
+
+    <!-- Recharge History -->
+    <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden mb-12 uppercase italic">
+        <div class="p-12 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+            <div>
+                <h3 class="font-black text-slate-900 uppercase tracking-[0.2em] text-[14px] italic mb-1">Capital Infusion Log</h3>
+                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest italic">Manual Wallet Top-up Transmissions</p>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left table-standard">
+                <thead>
+                    <tr class="bg-slate-50">
+                        <th class="px-12 py-6">Timestamp</th>
+                        <th class="px-12 py-6">Reference (UTR)</th>
+                        <th class="px-12 py-6">Value</th>
+                        <th class="px-12 py-6">Status</th>
+                        <th class="px-12 py-6">Admin Note</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 italic font-black">
+                    @forelse($topupRequests as $request)
+                        <tr class="hover:bg-slate-50 transition-all">
+                            <td class="px-12 py-8 text-xs text-slate-400">{{ $request->created_at->format('M d, Y - H:i') }}</td>
+                            <td class="px-12 py-8 text-xs text-slate-900 select-all">{{ $request->utr_number }}</td>
+                            <td class="px-12 py-8 text-lg text-slate-900">₹{{ number_format($request->amount, 2) }}</td>
+                            <td class="px-12 py-8">
+                                <span class="px-6 py-2 rounded-full border shadow-sm text-[10px] uppercase tracking-widest
+                                    {{ $request->status === 'approved' ? 'text-emerald-600 bg-emerald-50 border-emerald-100' : ($request->status === 'pending' ? 'text-amber-600 bg-amber-50 border-amber-100' : 'text-red-600 bg-red-50 border-red-100') }}">
+                                    {{ $request->status }}
+                                </span>
+                            </td>
+                            <td class="px-12 py-8 text-[10px] text-slate-400 uppercase tracking-widest">{{ $request->admin_note ?? '---' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-12 py-32 text-center text-slate-400 font-black italic uppercase tracking-[0.5em] text-[14px] opacity-30">No capital infusion sequences detected.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </x-dashboard.layout>

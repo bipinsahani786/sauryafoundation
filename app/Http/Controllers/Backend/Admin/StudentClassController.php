@@ -20,6 +20,11 @@ class StudentClassController extends Controller
         return view('backend.admin.student_classes.create');
     }
 
+    public function show(StudentClass $studentClass)
+    {
+        return redirect()->route('admin.student-classes.edit', $studentClass);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

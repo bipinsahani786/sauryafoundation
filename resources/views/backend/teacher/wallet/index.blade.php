@@ -15,8 +15,13 @@
                 <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-2 italic">Professional Balance</p>
                 <h3 class="text-5xl font-black tracking-tighter">₹{{ number_format(auth()->user()->wallet_balance, 2) }}</h3>
             </div>
-            <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-3xl backdrop-blur-sm border border-white/10 relative z-10">
-                <i class="fas fa-piggy-bank"></i>
+            <div class="flex flex-col gap-2 relative z-10">
+                <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-2xl backdrop-blur-sm border border-white/10 mb-2">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+                <a href="{{ route('teacher.wallet.topup') }}" class="px-4 py-2 bg-white text-indigo-600 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-lg active:scale-95 text-center">
+                    <i class="fas fa-plus-circle mr-1"></i> Add Money
+                </a>
             </div>
         </div>
 
@@ -108,6 +113,50 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="px-8 py-20 text-center text-slate-400 font-black italic uppercase tracking-[0.3em] text-[10px]">No active payout markers identified.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Top-up Requests -->
+        <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-8 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                <h3 class="font-black text-slate-900 uppercase tracking-[0.2em] text-[10px] italic">Recharge Transmissions</h3>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Manual Wallet Credits</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left table-standard">
+                    <thead>
+                        <tr class="bg-slate-50">
+                            <th class="px-8 py-4">Request Date</th>
+                            <th class="px-8 py-4">UTR Number</th>
+                            <th class="px-8 py-4">Amount</th>
+                            <th class="px-8 py-4">Status</th>
+                            <th class="px-8 py-4">Note</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 italic">
+                        @forelse($topupRequests as $request)
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-8 py-6 text-xs text-slate-500 font-bold">{{ $request->created_at->format('M d, Y - H:i') }}</td>
+                                <td class="px-8 py-6">
+                                    <span class="bg-slate-100 px-3 py-1 rounded-lg text-slate-600 font-black text-[9px] uppercase tracking-tighter">{{ $request->utr_number }}</span>
+                                </td>
+                                <td class="px-8 py-6 font-black text-slate-900 text-sm">₹{{ number_format($request->amount, 2) }}</td>
+                                <td class="px-8 py-6">
+                                    <span class="px-3 py-1 
+                                        {{ $request->status === 'approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : ($request->status === 'pending' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-red-50 text-red-600 border-red-100') }} 
+                                        rounded-full font-black text-[8px] uppercase tracking-widest border">
+                                        {{ $request->status }}
+                                    </span>
+                                </td>
+                                <td class="px-8 py-6 text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ $request->admin_note ?? '---' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-8 py-20 text-center text-slate-400 font-black italic uppercase tracking-[0.3em] text-[10px]">No wallet recharge sequences detected.</td>
                             </tr>
                         @endforelse
                     </tbody>

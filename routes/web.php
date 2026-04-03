@@ -76,66 +76,150 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-    Route::get('/applications', [AdminController::class, 'applications'])->name('applications');
+    Route::get('/applications', [AdminController::class, 'applications'])->name('applications')->middleware('permission:view_applications');
 
-    Route::resource('plans', PlanController::class);
-    Route::post('/plans/{plan}/toggle-status', [PlanController::class, 'toggleStatus'])->name('plans.toggle-status');
+    Route::middleware('permission:view_plans')->group(function () {
+        Route::get('plans', [PlanController::class, 'index'])->name('plans.index');
+        
+        Route::get('plans/create', [PlanController::class, 'create'])->name('plans.create')->middleware('permission:create_plans');
+        Route::post('plans', [PlanController::class, 'store'])->name('plans.store')->middleware('permission:create_plans');
+        
+        Route::get('plans/{plan}', [PlanController::class, 'show'])->name('plans.show');
+        
+        Route::get('plans/{plan}/edit', [PlanController::class, 'edit'])->name('plans.edit')->middleware('permission:edit_plans');
+        Route::put('plans/{plan}', [PlanController::class, 'update'])->name('plans.update')->middleware('permission:edit_plans');
+        Route::post('/plans/{plan}/toggle-status', [PlanController::class, 'toggleStatus'])->name('plans.toggle-status')->middleware('permission:edit_plans');
+        
+        Route::delete('plans/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy')->middleware('permission:delete_plans');
+    });
 
-    Route::get('/subscriptions', [AdminController::class, 'subscriptions'])->name('subscriptions');
-    Route::post('/subscriptions/{subscription}/approve', [AdminController::class, 'approveSubscription'])->name('subscriptions.approve');
-    Route::post('/subscriptions/{subscription}/reject', [AdminController::class, 'rejectSubscription'])->name('subscriptions.reject');
+    Route::middleware('permission:view_subscriptions')->group(function () {
+        Route::get('/subscriptions', [AdminController::class, 'subscriptions'])->name('subscriptions');
+        Route::post('/subscriptions/{subscription}/approve', [AdminController::class, 'approveSubscription'])->name('subscriptions.approve')->middleware('permission:approve_payments');
+        Route::post('/subscriptions/{subscription}/reject', [AdminController::class, 'rejectSubscription'])->name('subscriptions.reject')->middleware('permission:approve_payments');
+    });
 
-    Route::resource('users', UserController::class);
-    Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
-    Route::post('/users/{user}/impersonate', [UserController::class, 'impersonate'])->name('users.impersonate');
+    Route::middleware('permission:view_users')->group(function () {
+        Route::get('users', [UserController::class, 'index'])->name('users.index');
+        
+        Route::get('users/create', [UserController::class, 'create'])->name('users.create')->middleware('permission:create_users');
+        Route::post('users', [UserController::class, 'store'])->name('users.store')->middleware('permission:create_users');
+        
+        Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
+        
+        Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit')->middleware('permission:edit_users');
+        Route::put('users/{user}', [UserController::class, 'update'])->name('users.update')->middleware('permission:edit_users');
+        Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status')->middleware('permission:edit_users');
+        Route::post('/users/{user}/impersonate', [UserController::class, 'impersonate'])->name('users.impersonate')->middleware('permission:impersonate_users');
+        
+        Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy')->middleware('permission:delete_users');
+    });
 
     // Website Settings
-    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
-    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::middleware('permission:view_settings')->group(function () {
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [SettingController::class, 'update'])->name('settings.update')->middleware('permission:update_settings');
+    });
 
     // Payouts & KYC Management
-    Route::get('/payouts', [AdminController::class, 'payouts'])->name('payouts.index');
-    Route::post('/kyc/{user}/verify', [AdminController::class, 'verifyKyc'])->name('kyc.verify');
-    Route::post('/payouts/{payout}/approve', [AdminController::class, 'approvePayout'])->name('payout.approve');
+    Route::middleware('permission:view_payouts')->group(function () {
+        Route::get('/payouts', [AdminController::class, 'payouts'])->name('payouts.index');
+        Route::post('/kyc/{user}/verify', [AdminController::class, 'verifyKyc'])->name('kyc.verify')->middleware('permission:verify_kyc');
+        Route::post('/payouts/{payout}/approve', [AdminController::class, 'approvePayout'])->name('payout.approve')->middleware('permission:approve_payouts');
+    });
 
     // Dynamic Classes Management
-    Route::resource('student-classes', \App\Http\Controllers\Backend\Admin\StudentClassController::class);
-    Route::post('/student-classes/{student_class}/toggle-status', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'toggleStatus'])->name('student-classes.toggle-status');
+    Route::middleware('permission:view_classes')->group(function () {
+        Route::resource('student-classes', \App\Http\Controllers\Backend\Admin\StudentClassController::class)->except(['create', 'store', 'edit', 'update', 'destroy']);
+        
+        Route::post('student-classes', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'store'])->name('student-classes.store')->middleware('permission:create_classes');
+        Route::put('student-classes/{student_class}', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'update'])->name('student-classes.update')->middleware('permission:edit_classes');
+        Route::post('/student-classes/{student_class}/toggle-status', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'toggleStatus'])->name('student-classes.toggle-status')->middleware('permission:edit_classes');
+        Route::delete('student-classes/{student_class}', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'destroy'])->name('student-classes.destroy')->middleware('permission:delete_classes');
+    });
 
     // Home Banners
-    Route::resource('banners', BannerController::class);
-    Route::post('/banners/{banner}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
+    Route::middleware('permission:view_banners')->group(function () {
+        Route::get('banners', [BannerController::class, 'index'])->name('banners.index');
+        Route::get('banners/create', [BannerController::class, 'create'])->name('banners.create')->middleware('permission:create_banners');
+        Route::post('banners', [BannerController::class, 'store'])->name('banners.store')->middleware('permission:create_banners');
+        Route::get('banners/{banner}/edit', [BannerController::class, 'edit'])->name('banners.edit')->middleware('permission:edit_banners');
+        Route::put('banners/{banner}', [BannerController::class, 'update'])->name('banners.update')->middleware('permission:edit_banners');
+        Route::post('/banners/{banner}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status')->middleware('permission:edit_banners');
+        Route::delete('banners/{banner}', [BannerController::class, 'destroy'])->name('banners.destroy')->middleware('permission:delete_banners');
+    });
 
     // Home Sectors
-    Route::resource('home-sectors', HomeSectorController::class);
-    Route::post('/home-sectors/{home_sector}/toggle-status', [HomeSectorController::class, 'toggleStatus'])->name('home-sectors.toggle-status');
+    Route::middleware('permission:view_sectors')->group(function () {
+        Route::get('home-sectors', [HomeSectorController::class, 'index'])->name('home-sectors.index');
+        Route::get('home-sectors/create', [HomeSectorController::class, 'create'])->name('home-sectors.create')->middleware('permission:create_sectors');
+        Route::post('home-sectors', [HomeSectorController::class, 'store'])->name('home-sectors.store')->middleware('permission:create_sectors');
+        Route::get('home-sectors/{home_sector}/edit', [HomeSectorController::class, 'edit'])->name('home-sectors.edit')->middleware('permission:edit_sectors');
+        Route::put('home-sectors/{home_sector}', [HomeSectorController::class, 'update'])->name('home-sectors.update')->middleware('permission:edit_sectors');
+        Route::post('/home-sectors/{home_sector}/toggle-status', [HomeSectorController::class, 'toggleStatus'])->name('home-sectors.toggle-status')->middleware('permission:edit_sectors');
+        Route::delete('home-sectors/{home_sector}', [HomeSectorController::class, 'destroy'])->name('home-sectors.destroy')->middleware('permission:delete_sectors');
+    });
 
-    // Quiz Approvals
-    Route::get('/quiz-approvals', [AdminController::class, 'quizzes'])->name('quiz-approvals');
-    Route::post('/quiz-approvals/{quiz}/approve', [AdminController::class, 'approveQuiz'])->name('quiz-approvals.approve');
-    Route::post('/quiz-approvals/{quiz}/reject', [AdminController::class, 'rejectQuiz'])->name('quiz-approvals.reject');
+    // Exam Management
+    Route::middleware('permission:view_exams')->group(function () {
+        Route::get('/quiz-approvals', [AdminController::class, 'quizzes'])->name('quiz-approvals');
+        Route::post('/quiz-approvals/{quiz}/approve', [AdminController::class, 'approveQuiz'])->name('quiz-approvals.approve')->middleware('permission:approve_exams');
+        Route::post('/quiz-approvals/{quiz}/reject', [AdminController::class, 'rejectQuiz'])->name('quiz-approvals.reject')->middleware('permission:approve_exams');
 
-    // Admin Quizzes (Manage Exams)
-    Route::resource('quizzes', \App\Http\Controllers\Backend\Admin\QuizController::class);
-    Route::get('/quizzes/{quiz}/results', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'results'])->name('quizzes.results');
-    Route::get('/quizzes/sample-csv', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'downloadSampleCSV'])->name('quizzes.sample-csv');
-    Route::post('/quizzes/{quiz}/questions', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'addQuestion'])->name('quizzes.add-question');
-    Route::post('/quizzes/{quiz}/bulk-questions', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'addBulkQuestions'])->name('quizzes.bulk-questions');
-    Route::post('/quizzes/{quiz}/publish', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'publish'])->name('quizzes.publish');
-    Route::post('/quizzes/{quiz}/unpublish', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'unpublish'])->name('quizzes.unpublish');
-    Route::post('/quizzes/{quiz}/promote', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'calculateAndPromote'])->name('quizzes.promote');
-    Route::delete('/questions/{question}', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'deleteQuestion'])->name('questions.destroy');
+        Route::get('quizzes', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'index'])->name('quizzes.index');
+        
+        Route::get('quizzes/create', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'create'])->name('quizzes.create')->middleware('permission:create_exams');
+        Route::post('quizzes', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'store'])->name('quizzes.store')->middleware('permission:create_exams');
+        
+        Route::get('quizzes/{quiz}', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'show'])->name('quizzes.show');
+        Route::get('/quizzes/{quiz}/results', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'results'])->name('quizzes.results');
+        Route::get('/quizzes/sample-csv', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'downloadSampleCSV'])->name('quizzes.sample-csv');
+        Route::post('/quizzes/{quiz}/questions', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'addQuestion'])->name('quizzes.add-question')->middleware('permission:edit_exams');
+        Route::post('/quizzes/{quiz}/bulk-questions', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'addBulkQuestions'])->name('quizzes.bulk-questions')->middleware('permission:edit_exams');
+        Route::post('/quizzes/{quiz}/publish', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'publish'])->name('quizzes.publish')->middleware('permission:publish_exams');
+        Route::post('/quizzes/{quiz}/unpublish', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'unpublish'])->name('quizzes.unpublish')->middleware('permission:publish_exams');
+        Route::post('/quizzes/{quiz}/promote', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'calculateAndPromote'])->name('quizzes.promote')->middleware('permission:publish_exams');
+        Route::delete('/questions/{question}', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'deleteQuestion'])->name('questions.destroy')->middleware('permission:edit_exams');
+    });
 
     // Testimonials
-    Route::resource('testimonials', TestimonialController::class);
-    Route::post('/testimonials/{testimonial}/toggle-status', [TestimonialController::class, 'toggleStatus'])->name('testimonials.toggle-status');
+    Route::middleware('permission:view_testimonials')->group(function () {
+        Route::get('testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
+        Route::get('testimonials/create', [TestimonialController::class, 'create'])->name('testimonials.create')->middleware('permission:create_testimonials');
+        Route::post('testimonials', [TestimonialController::class, 'store'])->name('testimonials.store')->middleware('permission:create_testimonials');
+        Route::get('testimonials/{testimonial}/edit', [TestimonialController::class, 'edit'])->name('testimonials.edit')->middleware('permission:edit_testimonials');
+        Route::put('testimonials/{testimonial}', [TestimonialController::class, 'update'])->name('testimonials.update')->middleware('permission:edit_testimonials');
+        Route::post('/testimonials/{testimonial}/toggle-status', [TestimonialController::class, 'toggleStatus'])->name('testimonials.toggle-status')->middleware('permission:edit_testimonials');
+        Route::delete('testimonials/{testimonial}', [TestimonialController::class, 'destroy'])->name('testimonials.destroy')->middleware('permission:delete_testimonials');
+    });
+
+    // Admin Wallet Management
+    Route::middleware('permission:view_wallet')->group(function () {
+        Route::get('/wallet', [App\Http\Controllers\Backend\Admin\WalletController::class, 'index'])->name('wallet.index');
+        Route::get('/wallet/search-users', [App\Http\Controllers\Backend\Admin\WalletController::class, 'searchUsers'])->name('wallet.search-users');
+        Route::post('/wallet/add', [App\Http\Controllers\Backend\Admin\WalletController::class, 'store'])->name('wallet.store')->middleware('permission:credit_wallet');
+    });
+
+    // Top-up Requests
+    Route::middleware('permission:view_topup_requests')->group(function () {
+        Route::get('wallet/topups', [\App\Http\Controllers\Backend\Admin\WalletTopupController::class, 'index'])->name('wallet.topups.index');
+        Route::post('wallet/topups/{topup_request}/approve', [\App\Http\Controllers\Backend\Admin\WalletTopupController::class, 'approve'])->name('wallet.topup.approve')->middleware('permission:approve_topup_requests');
+        Route::post('wallet/topups/{topup_request}/reject', [\App\Http\Controllers\Backend\Admin\WalletTopupController::class, 'reject'])->name('wallet.topup.reject')->middleware('permission:approve_topup_requests');
+    });
 
     // Industry Experts
-    Route::resource('industry-experts', IndustryExpertController::class);
-    Route::post('/industry-experts/{industry_expert}/toggle-status', [IndustryExpertController::class, 'toggleStatus'])->name('industry-experts.toggle-status');
+    Route::middleware('permission:view_industry_experts')->group(function () {
+        Route::get('industry-experts', [IndustryExpertController::class, 'index'])->name('industry-experts.index');
+        Route::get('industry-experts/create', [IndustryExpertController::class, 'create'])->name('industry-experts.create')->middleware('permission:create_industry_experts');
+        Route::post('industry-experts', [IndustryExpertController::class, 'store'])->name('industry-experts.store')->middleware('permission:create_industry_experts');
+        Route::get('industry-experts/{industry_expert}/edit', [IndustryExpertController::class, 'edit'])->name('industry-experts.edit')->middleware('permission:edit_industry_experts');
+        Route::put('industry-experts/{industry_expert}', [IndustryExpertController::class, 'update'])->name('industry-experts.update')->middleware('permission:edit_industry_experts');
+        Route::post('/industry-experts/{industry_expert}/toggle-status', [IndustryExpertController::class, 'toggleStatus'])->name('industry-experts.toggle-status')->middleware('permission:edit_industry_experts');
+        Route::delete('industry-experts/{industry_expert}', [IndustryExpertController::class, 'destroy'])->name('industry-experts.destroy')->middleware('permission:delete_industry_experts');
+    });
 });
 
-// Shared Profile Route
+    // Shared Profile Route
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -148,6 +232,8 @@ Route::middleware(['auth', 'syndicate'])->prefix('dashboard')->name('syndicate.'
     Route::get('/plans/{plan}/join', [SyndicateController::class, 'joinForm'])->name('plans.join');
     Route::post('/plans/{plan}/join', [SyndicateController::class, 'submitJoin'])->name('plans.submit');
     Route::get('/wallet', [SyndicateController::class, 'wallet'])->name('wallet');
+    Route::get('/wallet/topup', [SyndicateController::class, 'topup'])->name('wallet.topup');
+    Route::post('/wallet/topup', [SyndicateController::class, 'submitTopup'])->name('wallet.topup.submit');
 });
 
 Route::middleware(['auth', 'sales_agent'])->prefix('sales-agent')->name('sales-agent.')->group(function () {
@@ -155,6 +241,8 @@ Route::middleware(['auth', 'sales_agent'])->prefix('sales-agent')->name('sales-a
     Route::get('/merchants', [SalesAgentController::class, 'merchants'])->name('merchants');
     Route::post('/merchants', [SalesAgentController::class, 'storeMerchant'])->name('merchants.store');
     Route::get('/wallet', [SalesAgentController::class, 'wallet'])->name('wallet');
+    Route::get('/wallet/topup', [SalesAgentController::class, 'topup'])->name('wallet.topup');
+    Route::post('/wallet/topup', [SalesAgentController::class, 'submitTopup'])->name('wallet.topup.submit');
     Route::get('/kyc', [SalesAgentController::class, 'kyc'])->name('kyc');
     Route::post('/kyc', [SalesAgentController::class, 'submitKyc'])->name('kyc.submit');
     Route::post('/payout/request', [SalesAgentController::class, 'submitPayoutRequest'])->name('payout.submit');
@@ -183,6 +271,8 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
 
     // Wallet & KYC
     Route::get('/wallet', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'wallet'])->name('wallet');
+    Route::get('/wallet/topup', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'topup'])->name('wallet.topup');
+    Route::post('/wallet/topup', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'submitTopup'])->name('wallet.topup.submit');
     Route::get('/kyc', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'kyc'])->name('kyc');
     Route::post('/kyc', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'submitKyc'])->name('kyc.submit');
     Route::post('/payout/request', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'submitPayoutRequest'])->name('payout.submit');

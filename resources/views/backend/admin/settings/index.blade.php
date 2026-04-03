@@ -153,6 +153,53 @@
                     </div>
                 </div>
 
+                <!-- Bank details & QR -->
+                <div class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm" x-data="{ qrPreview: '{{ isset($settings['admin_qr_code']) ? asset('storage/' . $settings['admin_qr_code']) : '' }}' }">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-10 h-1 rounded-full bg-emerald-500"></div>
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Top-up Account Details</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-6">
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Bank Name</label>
+                                <input type="text" name="admin_bank_name" value="{{ $settings['admin_bank_name'] ?? '' }}" placeholder="State Bank of India" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Account Number</label>
+                                <input type="text" name="admin_account_no" value="{{ $settings['admin_account_no'] ?? '' }}" placeholder="XXXX XXXX XXXX" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">IFSC Code</label>
+                                <input type="text" name="admin_ifsc_code" value="{{ $settings['admin_ifsc_code'] ?? '' }}" placeholder="SBIN0001234" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">UPI ID</label>
+                                <input type="text" name="admin_upi_id" value="{{ $settings['admin_upi_id'] ?? '' }}" placeholder="admin@upi" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Payment QR Code</label>
+                            <div class="relative group h-full min-h-[260px]">
+                                <input type="file" name="admin_qr_code" @change="let reader = new FileReader(); reader.onload = (e) => { qrPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="h-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-8 text-center flex flex-col items-center justify-center group-hover:border-emerald-500 transition-all">
+                                    <template x-if="qrPreview">
+                                        <img :src="qrPreview" class="h-40 w-40 object-contain mb-4 rounded-xl shadow-lg">
+                                    </template>
+                                    <template x-if="!qrPreview">
+                                        <div class="mb-4">
+                                            <i class="fas fa-qrcode text-5xl text-slate-300"></i>
+                                        </div>
+                                    </template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="qrPreview ? 'Change QR Code' : 'Upload Payment QR'"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex justify-end pt-6">
                     <button type="submit" class="bg-indigo-600 text-white px-12 py-5 rounded-[2rem] text-xs font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-2xl shadow-indigo-200 border-b-4 border-indigo-800 active:border-b-0 active:translate-y-1">
                         Deploy Changes <i class="fas fa-rocket ml-2"></i>

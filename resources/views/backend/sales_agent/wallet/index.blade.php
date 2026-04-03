@@ -12,8 +12,13 @@
                 <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-2">Current Balance</p>
                 <h3 class="text-4xl font-black">₹{{ number_format(auth()->user()->wallet_balance, 2) }}</h3>
             </div>
-            <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-3xl">
-                <i class="fas fa-wallet"></i>
+            <div class="flex flex-col gap-2">
+                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <a href="{{ route('sales-agent.wallet.topup') }}" class="px-4 py-2 bg-white text-indigo-600 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-lg active:scale-95 text-center">
+                    <i class="fas fa-plus-circle mr-1"></i> Add Money
+                </a>
             </div>
         </div>
 
@@ -105,6 +110,50 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="px-6 py-8 text-center text-slate-400 font-medium italic">No payout requests found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Top-up History -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                <h3 class="font-black text-slate-900 uppercase tracking-widest text-xs">Recharge History</h3>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Manual Wallet Credits</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs table-standard">
+                    <thead>
+                        <tr class="bg-slate-50">
+                            <th class="px-6 py-4">Request Date</th>
+                            <th class="px-6 py-4">UTR Number</th>
+                            <th class="px-6 py-4">Amount</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4">Admin Note</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 italic font-medium">
+                        @forelse($topupRequests as $request)
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 text-slate-500">{{ $request->created_at->format('M d, Y H:i') }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="bg-slate-100 px-2 py-1 rounded text-slate-600 font-bold uppercase tracking-tighter">{{ $request->utr_number }}</span>
+                                </td>
+                                <td class="px-6 py-4 font-bold text-slate-900">₹{{ number_format($request->amount, 2) }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 
+                                        {{ $request->status === 'approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : ($request->status === 'pending' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-red-50 text-red-600 border-red-100') }} 
+                                        rounded-full font-bold text-[9px] uppercase tracking-wider border">
+                                        {{ $request->status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-slate-400 font-bold uppercase tracking-widest">{{ $request->admin_note ?? '---' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium italic">No wallet recharge requests found.</td>
                             </tr>
                         @endforelse
                     </tbody>

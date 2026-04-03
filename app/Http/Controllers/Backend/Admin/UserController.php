@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -19,7 +20,13 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('backend.admin.users.create');
+        $permissions = Permission::all();
+        return view('backend.admin.users.create', compact('permissions'));
+    }
+
+    public function show(User $user)
+    {
+        return redirect()->route('admin.users.edit', $user);
     }
 
     public function store(Request $request)
@@ -32,7 +39,7 @@ class UserController extends Controller
             'commission_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -40,12 +47,17 @@ class UserController extends Controller
             'commission_percent' => $request->commission_percent ?? 0,
         ]);
 
+        if ($request->role === 'admin' && $request->has('permissions')) {
+            $user->permissions()->sync($request->permissions);
+        }
+
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
     public function edit(User $user)
     {
-        return view('backend.admin.users.create', compact('user'));
+        $permissions = Permission::all();
+        return view('backend.admin.users.create', compact('user', 'permissions'));
     }
 
     public function update(Request $request, User $user)
@@ -69,6 +81,12 @@ class UserController extends Controller
                 'password' => ['confirmed', Password::defaults()],
             ]);
             $user->update(['password' => Hash::make($request->password)]);
+        }
+
+        if ($request->role === 'admin') {
+            $user->permissions()->sync($request->permissions ?? []);
+        } else {
+            $user->permissions()->detach();
         }
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
