@@ -23,8 +23,9 @@ class TeacherController extends Controller
         ];
         
         $recent_quizzes = Quiz::where('teacher_id', auth()->id())->latest()->take(5)->get();
+        $classes = StudentClass::where('status', 'active')->get();
         
-        return view('backend.teacher.dashboard', compact('stats', 'recent_quizzes'));
+        return view('backend.teacher.dashboard', compact('stats', 'recent_quizzes', 'classes'));
     }
 
     public function students()
@@ -99,35 +100,35 @@ class TeacherController extends Controller
         ]);
 
         $amount = $validated['amount'];
-        $teacher = auth()->user();
-
-        if ($teacher->wallet_balance < $amount) {
-            return back()->withErrors(['amount' => 'Insufficient wallet balance.']);
-        }
 
         try {
-            DB::beginTransaction();
+            DB::transaction(function () use ($student, $amount) {
+                // Lock the teacher record to prevent concurrent withdrawal issues
+                $teacher = User::lockForUpdate()->find(auth()->id());
 
-            // Deduct from teacher
-            $teacher->withdraw(
-                $amount, 
-                'student_wallet_credit', 
-                $student->id, 
-                "Wallet credit to student: {$student->name}"
-            );
+                if ($teacher->wallet_balance < $amount) {
+                    throw new \Exception('Insufficient wallet balance.');
+                }
 
-            // Credit to student
-            $student->deposit(
-                $amount, 
-                'teacher_wallet_credit', 
-                $teacher->id, 
-                "Wallet credit from teacher: {$teacher->name}"
-            );
+                // Deduct from teacher
+                $teacher->withdraw(
+                    $amount, 
+                    'student_wallet_credit', 
+                    $student->id, 
+                    "Wallet credit to student: {$student->name}"
+                );
 
-            DB::commit();
+                // Credit to student
+                $student->deposit(
+                    $amount, 
+                    'teacher_wallet_credit', 
+                    $teacher->id, 
+                    "Wallet credit from teacher: {$teacher->name}"
+                );
+            });
+
             return back()->with('success', "₹{$amount} credited to student wallet successfully.");
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()->withErrors(['amount' => 'Transaction failed: ' . $e->getMessage()]);
         }
     }
@@ -210,14 +211,27 @@ class TeacherController extends Controller
         }
 
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:1|max:' . $user->wallet_balance,
+            'amount' => 'required|numeric|min:1',
         ]);
 
-        \App\Models\PayoutRequest::create([
-            'user_id' => $user->id,
-            'amount' => $validated['amount'],
-            'status' => 'pending',
-        ]);
+        try {
+            DB::transaction(function () use ($user, $validated) {
+                // Lock the user to check balance accurately
+                $lockedUser = User::lockForUpdate()->find($user->id);
+
+                if ($lockedUser->wallet_balance < $validated['amount']) {
+                    throw new \Exception('Insufficient wallet balance for this request.');
+                }
+
+                \App\Models\PayoutRequest::create([
+                    'user_id' => $lockedUser->id,
+                    'amount' => $validated['amount'],
+                    'status' => 'pending',
+                ]);
+            });
+        } catch (\Exception $e) {
+            return back()->withErrors(['payout' => 'Request failed: ' . $e->getMessage()]);
+        }
 
         return back()->with('success', 'Payout request submitted successfully.');
     }

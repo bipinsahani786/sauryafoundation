@@ -132,6 +132,30 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Recent Study Materials Widget -->
+            <div class="mt-10 bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden italic">
+                <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <h3 class="font-black text-slate-900 text-[10px] uppercase tracking-[0.2em]">Latest Resources</h3>
+                    <a href="{{ route('student.study-materials.index') }}" class="text-[9px] font-black text-indigo-600 uppercase tracking-widest">Vault <i class="fas fa-chevron-right ml-1"></i></a>
+                </div>
+                <div class="p-2">
+                    @forelse($recent_materials as $material)
+                        <a href="{{ route('student.study-materials.download', $material) }}" class="flex items-center gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-all group">
+                            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
+                                <i class="fas {{ $material->category == 'pdf' ? 'fa-file-pdf' : 'fa-file-alt' }} text-xs"></i>
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <div class="text-[11px] font-black text-slate-900 truncate uppercase tracking-tight">{{ $material->title }}</div>
+                                <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest">{{ $material->created_at->diffForHumans() }}</div>
+                            </div>
+                            <i class="fas fa-download text-[8px] text-slate-300 group-hover:text-indigo-600 transition-colors"></i>
+                        </a>
+                    @empty
+                        <div class="p-8 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest italic">No notes uploaded.</div>
+                    @endforelse
+                </div>
+            </div>
         </div>
     </div>
 </x-dashboard.layout>

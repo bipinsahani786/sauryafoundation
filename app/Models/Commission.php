@@ -10,7 +10,8 @@ class Commission extends Model
         'user_id',
         'student_id',
         'quiz_enrollment_id',
-        'quiz_price',
+        'course_id',
+        'total_amount',
         'commission_percent',
         'amount',
         'type',
@@ -30,5 +31,9 @@ class Commission extends Model
     public function quizEnrollment()
     {
         return $this->belongsTo(QuizEnrollment::class);
+    }
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
     }
 }

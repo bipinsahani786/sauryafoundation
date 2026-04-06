@@ -68,7 +68,7 @@
                         $inactiveClasses = "text-slate-500 hover:bg-slate-50 hover:text-indigo-600";
                     @endphp
 
-                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'superadmin')
+                    @if(Auth::user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.dashboard') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-home w-4"></i> <span>Dashboard</span>
                         </a>
@@ -198,6 +198,13 @@
                         <a href="{{ route('admin.student-classes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.student-classes.*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-school w-4"></i> <span>Academic Classes</span>
                         </a>
+
+                        <a href="{{ route('admin.courses.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.courses.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-graduation-cap w-4"></i> <span>Academy (LMS)</span>
+                        </a>
+                        <a href="{{ route('admin.study-materials.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.study-materials.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-book w-4"></i> <span>Global Notes</span>
+                        </a>
                         @endif
 
                         @if(Auth::user()->hasPermission('view_settings'))
@@ -205,6 +212,10 @@
                             <i class="fas fa-cog w-4 font-black"></i> <span class="font-black italic">Site Settings</span>
                         </a>
                         @endif
+
+                        <a href="{{ route('admin.docs') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.docs') ? $activeClasses : $inactiveClasses }} mt-6 border-t border-slate-100 pt-6">
+                            <i class="fas fa-book-reader w-4 text-indigo-600"></i> <span class="text-indigo-600">Project Docs (Tutorial)</span>
+                        </a>
                     @elseif(Auth::user()->role === 'teacher')
                         <a href="{{ route('teacher.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.dashboard') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-th-large w-4"></i> <span>Dashboard</span>
@@ -227,6 +238,9 @@
                         <a href="{{ route('teacher.quizzes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.quizzes*') ? $activeClasses : $inactiveClasses }}" id="sidebar_link_teacher_exams">
                             <i class="fas fa-vial w-4"></i> <span>Exam Center</span>
                         </a>
+                        <a href="{{ route('teacher.study-materials.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.study-materials.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-book w-4"></i> <span>My Study Notes</span>
+                        </a>
                         <a href="{{ route('teacher.wallet') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.wallet*') ? $activeClasses : $inactiveClasses }}" id="sidebar_wallet_link_teacher">
                             <i class="fas fa-wallet w-4"></i> <span>My Wallet</span>
                         </a>
@@ -244,8 +258,11 @@
                         <a href="{{ route('student.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.dashboard') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-th-large w-4"></i> <span>Dashboard</span>
                         </a>
-                        <a href="{{ route('student.courses') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.courses*') ? $activeClasses : $inactiveClasses }}">
+                        <a href="{{ route('student.courses.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.courses*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-university w-4"></i> <span>My Academy</span>
+                        </a>
+                        <a href="{{ route('student.study-materials.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.study-materials.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-book-open w-4"></i> <span>Study Vault</span>
                         </a>
                         <a href="{{ route('student.exams') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.exams*', 'student.results*') ? $activeClasses : $inactiveClasses }}" id="sidebar_link_student_portal">
                             <i class="fas fa-vial-circle-check w-4"></i> <span>Test Portal</span>

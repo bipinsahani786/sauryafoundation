@@ -412,30 +412,6 @@
     <!-- 13. Application Form -->
 
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const bannerSwiper = new Swiper('.bannerSwiper', {
-                loop: true,
-                autoplay: {
-                    delay: 5000,
-                    disableOnInteraction: false,
-                },
-                parallax: true,
-                speed: 1000,
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                effect: 'fade',
-                fadeEffect: {
-                    crossFade: true
-                }
-            });
-        });
-    </script>
+
 
 </x-frontend.layout>

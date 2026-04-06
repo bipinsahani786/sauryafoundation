@@ -15,6 +15,7 @@ class Course extends Model
         'description',
         'thumbnail',
         'status',
+        'is_global',
         'price',
         'class_id',
     ];

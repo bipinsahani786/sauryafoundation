@@ -23,6 +23,11 @@ class AdminController extends Controller
         return view('backend.admin.dashboard', compact('stats'));
     }
 
+    public function docs()
+    {
+        return view('backend.admin.docs');
+    }
+
     public function applications()
     {
         $applications = SyndicateApplication::latest()->paginate(20);
@@ -81,40 +86,47 @@ class AdminController extends Controller
 
     public function approvePayout(Request $request, \App\Models\PayoutRequest $payout)
     {
-        $agent = $payout->user;
         $superadmin = auth()->user();
 
-        if ($agent->wallet_balance < $payout->amount) {
-            return back()->withErrors(['payout' => 'Agent has insufficient balance.']);
+        try {
+            \DB::transaction(function () use ($payout, $superadmin, $request) {
+                // Lock records for update
+                $agent = User::lockForUpdate()->find($payout->user_id);
+                $superadmin = User::lockForUpdate()->find($superadmin->id);
+
+                if ($agent->wallet_balance < $payout->amount) {
+                    throw new \Exception("Agent {$agent->name} has insufficient balance.");
+                }
+
+                if ($superadmin->wallet_balance < $payout->amount) {
+                    throw new \Exception("Superadmin has insufficient balance.");
+                }
+
+                // Deduct from Agent (Payout requested)
+                $agent->withdraw(
+                    $payout->amount,
+                    'payout_request',
+                    $payout->id,
+                    "Payout of ₹{$payout->amount} approved."
+                );
+
+                // Deduct from Superadmin (Treasury payout)
+                $superadmin->withdraw(
+                    $payout->amount,
+                    'payout_disbursement',
+                    $payout->id,
+                    "Disbursed payout to {$agent->name} (#{$payout->id})"
+                );
+
+                $payout->update([
+                    'status' => 'approved',
+                    'admin_id' => $superadmin->id,
+                    'remarks' => $request->remarks
+                ]);
+            });
+        } catch (\Exception $e) {
+            return back()->withErrors(['payout' => 'Payout failed: ' . $e->getMessage()]);
         }
-
-        if ($superadmin->wallet_balance < $payout->amount) {
-            return back()->withErrors(['payout' => 'Superadmin has insufficient balance.']);
-        }
-
-        \DB::transaction(function () use ($payout, $agent, $superadmin, $request) {
-            // Deduct from Agent
-            $agent->withdraw(
-                $payout->amount,
-                'payout_request',
-                $payout->id,
-                "Payout of ₹{$payout->amount} approved."
-            );
-
-            // Deduct from Superadmin
-            $superadmin->withdraw(
-                $payout->amount,
-                'payout_disbursement',
-                $payout->id,
-                "Disbursed payout to {$agent->name} (#{$payout->id})"
-            );
-
-            $payout->update([
-                'status' => 'approved',
-                'admin_id' => $superadmin->id,
-                'remarks' => $request->remarks
-            ]);
-        });
 
         return back()->with('success', 'Payout approved and funds disbursed.');
     }

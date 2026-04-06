@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             InitialSeeder::class,
             HomeSectorSeeder::class,
             ContentSeeder::class,
+            StudentClassSeeder::class,
+            PermissionSeeder::class,
         ]);
     }
 }

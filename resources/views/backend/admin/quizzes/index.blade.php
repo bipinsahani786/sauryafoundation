@@ -74,6 +74,21 @@
                                 <a href="{{ route('admin.quizzes.edit', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 text-slate-700 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">
                                     Edit
                                 </a>
+                                @if($quiz->status == 'pending')
+                                    <form action="{{ route('admin.quizzes.publish', $quiz->id) }}" method="POST" class="flex-1">
+                                        @csrf
+                                        <button type="submit" class="w-full text-center bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
+                                            Publish
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('admin.quizzes.unpublish', $quiz->id) }}" method="POST" class="flex-1">
+                                        @csrf
+                                        <button type="submit" class="w-full text-center bg-amber-50 text-amber-600 border border-amber-100 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-amber-600 hover:text-white transition-all shadow-sm">
+                                            Unpublish
+                                        </button>
+                                    </form>
+                                @endif
                                 <a href="{{ route('admin.quizzes.show', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 text-slate-700 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">
                                     Ques ({{ $quiz->questions_count ?? $quiz->questions()->count() }})
                                 </a>
@@ -103,10 +118,25 @@
                                 <h3 class="font-black text-slate-900 text-lg mb-1 tracking-tighter">{{ $quiz->title }}</h3>
                                 <p class="text-[10px] text-slate-400 font-bold italic line-clamp-1">{{ $quiz->description ?? 'Regular examination.' }}</p>
                             </div>
-                            <div class="p-6 bg-slate-50 mt-auto flex gap-2">
-                                <a href="{{ route('admin.quizzes.edit', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">Edit</a>
-                                <a href="{{ route('admin.quizzes.show', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">Setup</a>
-                                <a href="{{ route('admin.quizzes.results', $quiz->id) }}" class="flex-1 text-center bg-indigo-600 text-white px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all">Results</a>
+                            <div class="p-6 bg-slate-50 mt-auto flex flex-wrap gap-2">
+                                <a href="{{ route('admin.quizzes.edit', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">Edit</a>
+                                @if($quiz->status == 'pending')
+                                    <form action="{{ route('admin.quizzes.publish', $quiz->id) }}" method="POST" class="flex-1">
+                                        @csrf
+                                        <button type="submit" class="w-full text-center bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
+                                            Publish
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('admin.quizzes.unpublish', $quiz->id) }}" method="POST" class="flex-1">
+                                        @csrf
+                                        <button type="submit" class="w-full text-center bg-amber-50 text-amber-600 border border-amber-100 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-amber-600 hover:text-white transition-all shadow-sm">
+                                            Unpublish
+                                        </button>
+                                    </form>
+                                @endif
+                                <a href="{{ route('admin.quizzes.show', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">Setup</a>
+                                <a href="{{ route('admin.quizzes.results', $quiz->id) }}" class="w-full text-center bg-indigo-600 text-white px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-indigo-100">Results</a>
                             </div>
                         </div>
                     @endforeach

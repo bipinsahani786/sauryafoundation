@@ -422,7 +422,36 @@
             offset: 50,
             disable: 'mobile' // Disable animations on mobile for better performance
         });
+
+        // Global Banner Swiper Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            const swiperElements = document.querySelectorAll('.bannerSwiper');
+            swiperElements.forEach((el) => {
+                new Swiper(el, {
+                    loop: true,
+                    autoplay: {
+                        delay: 5000,
+                        disableOnInteraction: false,
+                    },
+                    parallax: true,
+                    speed: 1000,
+                    pagination: {
+                        el: el.querySelector('.swiper-pagination') || '.swiper-pagination',
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: el.querySelector('.swiper-button-next') || '.swiper-button-next',
+                        prevEl: el.querySelector('.swiper-button-prev') || '.swiper-button-prev',
+                    },
+                    effect: 'fade',
+                    fadeEffect: {
+                        crossFade: true
+                    }
+                });
+            });
+        });
     </script>
+    @stack('scripts')
 </body>
 
 </html>

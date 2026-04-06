@@ -5,7 +5,7 @@
         <!-- Syllabus Sidebar -->
         <div class="w-full md:w-80 bg-slate-50 border-r border-slate-200 flex flex-col h-full shrink-0 shadow-xl z-20">
             <div class="p-6 border-b border-slate-200">
-                <a href="{{ route('student.courses') }}" class="text-[10px] font-black text-slate-400 hover:text-indigo-600 uppercase tracking-widest transition-colors mb-4 inline-block">
+                <a href="{{ route('student.courses.index') }}" class="text-[10px] font-black text-slate-400 hover:text-indigo-600 uppercase tracking-widest transition-colors mb-4 inline-block">
                     <i class="fas fa-arrow-left mr-1"></i> Back to Academy
                 </a>
                 <h1 class="text-sm font-black text-slate-900 tracking-tight truncate">{{ $course->title }}</h1>
@@ -138,7 +138,7 @@
                         <div class="pt-12 border-t border-slate-100 flex justify-center" x-data="{ completing: false, isDone: {{ $activeContent->isCompletedBy(Auth::id()) ? 'true' : 'false' }} }">
                             <template x-if="!isDone">
                                 <button 
-                                    @click="completing = true; fetch('{{ route('student.contents.complete', $activeContent) }}', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }).then(() => { isDone = true; completing = false; window.location.reload(); })"
+                                    @click="completing = true; fetch('{{ route('student.content.complete', $activeContent) }}', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }).then(() => { isDone = true; completing = false; window.location.reload(); })"
                                     class="inline-flex items-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-emerald-100 disabled:opacity-50"
                                     :disabled="completing"
                                 >

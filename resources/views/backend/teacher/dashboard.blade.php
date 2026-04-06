@@ -87,6 +87,12 @@
                     <input type="text" name="name" placeholder="Full Name" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required>
                     <input type="email" name="email" placeholder="Email Address" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required>
                     <input type="password" name="password" placeholder="Temporary Password" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required>
+                    <select name="class_id" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white focus:bg-white/20 outline-none transition-all font-bold appearance-none italic" required>
+                        <option value="" class="text-slate-900">Select Class</option>
+                        @foreach($classes as $class)
+                            <option value="{{ $class->id }}" class="text-slate-900">{{ $class->name }}</option>
+                        @endforeach
+                    </select>
                     <button type="submit" class="w-full bg-white text-indigo-600 font-black py-2.5 rounded-xl text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all shadow-xl">
                         Admit Student
                     </button>

@@ -76,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/docs', [AdminController::class, 'docs'])->name('docs');
     Route::get('/applications', [AdminController::class, 'applications'])->name('applications')->middleware('permission:view_applications');
 
     Route::middleware('permission:view_plans')->group(function () {
@@ -130,12 +131,30 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Dynamic Classes Management
     Route::middleware('permission:view_classes')->group(function () {
-        Route::resource('student-classes', \App\Http\Controllers\Backend\Admin\StudentClassController::class)->except(['create', 'store', 'edit', 'update', 'destroy']);
+        Route::get('student-classes', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'index'])->name('student-classes.index');
         
+        Route::get('student-classes/create', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'create'])->name('student-classes.create')->middleware('permission:create_classes');
         Route::post('student-classes', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'store'])->name('student-classes.store')->middleware('permission:create_classes');
+        
+        Route::get('student-classes/{student_class}/edit', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'edit'])->name('student-classes.edit')->middleware('permission:edit_classes');
         Route::put('student-classes/{student_class}', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'update'])->name('student-classes.update')->middleware('permission:edit_classes');
         Route::post('/student-classes/{student_class}/toggle-status', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'toggleStatus'])->name('student-classes.toggle-status')->middleware('permission:edit_classes');
         Route::delete('student-classes/{student_class}', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'destroy'])->name('student-classes.destroy')->middleware('permission:delete_classes');
+
+        // Study Materials
+        Route::resource('study-materials', \App\Http\Controllers\Backend\Admin\StudyMaterialController::class);
+        Route::post('study-materials/{study_material}/toggle-status', [\App\Http\Controllers\Backend\Admin\StudyMaterialController::class, 'toggleStatus'])->name('study-materials.toggle-status');
+    });
+
+    // Academy Management (LMS)
+    Route::middleware('permission:view_settings')->group(function () {
+        Route::resource('courses', \App\Http\Controllers\Backend\Admin\CourseController::class);
+        Route::post('courses/{course}/publish', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'publish'])->name('courses.publish');
+        Route::post('courses/{course}/subjects', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'addSubject'])->name('courses.add-subject');
+        Route::post('subjects/{subject}/topics', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'addTopic'])->name('subjects.add-topic');
+        Route::post('topics/{topic}/contents', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'addContent'])->name('topics.add-content');
+        Route::put('contents/{content}', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'updateContent'])->name('contents.update');
+        Route::delete('contents/{content}', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'deleteContent'])->name('contents.destroy');
     });
 
     // Home Banners
@@ -172,6 +191,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::post('quizzes', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'store'])->name('quizzes.store')->middleware('permission:create_exams');
         
         Route::get('quizzes/{quiz}', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'show'])->name('quizzes.show');
+        Route::get('quizzes/{quiz}/edit', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'edit'])->name('quizzes.edit')->middleware('permission:edit_exams');
+        Route::put('quizzes/{quiz}', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'update'])->name('quizzes.update')->middleware('permission:edit_exams');
+        Route::delete('quizzes/{quiz}', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'destroy'])->name('quizzes.destroy')->middleware('permission:edit_exams');
+        
         Route::get('/quizzes/{quiz}/results', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'results'])->name('quizzes.results');
         Route::get('/quizzes/sample-csv', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'downloadSampleCSV'])->name('quizzes.sample-csv');
         Route::post('/quizzes/{quiz}/questions', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'addQuestion'])->name('quizzes.add-question')->middleware('permission:edit_exams');
@@ -216,6 +239,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::put('industry-experts/{industry_expert}', [IndustryExpertController::class, 'update'])->name('industry-experts.update')->middleware('permission:edit_industry_experts');
         Route::post('/industry-experts/{industry_expert}/toggle-status', [IndustryExpertController::class, 'toggleStatus'])->name('industry-experts.toggle-status')->middleware('permission:edit_industry_experts');
         Route::delete('industry-experts/{industry_expert}', [IndustryExpertController::class, 'destroy'])->name('industry-experts.destroy')->middleware('permission:delete_industry_experts');
+        // Study Materials
+        Route::resource('study-materials', \App\Http\Controllers\Backend\Admin\StudyMaterialController::class);
     });
 });
 
@@ -284,7 +309,9 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     Route::post('subjects/{subject}/topics', [CourseController::class, 'addTopic'])->name('subjects.add-topic');
     Route::post('topics/{topic}/contents', [CourseController::class, 'addContent'])->name('topics.add-content');
     Route::put('contents/{content}', [CourseController::class, 'updateContent'])->name('contents.update');
-    Route::delete('contents/{content}', [CourseController::class, 'deleteContent'])->name('contents.destroy');
+    // Study Materials
+    Route::resource('study-materials', \App\Http\Controllers\Backend\Teacher\StudyMaterialController::class);
+    Route::post('study-materials/{study_material}/toggle-status', [\App\Http\Controllers\Backend\Teacher\StudyMaterialController::class, 'toggleStatus'])->name('study-materials.toggle-status');
 });
 
 Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
@@ -301,10 +328,14 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     Route::get('/results/{attempt}', [App\Http\Controllers\Backend\Student\StudentController::class, 'showResult'])->name('results.show');
 
     // LMS Courses
-    Route::get('/courses', [App\Http\Controllers\Backend\Student\StudentController::class, 'courses'])->name('courses');
-    Route::get('/courses/{course}', [App\Http\Controllers\Backend\Student\StudentController::class, 'showCourse'])->name('courses.show');
-    Route::post('/courses/{course}/enroll', [App\Http\Controllers\Backend\Student\StudentController::class, 'enroll'])->name('courses.enroll');
-    Route::post('/contents/{content}/complete', [App\Http\Controllers\Backend\Student\StudentController::class, 'completeContent'])->name('contents.complete');
+    Route::get('/courses', [\App\Http\Controllers\Backend\Student\StudentController::class, 'courses'])->name('courses.index');
+    Route::get('/courses/{course}', [\App\Http\Controllers\Backend\Student\StudentController::class, 'showCourse'])->name('courses.show');
+    Route::post('/courses/{course}/enroll', [\App\Http\Controllers\Backend\Student\StudentController::class, 'enroll'])->name('courses.enroll');
+    Route::post('/content/{content}/complete', [\App\Http\Controllers\Backend\Student\StudentController::class, 'completeContent'])->name('content.complete');
+
+    // Study Materials
+    Route::get('/study-materials', [\App\Http\Controllers\Backend\Student\StudyMaterialController::class, 'index'])->name('study-materials.index');
+    Route::get('/study-materials/{study_material}/download', [\App\Http\Controllers\Backend\Student\StudyMaterialController::class, 'download'])->name('study-materials.download');
 
     // Wallet
     Route::get('/wallet', [App\Http\Controllers\Backend\Student\StudentController::class, 'wallet'])->name('wallet');

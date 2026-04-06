@@ -18,6 +18,7 @@ class StudentController extends Controller
             'total_exams' => Quiz::where('status', 'published')
                 ->where(function($q) use ($classId, $user) {
                     $q->where('is_global', true)
+                      ->orWhere('teacher_id', $user->teacher_id)
                       ->orWhereHas('studentClasses', function($sq) use ($classId) {
                           $sq->where('student_classes.id', $classId);
                       });
@@ -42,7 +43,9 @@ class StudentController extends Controller
             ->get();
 
         $banners = \App\Models\Banner::where('is_active', true)->where('type', 'student')->orderBy('order')->get();
-        return view('backend.student.dashboard', compact('stats', 'upcoming_exams', 'banners'));
+        $recent_materials = \App\Models\StudyMaterial::forStudent($user)->latest()->take(5)->get();
+
+        return view('backend.student.dashboard', compact('stats', 'upcoming_exams', 'banners', 'recent_materials'));
     }
 
     public function exams()
@@ -91,7 +94,7 @@ class StudentController extends Controller
     {
         $user = auth()->user();
         
-        if (!$quiz->is_global && !$quiz->studentClasses()->where('student_classes.id', $user->class_id)->exists()) {
+        if (!$quiz->is_global && $quiz->teacher_id !== $user->teacher_id && !$quiz->studentClasses()->where('student_classes.id', $user->class_id)->exists()) {
              abort(403);
         }
 
@@ -108,22 +111,30 @@ class StudentController extends Controller
             return back()->with('error', 'You cannot directly enroll in advanced levels. You must qualify from previous levels.');
         }
 
-        if ($quiz->price > 0) {
-            try {
-                $user->withdraw($quiz->price, Quiz::class, $quiz->id, 'Enrollment for Quiz: ' . $quiz->title);
-            } catch (\Exception $e) {
-                return back()->with('error', 'Insufficient wallet balance for this exam.');
-            }
-        }
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($user, $quiz) {
+                // Lock the user record to prevent race conditions on wallet_balance
+                $user->lockForUpdate()->find($user->id);
 
-        $enrollment = $user->quizEnrollments()->create([
-            'quiz_id' => $quiz->id,
-            'paid_amount' => $quiz->price,
-            'status' => 'active'
-        ]);
+                if ($quiz->price > 0) {
+                    if ($user->wallet_balance < $quiz->price) {
+                        throw new \Exception('Insufficient wallet balance.');
+                    }
+                    $user->withdraw($quiz->price, Quiz::class, $quiz->id, 'Enrollment for Quiz: ' . $quiz->title);
+                }
 
-        if ($quiz->price > 0) {
-            (new \App\Services\CommissionService())->distribute($enrollment);
+                $enrollment = $user->quizEnrollments()->create([
+                    'quiz_id' => $quiz->id,
+                    'paid_amount' => $quiz->price,
+                    'status' => 'active'
+                ]);
+
+                if ($quiz->price > 0) {
+                    (new \App\Services\CommissionService())->distribute($enrollment, 'quiz');
+                }
+            });
+        } catch (\Exception $e) {
+            return back()->with('error', 'Enrollment failed: ' . $e->getMessage());
         }
 
         return back()->with('success', 'Enrolled successfully! You can now start the exam.');
@@ -273,12 +284,19 @@ class StudentController extends Controller
         $leaderboard = QuizAttempt::where('quiz_id', $attempt->quiz_id)
             ->where('status', 'completed')
             ->where('is_blocked', false)
+            ->whereIn('id', function($query) use ($attempt) {
+                $query->selectRaw('MAX(id)')
+                    ->from('quiz_attempts')
+                    ->where('quiz_id', $attempt->quiz_id)
+                    ->where('status', 'completed')
+                    ->where('is_blocked', false)
+                    ->groupBy('student_id');
+            })
             ->with('student')
             ->orderByDesc('score')
             ->orderBy('time_taken_seconds')
-            ->get()
-            ->unique('student_id')
-            ->take(10);
+            ->take(10)
+            ->get();
             
         return view('backend.student.exams.result', compact('attempt', 'rank', 'leaderboard'));
     }
@@ -286,8 +304,12 @@ class StudentController extends Controller
     public function courses()
     {
         $user = auth()->user();
-        $courses = \App\Models\Course::where('class_id', $user->class_id)
-            ->where('status', 'published')
+        $courses = \App\Models\Course::where('status', 'published')
+            ->where(function($q) use ($user) {
+                $q->where('is_global', true)
+                  ->orWhere('teacher_id', $user->teacher_id)
+                  ->orWhere('class_id', $user->class_id);
+            })
             ->withCount('students')
             ->get();
         $enrolledIds = $user->enrolledCourses()->pluck('courses.id')->toArray();
@@ -308,7 +330,36 @@ class StudentController extends Controller
 
     public function enroll(\App\Models\Course $course)
     {
-        auth()->user()->enrolledCourses()->syncWithoutDetaching([$course->id]);
+        $user = auth()->user();
+
+        if ($user->enrolledCourses()->where('course_id', $course->id)->exists()) {
+            return back()->with('info', 'You are already enrolled in this course.');
+        }
+
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($user, $course) {
+                // Lock for concurrency safety
+                $user->lockForUpdate()->find($user->id);
+
+                if ($course->price > 0) {
+                    if ($user->wallet_balance < $course->price) {
+                        throw new \Exception('Insufficient wallet balance.');
+                    }
+                    $user->withdraw($course->price, \App\Models\Course::class, $course->id, 'Enrollment for Course: ' . $course->title);
+                }
+
+                // Enroll
+                $user->enrolledCourses()->syncWithoutDetaching([$course->id]);
+
+                // Commissions
+                if ($course->price > 0) {
+                    (new \App\Services\CommissionService())->distribute($course, 'course', $user);
+                }
+            });
+        } catch (\Exception $e) {
+            return back()->with('error', 'Course enrollment failed: ' . $e->getMessage());
+        }
+
         return redirect()->route('student.courses.show', $course)->with('success', 'Enrolled successfully!');
     }
 
@@ -320,6 +371,10 @@ class StudentController extends Controller
 
     public function reportBreach(Request $request, Quiz $quiz)
     {
+        $request->validate([
+            'reason' => 'nullable|string|max:500'
+        ]);
+
         $attempt = QuizAttempt::where('student_id', auth()->id())
             ->where('quiz_id', $quiz->id)
             ->where('status', 'ongoing')

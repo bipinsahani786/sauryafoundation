@@ -15,12 +15,18 @@ class Impersonate
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (session()->has('impersonate_id')) {
-            $user = User::find(session('impersonate_id'));
-            if ($user) {
-                // We don't actually Auth::login($user) because that would persist.
-                // We just tell Laravel to treat THIS request as THIS user.
-                Auth::setUser($user);
+        if (session()->has('impersonate_id') && session()->has('admin_id')) {
+            $admin = User::find(session('admin_id'));
+            
+            // Allow impersonation only if the original user was a SuperAdmin
+            if ($admin && $admin->isSuperAdmin()) {
+                $user = User::find(session('impersonate_id'));
+                if ($user) {
+                    Auth::setUser($user);
+                }
+            } else {
+                // If the session is compromised or the admin is no longer a superadmin
+                session()->forget(['impersonate_id', 'admin_id']);
             }
         }
 

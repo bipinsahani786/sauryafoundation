@@ -13,7 +13,7 @@ class QuizController extends Controller
     public function index()
     {
         $quizzes = Quiz::where('teacher_id', auth()->id())
-            ->withCount('enrollments')
+            ->withCount(['enrollments', 'questions'])
             ->latest()
             ->paginate(10);
         return view('backend.teacher.quizzes.index', compact('quizzes'));

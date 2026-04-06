@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Backend\Teacher;
+namespace App\Http\Controllers\Backend\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
@@ -16,46 +16,76 @@ class CourseController extends Controller
 {
     public function index()
     {
-        $courses = Course::where('teacher_id', Auth::id())->withCount('students')->get();
-        return view('backend.teacher.courses.index', compact('courses'));
+        // Admin sees all courses
+        $courses = Course::with(['teacher'])->withCount('students')->latest()->get();
+        return view('backend.admin.courses.index', compact('courses'));
     }
 
     public function create()
     {
         $classes = StudentClass::where('status', 'active')->get();
-        return view('backend.teacher.courses.create', compact('classes'));
+        return view('backend.admin.courses.create', compact('classes'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'class_id' => 'required|exists:student_classes,id',
+            'class_id' => 'required_without:is_global|exists:student_classes,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
+            'is_global' => 'nullable|boolean',
         ]);
 
-        $validated['teacher_id'] = Auth::id();
+        $validated['teacher_id'] = Auth::id(); // Admin is the creator
         $validated['status'] = 'draft';
+        $validated['is_global'] = $request->has('is_global');
+
+        if ($validated['is_global']) {
+            $validated['class_id'] = null;
+        }
 
         $course = Course::create($validated);
 
-        return redirect()->route('teacher.courses.show', $course)->with('success', 'Course created successfully. Now add subjects and topics.');
+        return redirect()->route('admin.courses.show', $course)->with('success', 'Global course created successfully. Now add subjects and topics.');
     }
 
     public function show(Course $course)
     {
-        if ($course->teacher_id !== Auth::id()) abort(403);
-        
         $course->load('subjects.topics.contents.quiz');
-        $quizzes = Quiz::where('teacher_id', Auth::id())->get();
-        return view('backend.teacher.courses.show', compact('course', 'quizzes'));
+        // Admin can attach any quiz or global quizzes
+        $quizzes = Quiz::where('is_global', true)->orWhere('teacher_id', Auth::id())->get();
+        return view('backend.admin.courses.show', compact('course', 'quizzes'));
+    }
+
+    public function edit(Course $course)
+    {
+        $classes = StudentClass::where('status', 'active')->get();
+        return view('backend.admin.courses.edit', compact('course', 'classes'));
+    }
+
+    public function update(Request $request, Course $course)
+    {
+        $validated = $request->validate([
+            'class_id' => 'required_without:is_global|exists:student_classes,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'is_global' => 'nullable|boolean',
+        ]);
+
+        $validated['is_global'] = $request->has('is_global');
+        if ($validated['is_global']) {
+            $validated['class_id'] = null;
+        }
+
+        $course->update($validated);
+
+        return redirect()->route('admin.courses.index')->with('success', 'Course updated successfully.');
     }
 
     public function addSubject(Request $request, Course $course)
     {
-        if ($course->teacher_id !== Auth::id()) abort(403);
-
         $request->validate(['title' => 'required|string|max:255']);
         $course->subjects()->create(['title' => $request->title, 'order' => $course->subjects()->count() + 1]);
         return back()->with('success', 'Subject added.');
@@ -63,8 +93,6 @@ class CourseController extends Controller
 
     public function addTopic(Request $request, Subject $subject)
     {
-        if ($subject->course->teacher_id !== Auth::id()) abort(403);
-
         $request->validate(['title' => 'required|string|max:255']);
         $subject->topics()->create(['title' => $request->title, 'order' => $subject->topics()->count() + 1]);
         return back()->with('success', 'Topic added.');
@@ -72,14 +100,12 @@ class CourseController extends Controller
 
     public function addContent(Request $request, Topic $topic)
     {
-        if ($topic->subject->course->teacher_id !== Auth::id()) abort(403);
-
         $validated = $request->validate([
             'type' => 'required|in:note,video,test',
             'title' => 'required|string|max:255',
             'body' => 'nullable|string',
             'quiz_id' => 'nullable|exists:quizzes,id',
-            'attachment' => 'nullable|file|mimes:pdf|max:10240', // 10MB Max PDF
+            'attachment' => 'nullable|file|mimes:pdf|max:10240',
         ]);
 
         if ($request->hasFile('attachment')) {
@@ -90,14 +116,11 @@ class CourseController extends Controller
         $validated['order'] = $topic->contents()->count() + 1;
         $topic->contents()->create($validated);
         
-        return back()->with('success', 'Content added to topic.');
+        return back()->with('success', 'Content added.');
     }
 
     public function updateContent(Request $request, Content $content)
     {
-        // Check ownership through course
-        if ($content->topic->subject->course->teacher_id !== Auth::id()) abort(403);
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'nullable|string',
@@ -116,17 +139,19 @@ class CourseController extends Controller
 
     public function publish(Course $course)
     {
-        if ($course->teacher_id !== Auth::id()) abort(403);
-        
         $course->update(['status' => 'published']);
-        
-        return redirect()->route('teacher.courses.index')->with('success', 'Course published successfully! It is now visible to students.');
+        return back()->with('success', 'Course published.');
     }
 
     public function deleteContent(Content $content)
     {
-        if ($content->topic->subject->course->teacher_id !== Auth::id()) abort(403);
         $content->delete();
         return back()->with('success', 'Content deleted.');
+    }
+
+    public function destroy(Course $course)
+    {
+        $course->delete();
+        return redirect()->route('admin.courses.index')->with('success', 'Course deleted.');
     }
 }

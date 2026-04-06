@@ -59,19 +59,7 @@
         </section>
     @endif
 
-    @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            new Swiper(".bannerSwiper", {
-                autoplay: { delay: 5000, disableOnInteraction: false },
-                pagination: { el: ".swiper-pagination", clickable: true },
-                effect: "fade",
-                fadeEffect: { crossFade: true },
-                loop: true,
-            });
-        });
-    </script>
-    @endpush
+
 
     <!-- 2. Sector Stats -->
     <section class="py-24 bg-brand-card/5 border-y border-brand-border">

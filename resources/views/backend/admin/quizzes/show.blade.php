@@ -2,25 +2,35 @@
     <x-slot name="title">Question Terminal</x-slot>
 
     <div class="mb-6 flex justify-between items-center">
-        <div>
-            <h2 class="text-xl font-black text-slate-900 tracking-tight">{{ $quiz->title }}</h2>
-            <div class="flex gap-4 mt-1">
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                    <i class="fas fa-clock text-indigo-500"></i> {{ $quiz->duration_minutes }} Mins
-                </p>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                    <i class="fas fa-coins text-emerald-500"></i> ₹{{ number_format($quiz->price) }}
-                </p>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                    <i class="fas fa-list-ol text-purple-500"></i> {{ $questions->count() }} Questions
-                </p>
+        <div class="flex items-center gap-4">
+            <a href="{{ route('admin.quizzes.index') }}" class="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <div>
+                <h2 class="text-xl font-black text-slate-900 tracking-tight">{{ $quiz->title }}</h2>
+                <div class="flex gap-4 mt-1">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                        <i class="fas fa-clock text-indigo-500"></i> {{ $quiz->duration_minutes }} Mins
+                    </p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                        <i class="fas fa-coins text-emerald-500"></i> ₹{{ number_format($quiz->price) }}
+                    </p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                        <i class="fas fa-list-ol text-purple-500"></i> {{ $questions->count() }} Questions
+                    </p>
+                </div>
             </div>
         </div>
-        <div class="bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center gap-2">
-           <span class="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400">Security Check:</span>
-           <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase {{ $quiz->status == 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600' }}">
-               {{ $quiz->status }}
-           </span>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.quizzes.results', $quiz->id) }}" class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all border border-indigo-100">
+                <i class="fas fa-chart-bar mr-1"></i> Results
+            </a>
+            <div class="bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center gap-2">
+               <span class="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400">Security Check:</span>
+               <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase {{ $quiz->status == 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600' }}">
+                   {{ $quiz->status }}
+               </span>
+            </div>
         </div>
     </div>
 

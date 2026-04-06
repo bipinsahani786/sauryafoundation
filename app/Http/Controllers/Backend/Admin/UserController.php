@@ -125,7 +125,10 @@ class UserController extends Controller
             return back()->with('error', 'You cannot impersonate yourself.');
         }
 
-        session(['impersonate_id' => $user->id]);
+        session([
+            'impersonate_id' => $user->id,
+            'admin_id' => auth()->id()
+        ]);
         
         // Redirect to the user's dashboard based on their role
         $route = match($user->role) {
@@ -141,7 +144,7 @@ class UserController extends Controller
 
     public function stopImpersonating()
     {
-        session()->forget('impersonate_id');
+        session()->forget(['impersonate_id', 'admin_id']);
         return redirect()->route('admin.users.index')->with('success', 'Returned to Admin session.');
     }
 }
