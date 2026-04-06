@@ -12,15 +12,80 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $range = $request->get('range', 'all');
+        $fromDate = match($range) {
+            'today' => now()->startOfDay(),
+            'yesterday' => now()->subDay()->startOfDay(),
+            'week' => now()->subDays(7)->startOfDay(),
+            'month' => now()->startOfMonth(),
+            'year' => now()->startOfYear(),
+            default => null,
+        };
+
+        $toDate = match($range) {
+            'yesterday' => now()->subDay()->endOfDay(),
+            default => now()->endOfDay(),
+        };
+
+        $queryFilter = function ($query) use ($fromDate, $toDate) {
+            if ($fromDate) $query->whereBetween('created_at', [$fromDate, $toDate]);
+        };
+
+        // Financial Stats
+        $planRevenue = PlanSubscription::where('status', 'approved')->where($queryFilter)->sum('amount');
+        $quizRevenue = \App\Models\QuizEnrollment::where('status', 'active')->where($queryFilter)->sum('paid_amount');
+        $totalRevenue = $planRevenue + $quizRevenue;
+        
+        $commissionTotal = \App\Models\Commission::where($queryFilter)->sum('amount');
+        $netProfit = $totalRevenue - $commissionTotal;
+
+        $pendingPayouts = \App\Models\PayoutRequest::where('status', 'pending')->where($queryFilter)->sum('amount');
+
+        // User Stats
+        $usersBase = User::where($queryFilter);
+        $totalTeachers = (clone $usersBase)->where('role', 'teacher')->count();
+        $totalAgents = (clone $usersBase)->where('role', 'sales_agent')->count();
+        $totalStudents = (clone $usersBase)->where('role', 'student')->count();
+        $totalSyndicate = (clone $usersBase)->where('role', 'syndicate')->count();
+
+        // Lead Stats
+        $pendingLeads = SyndicateApplication::where($queryFilter)->count();
+
+        // Chart Data (Simple daily revenue for the last 30 days)
+        $chartDates = [];
+        $chartRevenue = [];
+        for ($i = 29; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $dayPlan = PlanSubscription::where('status', 'approved')->whereDate('created_at', $date)->sum('amount');
+            $dayQuiz = \App\Models\QuizEnrollment::where('status', 'active')->whereDate('created_at', $date)->sum('paid_amount');
+            
+            $chartDates[] = now()->subDays($i)->format('d M');
+            $chartRevenue[] = $dayPlan + $dayQuiz;
+        }
+
         $stats = [
-            'total_applications' => SyndicateApplication::count(),
-            'total_members' => User::where('role', 'syndicate')->count(),
+            'range' => $range,
+            'total_revenue' => $totalRevenue,
+            'net_profit' => $netProfit,
+            'pending_payouts' => $pendingPayouts,
+            'pending_leads' => $pendingLeads,
+            'teachers' => $totalTeachers,
+            'agents' => $totalAgents,
+            'students' => $totalStudents,
+            'members' => $totalSyndicate,
             'active_plans' => Plan::where('status', 'active')->count(),
             'pending_subscriptions' => PlanSubscription::where('status', 'pending')->count(),
+            'chart_labels' => $chartDates,
+            'chart_data' => $chartRevenue,
+            'user_mix' => [$totalTeachers, $totalAgents, $totalStudents, $totalSyndicate]
         ];
-        return view('backend.admin.dashboard', compact('stats'));
+
+        $recentleads = SyndicateApplication::latest()->take(5)->get();
+        $recentTransactions = \App\Models\Transaction::with('user')->latest()->take(10)->get();
+
+        return view('backend.admin.dashboard', compact('stats', 'recentleads', 'recentTransactions'));
     }
 
     public function docs()
