@@ -178,13 +178,17 @@
                         </div>
                         @endif
 
+                        @if(Auth::user()->hasPermission('view_finance'))
                         <a href="{{ route('admin.finance.ledger') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.finance.ledger') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-file-invoice-dollar w-4"></i> <span>Financial Ledger</span>
                         </a>
+                        @endif
 
+                        @if(Auth::user()->hasPermission('view_audit_logs'))
                         <a href="{{ route('admin.activity-logs.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.activity-logs.*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-fingerprint w-4"></i> <span>Activity Logs</span>
                         </a>
+                        @endif
 
                         @if(Auth::user()->hasPermission('view_users'))
                         <a href="{{ route('admin.users.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.users.*') ? $activeClasses : $inactiveClasses }}">

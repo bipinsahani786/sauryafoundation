@@ -243,10 +243,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::resource('study-materials', \App\Http\Controllers\Backend\Admin\StudyMaterialController::class);
 
         // Finance & Ledger
-        Route::get('finance/ledger', [\App\Http\Controllers\Backend\Admin\FinanceController::class, 'ledger'])->name('finance.ledger');
+        Route::middleware('permission:view_finance')->group(function () {
+            Route::get('finance/ledger', [\App\Http\Controllers\Backend\Admin\FinanceController::class, 'ledger'])->name('finance.ledger');
+        });
 
         // Activity Logs
-        Route::get('activity-logs', [\App\Http\Controllers\Backend\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::middleware('permission:view_audit_logs')->group(function () {
+            Route::get('activity-logs', [\App\Http\Controllers\Backend\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
+        });
     });
 });
 
