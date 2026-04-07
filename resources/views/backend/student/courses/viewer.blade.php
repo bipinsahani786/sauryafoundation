@@ -111,9 +111,15 @@
                                     <h3 class="text-xl font-black text-slate-900">Assessment Required</h3>
                                     <p class="text-slate-500 font-medium max-w-md mx-auto mt-2">Complete this quiz to validate your understanding of {{ $activeContent->topic->title }}.</p>
                                 </div>
-                                <a href="{{ route('student.exams.show', $activeContent->quiz_id) }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-indigo-100">
-                                    Enter Test Engine <i class="fas fa-external-link-alt text-[10px] ml-1"></i>
-                                </a>
+                                @if($activeContent->quiz_id)
+                                    <a href="{{ route('student.exams.show', $activeContent->quiz_id) }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-indigo-100">
+                                        Enter Test Engine <i class="fas fa-external-link-alt text-[10px] ml-1"></i>
+                                    </a>
+                                @else
+                                    <button disabled class="inline-flex items-center gap-2 bg-slate-200 text-slate-500 px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest cursor-not-allowed border border-slate-300">
+                                        Quiz Not Configured <i class="fas fa-exclamation-triangle text-[10px] ml-1"></i>
+                                    </button>
+                                @endif
                             </div>
                         @endif
 

@@ -60,7 +60,7 @@
                         @endif
                     </div>
                     
-                    @if($isLive || !$quiz->start_time)
+                    @if(!$isExpired)
                         @if(!$isEnrolled)
                             <form action="{{ route('student.exams.enroll', $quiz->id) }}" method="POST">
                                 @csrf
@@ -73,13 +73,17 @@
                                     @endif
                                 </button>
                             </form>
-                        @else
+                        @elseif($isLive || !$quiz->start_time)
                             <form action="{{ route('student.exams.start', $quiz->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="bg-indigo-600 text-white px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100">
                                     Initialize Engine <i class="fas fa-bolt ml-2"></i>
                                 </button>
                             </form>
+                        @else
+                            <button disabled class="bg-amber-100 text-amber-600 px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] cursor-not-allowed border border-amber-200">
+                                Awaiting Launch <i class="fas fa-clock ml-2"></i>
+                            </button>
                         @endif
                     @else
                         <button disabled class="bg-slate-100 text-slate-400 px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] cursor-not-allowed border border-slate-200">

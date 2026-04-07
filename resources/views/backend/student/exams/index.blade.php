@@ -67,10 +67,14 @@
                         <button disabled class="w-full text-center bg-slate-100 text-slate-400 py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest border border-slate-200 cursor-not-allowed">
                             Time Expired
                         </button>
-                    @elseif($isUpcoming)
-                        <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center bg-amber-50 text-amber-600 py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest border border-amber-100">
-                            View Instructions <i class="fas fa-info-circle ml-1"></i>
+                    @elseif($isUpcoming && !$isEnrolled)
+                        <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center bg-emerald-600 text-white py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl">
+                            Enroll Now <i class="fas fa-shopping-cart ml-1"></i>
                         </a>
+                    @elseif($isUpcoming && $isEnrolled)
+                        <button disabled class="w-full text-center bg-amber-50 text-amber-600 py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest border border-amber-100 cursor-not-allowed">
+                            Awaiting Launch <i class="fas fa-clock ml-1"></i>
+                        </button>
                     @else
                         <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center {{ $isEnrolled ? 'bg-slate-900' : 'bg-emerald-600' }} text-white py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl">
                             {{ $isEnrolled ? 'Enter Terminal' : 'Enroll Now' }} <i class="fas {{ $isEnrolled ? 'fa-bolt' : 'fa-shopping-cart' }} ml-1"></i>
