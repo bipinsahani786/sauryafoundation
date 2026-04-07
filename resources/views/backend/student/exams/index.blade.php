@@ -77,7 +77,6 @@
                         </a>
                     @endif
                 </div>
-                </div>
             @empty
                 <div class="col-span-full py-16 bg-slate-50 rounded-[3rem] text-center border-2 border-dashed border-slate-200">
                     <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">No Live Events Scheduled</p>

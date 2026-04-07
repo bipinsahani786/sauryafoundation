@@ -114,13 +114,78 @@ class CourseController extends Controller
         return back()->with('success', 'Content updated.');
     }
 
+    public function edit(Course $course)
+    {
+        if ($course->teacher_id !== Auth::id()) abort(403);
+        $classes = StudentClass::where('status', 'active')->get();
+        return view('backend.teacher.courses.edit', compact('course', 'classes'));
+    }
+
+    public function update(Request $request, Course $course)
+    {
+        if ($course->teacher_id !== Auth::id()) abort(403);
+
+        $validated = $request->validate([
+            'class_id' => 'required|exists:student_classes,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $course->update($validated);
+
+        return redirect()->route('teacher.courses.index')->with('success', 'Course updated successfully.');
+    }
+
     public function publish(Course $course)
     {
         if ($course->teacher_id !== Auth::id()) abort(403);
-        
         $course->update(['status' => 'published']);
-        
-        return redirect()->route('teacher.courses.index')->with('success', 'Course published successfully! It is now visible to students.');
+        return back()->with('success', 'Course published successfully!');
+    }
+
+    public function unpublish(Course $course)
+    {
+        if ($course->teacher_id !== Auth::id()) abort(403);
+        $course->update(['status' => 'draft']);
+        return back()->with('success', 'Course moved to draft.');
+    }
+
+    public function destroy(Course $course)
+    {
+        if ($course->teacher_id !== Auth::id()) abort(403);
+        $course->delete();
+        return redirect()->route('teacher.courses.index')->with('success', 'Course deleted.');
+    }
+
+    public function updateSubject(Request $request, Subject $subject)
+    {
+        if ($subject->course->teacher_id !== Auth::id()) abort(403);
+        $request->validate(['title' => 'required|string|max:255']);
+        $subject->update(['title' => $request->title]);
+        return back()->with('success', 'Subject updated.');
+    }
+
+    public function deleteSubject(Subject $subject)
+    {
+        if ($subject->course->teacher_id !== Auth::id()) abort(403);
+        $subject->delete();
+        return back()->with('success', 'Subject deleted.');
+    }
+
+    public function updateTopic(Request $request, Topic $topic)
+    {
+        if ($topic->subject->course->teacher_id !== Auth::id()) abort(403);
+        $request->validate(['title' => 'required|string|max:255']);
+        $topic->update(['title' => $request->title]);
+        return back()->with('success', 'Topic updated.');
+    }
+
+    public function deleteTopic(Topic $topic)
+    {
+        if ($topic->subject->course->teacher_id !== Auth::id()) abort(403);
+        $topic->delete();
+        return back()->with('success', 'Topic deleted.');
     }
 
     public function deleteContent(Content $content)

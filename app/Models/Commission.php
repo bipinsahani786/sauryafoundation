@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Auditable;
 
 class Commission extends Model
 {
+    use Auditable;
     protected $fillable = [
         'user_id',
         'student_id',

@@ -25,7 +25,17 @@
                             <i class="fas fa-paper-plane mr-2"></i> Publish Course
                         </button>
                     </form>
+                @else
+                    <form action="{{ route('teacher.courses.unpublish', $course) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="bg-slate-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:bg-slate-700 transition-all">
+                            <i class="fas fa-eye-slash mr-2"></i> Unpublish
+                        </button>
+                    </form>
                 @endif
+                <a href="{{ route('teacher.courses.edit', $course) }}" class="bg-slate-100 text-slate-600 px-5 py-2.5 rounded-xl font-bold text-xs hover:bg-slate-200 transition-all">
+                    <i class="fas fa-edit mr-2"></i> Edit Course
+                </a>
                 <button @click="showSubjectModal = true" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:bg-indigo-700 transition-all">
                     <i class="fas fa-plus mr-2"></i> Add Subject
                 </button>
@@ -37,13 +47,21 @@
             <!-- Sidebar: Subjects & Topics -->
             <div class="md:col-span-1 space-y-4">
                 <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Course Syllabus</h3>
-                <div class="space-y-2">
+                <div class="space-y-4">
                     @foreach($course->subjects as $subject)
                         <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
-                            <div class="p-4 bg-slate-50/50 flex items-center justify-between border-b border-slate-50">
-                                <span class="text-xs font-black text-slate-700">{{ $subject->title }}</span>
+                            <div class="p-4 bg-slate-50/50 flex flex-col gap-2 border-b border-slate-50">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-black text-slate-700">{{ $subject->title }}</span>
+                                    <div class="flex items-center gap-1">
+                                        <button @click="const title = prompt('Rename Subject', '{{ $subject->title }}'); if(title) { document.getElementById('update_subject_{{ $subject->id }}').title.value = title; document.getElementById('update_subject_{{ $subject->id }}').submit(); }" class="text-[10px] text-slate-400 hover:text-indigo-600"><i class="fas fa-edit"></i></button>
+                                        <form id="update_subject_{{ $subject->id }}" action="{{ route('teacher.subjects.update', $subject) }}" method="POST" class="hidden">@csrf @method('PUT') <input type="hidden" name="title"></form>
+                                        
+                                        <form action="{{ route('teacher.subjects.destroy', $subject) }}" method="POST" onsubmit="return confirm('Delete this subject and all its topics?')">@csrf @method('DELETE') <button type="submit" class="text-[10px] text-slate-400 hover:text-red-600"><i class="fas fa-trash"></i></button></form>
+                                    </div>
+                                </div>
                                 <div x-data="{ showTopicModal: false }">
-                                    <button @click="showTopicModal = true" class="text-[10px] text-indigo-600 font-bold hover:underline">Add Topic</button>
+                                    <button @click="showTopicModal = true" class="text-[10px] text-indigo-600 font-bold hover:underline tracking-tight"><i class="fas fa-plus mr-1"></i> Add Topic</button>
                                     
                                     <!-- Topic Modal -->
                                     <div x-show="showTopicModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4" x-cloak>
@@ -60,9 +78,17 @@
                             </div>
                             <div class="p-2 space-y-1">
                                 @foreach($subject->topics as $topic)
-                                    <button class="w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all {{ isset($activeTopic) && $activeTopic->id === $topic->id ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50' }}">
-                                        {{ $topic->title }}
-                                    </button>
+                                    <div class="group flex items-center justify-between px-3 py-2 rounded-lg transition-all hover:bg-slate-50">
+                                        <button class="flex-1 text-left text-xs font-bold {{ isset($activeTopic) && $activeTopic->id === $topic->id ? 'text-indigo-700' : 'text-slate-500' }}">
+                                            {{ $topic->title }}
+                                        </button>
+                                        <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button @click="const title = prompt('Rename Topic', '{{ $topic->title }}'); if(title) { document.getElementById('update_topic_{{ $topic->id }}').title.value = title; document.getElementById('update_topic_{{ $topic->id }}').submit(); }" class="text-[9px] text-slate-400 hover:text-indigo-600"><i class="fas fa-edit"></i></button>
+                                            <form id="update_topic_{{ $topic->id }}" action="{{ route('teacher.topics.update', $topic) }}" method="POST" class="hidden">@csrf @method('PUT') <input type="hidden" name="title"></form>
+                                            
+                                            <form action="{{ route('teacher.topics.destroy', $topic) }}" method="POST" onsubmit="return confirm('Delete this topic?')">@csrf @method('DELETE') <button type="submit" class="text-[9px] text-slate-400 hover:text-red-600"><i class="fas fa-trash"></i></button></form>
+                                        </div>
+                                    </div>
                                 @endforeach
                             </div>
                         </div>

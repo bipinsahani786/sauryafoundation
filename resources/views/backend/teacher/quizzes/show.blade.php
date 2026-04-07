@@ -172,11 +172,14 @@
                 <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm group">
                     <div class="flex justify-between items-start mb-4">
                         <span class="w-6 h-6 bg-slate-100 text-slate-500 rounded-lg flex items-center justify-center font-black text-[10px]">{{ $index + 1 }}</span>
-                        <div class="flex gap-2">
+                        <div class="flex gap-4">
+                            <a href="{{ route('teacher.questions.edit', $question->id) }}" class="text-slate-300 hover:text-indigo-600 transition-colors">
+                                <i class="fas fa-pencil-alt text-xs"></i>
+                            </a>
                             <form action="{{ route('teacher.questions.destroy', $question->id) }}" method="POST" onsubmit="return confirm('Delete this question?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="text-slate-300 hover:text-red-600 transition-colors">
-                                    <i class="fas fa-trash-alt"></i>
+                                    <i class="fas fa-trash-alt text-xs"></i>
                                 </button>
                             </form>
                         </div>

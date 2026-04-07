@@ -241,6 +241,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::delete('industry-experts/{industry_expert}', [IndustryExpertController::class, 'destroy'])->name('industry-experts.destroy')->middleware('permission:delete_industry_experts');
         // Study Materials
         Route::resource('study-materials', \App\Http\Controllers\Backend\Admin\StudyMaterialController::class);
+
+        // Finance & Ledger
+        Route::get('finance/ledger', [\App\Http\Controllers\Backend\Admin\FinanceController::class, 'ledger'])->name('finance.ledger');
+
+        // Activity Logs
+        Route::get('activity-logs', [\App\Http\Controllers\Backend\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
     });
 });
 
@@ -292,6 +298,8 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     Route::post('quizzes/{quiz}/publish', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'publish'])->name('quizzes.publish');
     Route::post('quizzes/{quiz}/unpublish', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'unpublish'])->name('quizzes.unpublish');
     Route::post('quizzes/{quiz}/promote', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'calculateAndPromote'])->name('quizzes.promote');
+    Route::get('questions/{question}/edit', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'editQuestion'])->name('questions.edit');
+    Route::put('questions/{question}', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'updateQuestion'])->name('questions.update');
     Route::delete('questions/{question}', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'deleteQuestion'])->name('questions.destroy');
 
     // Wallet & KYC
@@ -305,10 +313,16 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     // Courses (LMS)
     Route::resource('courses', CourseController::class);
     Route::post('courses/{course}/publish', [CourseController::class, 'publish'])->name('courses.publish');
+    Route::post('courses/{course}/unpublish', [CourseController::class, 'unpublish'])->name('courses.unpublish');
     Route::post('courses/{course}/subjects', [CourseController::class, 'addSubject'])->name('courses.add-subject');
+    Route::put('subjects/{subject}', [CourseController::class, 'updateSubject'])->name('subjects.update');
+    Route::delete('subjects/{subject}', [CourseController::class, 'deleteSubject'])->name('subjects.destroy');
     Route::post('subjects/{subject}/topics', [CourseController::class, 'addTopic'])->name('subjects.add-topic');
+    Route::put('topics/{topic}', [CourseController::class, 'updateTopic'])->name('topics.update');
+    Route::delete('topics/{topic}', [CourseController::class, 'deleteTopic'])->name('topics.destroy');
     Route::post('topics/{topic}/contents', [CourseController::class, 'addContent'])->name('topics.add-content');
     Route::put('contents/{content}', [CourseController::class, 'updateContent'])->name('contents.update');
+    Route::delete('contents/{content}', [CourseController::class, 'deleteContent'])->name('contents.destroy');
     // Study Materials
     Route::resource('study-materials', \App\Http\Controllers\Backend\Teacher\StudyMaterialController::class);
     Route::post('study-materials/{study_material}/toggle-status', [\App\Http\Controllers\Backend\Teacher\StudyMaterialController::class, 'toggleStatus'])->name('study-materials.toggle-status');

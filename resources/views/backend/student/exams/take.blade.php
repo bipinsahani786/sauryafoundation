@@ -144,7 +144,7 @@
                         if (this.timeLeft > 0) {
                             this.timeLeft--;
                         } else {
-                            this.terminateSession('Time Expired');
+                            this.autoSubmit();
                         }
                     }, 1000);
                 },
@@ -168,8 +168,13 @@
                     else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
                 },
 
+                autoSubmit() {
+                    // Logic for normal time expiration: just submit the form for partial grading
+                    document.getElementById('quiz-form').submit();
+                },
+
                 terminateSession(reason) {
-                    // Report breach and redirect
+                    // Logic for SECURITY BREACHES only: report and fail
                     fetch(`{{ route('student.exams.report-breach', $quiz->id) }}`, {
                         method: 'POST',
                         headers: {

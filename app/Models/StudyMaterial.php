@@ -37,18 +37,8 @@ class StudyMaterial extends Model
     {
         return $query->where('status', 'active')
             ->where(function ($q) use ($user) {
-                // Global Admin Notes
-                $q->where(function ($sq) {
-                    $sq->whereNull('teacher_id')->where('is_global', true);
-                })
-                // Teacher's specific notes for this student
-                ->orWhere(function ($sq) use ($user) {
-                    $sq->where('teacher_id', $user->teacher_id)
-                        ->where(function ($ssq) use ($user) {
-                            $ssq->where('is_global', true)
-                                ->orWhere('class_id', $user->class_id);
-                        });
-                });
+                $q->where('is_global', true) // Admin or Global
+                  ->orWhere('teacher_id', $user->teacher_id); // Student's Teacher
             });
     }
 }

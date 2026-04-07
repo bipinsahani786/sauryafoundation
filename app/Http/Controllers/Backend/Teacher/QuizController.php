@@ -374,4 +374,39 @@ class QuizController extends Controller
 
         return redirect()->route('teacher.quizzes.index')->with('success', 'Quiz updated successfully.');
     }
+    public function editQuestion(Question $question)
+    {
+        if ($question->quiz->teacher_id !== auth()->id()) abort(403);
+        $quiz = $question->quiz;
+        return view('backend.teacher.quizzes.questions.edit', compact('quiz', 'question'));
+    }
+
+    public function updateQuestion(Request $request, Question $question)
+    {
+        if ($question->quiz->teacher_id !== auth()->id()) abort(403);
+
+        $validated = $request->validate([
+            'question_text' => 'required|string',
+            'option_0' => 'required|string',
+            'option_1' => 'required|string',
+            'option_2' => 'required|string',
+            'option_3' => 'required|string',
+            'correct_option' => 'required|integer|between:0,3',
+            'marks' => 'required|integer|min:1',
+        ]);
+
+        $question->update([
+            'question_text' => $validated['question_text'],
+            'options' => [
+                $validated['option_0'],
+                $validated['option_1'],
+                $validated['option_2'],
+                $validated['option_3'],
+            ],
+            'correct_option' => $validated['correct_option'],
+            'marks' => $validated['marks'],
+        ]);
+
+        return redirect()->route('teacher.quizzes.show', $question->quiz_id)->with('success', 'Question updated successfully.');
+    }
 }

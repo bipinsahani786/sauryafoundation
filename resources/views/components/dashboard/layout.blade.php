@@ -23,9 +23,9 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4f46e5; }
     </style>
 </head>
-<body class="text-slate-700 antialiased" x-data="{ sidebarOpen: false, openMenu: null }">
+<body class="text-slate-700 antialiased flex flex-col h-screen overflow-hidden" x-data="{ sidebarOpen: false, openMenu: null }">
     @if(session()->has('impersonate_id'))
-        <div class="bg-indigo-600 text-white py-2 px-4 flex items-center justify-between sticky top-0 z-[100] shadow-lg animate-pulse">
+        <div class="bg-indigo-600 text-white py-2 px-4 flex items-center justify-between shrink-0 z-[100] shadow-lg">
             <div class="flex items-center gap-3">
                 <i class="fas fa-user-secret text-sm"></i>
                 <span class="text-[10px] font-black uppercase tracking-widest leading-none">Viewing mode: <span class="underline">{{ Auth::user()->name }}</span> ({{ Auth::user()->role }})</span>
@@ -38,7 +38,7 @@
     <!-- Mobile Sidebar Overlay -->
     <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-slate-900/50 lg:hidden"></div>
 
-    <div class="flex h-screen overflow-hidden bg-slate-50">
+    <div class="flex flex-1 overflow-hidden bg-slate-50">
         <!-- Sidebar -->
         <aside 
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
@@ -177,6 +177,14 @@
                             </div>
                         </div>
                         @endif
+
+                        <a href="{{ route('admin.finance.ledger') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.finance.ledger') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-file-invoice-dollar w-4"></i> <span>Financial Ledger</span>
+                        </a>
+
+                        <a href="{{ route('admin.activity-logs.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.activity-logs.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-fingerprint w-4"></i> <span>Activity Logs</span>
+                        </a>
 
                         @if(Auth::user()->hasPermission('view_users'))
                         <a href="{{ route('admin.users.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.users.*') ? $activeClasses : $inactiveClasses }}">
