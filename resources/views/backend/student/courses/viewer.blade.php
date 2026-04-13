@@ -11,15 +11,16 @@
                 <h1 class="text-sm font-black text-slate-900 tracking-tight truncate">{{ $course->title }}</h1>
                 <div class="mt-2 h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                     @php 
-                        $totalContent = $course->subjects->flatMap->topics->flatMap->contents->count();
-                        $completedContent = auth()->user()->contentCompletions()->whereIn('content_id', $course->subjects->flatMap->topics->flatMap->contents->pluck('id'))->count();
-                        $progress = $totalContent > 0 ? round(($completedContent / $totalContent) * 100) : 0;
+                        $allContents = $course->subjects->flatMap->topics->flatMap->contents;
+                        $totalContent = $allContents->count();
+                        $completedCount = auth()->user()->contentCompletions()->whereIn('content_id', $allContents->pluck('id'))->count();
+                        $progress = $totalContent > 0 ? round(($completedCount / $totalContent) * 100) : 0;
                     @endphp 
                     <div class="h-full bg-indigo-600 transition-all duration-1000" style="width: {{ $progress }}%"></div>
                 </div>
                 <div class="flex justify-between mt-2 text-[8px] font-black text-slate-400 uppercase tracking-widest">
                     <span class="text-indigo-600">{{ $progress }}% Complete</span>
-                    <span>{{ $completedContent }}/{{ $totalContent }} Lessons</span>
+                    <span>{{ $completedCount }}/{{ $totalContent }} Lessons</span>
                 </div>
             </div>
 
@@ -65,7 +66,9 @@
         <div class="flex-1 flex flex-col h-full bg-white text-slate-900 relative">
             @php
                 $activeContentId = request()->query('content');
-                $activeContent = $activeContentId ? $course->subjects->flatMap->topics->flatMap->contents->where('id', $activeContentId)->first() : $course->subjects->first()->topics->first()->contents->first();
+                $activeContent = $activeContentId 
+                    ? $allContents->where('id', $activeContentId)->first() 
+                    : $allContents->first();
             @endphp
 
             @if($activeContent)
