@@ -274,7 +274,7 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-24" data-aos="fade-up">
                 <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-sm">Leadership</h2>
-                <h3 class="text-5xl font-extrabold text-white mb-6">Built by Industry Experts.</h3>
+                <h3 class="text-5xl font-extrabold text-white mb-6">Our Leadership</h3>
                 <p class="text-gray-400 max-w-2xl mx-auto text-lg">Our leadership team brings decades of experience in real estate, finance, and technology.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 lg:gap-24">
