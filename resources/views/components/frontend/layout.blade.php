@@ -89,7 +89,7 @@
     </div>
 
     <!-- Join Modal -->
-    <div x-show="showJoinModal" 
+    <div x-show="showJoinModal"
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
@@ -98,12 +98,12 @@
         x-transition:leave-end="opacity-0"
         class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-dark/90 backdrop-blur-sm"
         x-cloak>
-        <div @click.away="showJoinModal = false" 
+        <div @click.away="showJoinModal = false"
             class="glass-card w-full max-w-2xl rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 relative max-h-[96vh] overflow-y-auto custom-scrollbar"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="scale-90 opacity-0"
             x-transition:enter-end="scale-100 opacity-100">
-            
+
             <button @click="showJoinModal = false" class="absolute top-6 right-6 md:top-8 md:right-8 text-gray-500 hover:text-white transition-colors z-10">
                 <i class="fas fa-times text-xl md:text-2xl"></i>
             </button>
@@ -184,7 +184,7 @@
                             class="bg-white text-brand-dark px-6 py-2.5 rounded-full text-sm font-bold hover:bg-gray-200 transition-all">Join</button>
                     @endauth
                 </div>
-                
+
                 <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden text-2xl text-white">
                     <i :class="mobileMenuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
                 </button>
@@ -193,22 +193,56 @@
 
         <!-- Mobile Menu -->
         <div x-show="mobileMenuOpen" x-cloak x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-50 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-4"
             class="lg:hidden glass-nav border-t border-brand-border p-6 absolute top-full left-0 right-0 z-40 bg-brand-dark shadow-2xl">
-            <div class="flex flex-col gap-6">
+            <div class="flex flex-col gap-2">
                 <a href="{{ route('home') }}" class="text-lg font-bold text-white"
                     @click="mobileMenuOpen = false">Home</a>
                 <a href="{{ route('about') }}" class="text-lg font-bold text-white"
                     @click="mobileMenuOpen = false">About Us</a>
-                <div class="flex flex-col gap-4 pl-4 border-l-2 border-brand-primary/30">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sectors</p>
-                    @foreach($navSectors as $navSector)
-                        <a href="{{ route('sectors.detail', $navSector->slug) }}" @click="mobileMenuOpen = false"
-                            class="text-gray-300 font-medium">{{ $navSector->title }}</a>
-                    @endforeach
-                </div>
+              <div x-data="{ open: false }" class="flex flex-col pl-4 border-l-2 border-brand-primary/30">
+
+    <!-- Header (click to toggle) -->
+    <button
+        @click="open = !open"
+        class="flex items-center justify-between text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+    >
+        Sectors
+
+        <i class="fas" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+    </button>
+
+    <!-- Dropdown content -->
+    <div
+      <div
+    x-show="open"
+
+    @click.outside="open = false"
+
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+    x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+    x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
+
+    class="flex flex-col gap-3 mt-3 overflow-hidden origin-top"
+>
+        @foreach($navSectors as $navSector)
+            <a
+                href="{{ route('sectors.detail', $navSector->slug) }}"
+                @click="mobileMenuOpen = false"
+                class="text-gray-300 font-medium hover:text-white transition"
+            >
+                {{ $navSector->title }}
+            </a>
+        @endforeach
+    </div>
+
+</div>
                 <a href="{{ route('process') }}" class="text-lg font-bold text-white"
                     @click="mobileMenuOpen = false">Process</a>
                 <a href="{{ route('returns') }}" class="text-lg font-bold text-white"
@@ -219,7 +253,7 @@
                         <i class="fas fa-th-large mr-2"></i> Go to Dashboard
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="text-brand-primary font-bold"
+                    <a href="{{ route('login') }}" class="w-full py-4 bg-brand-primary text-center text-white rounded-xl font-bold shadow-lg"
                         @click="mobileMenuOpen = false">Member Login</a>
                     <button @click="showJoinModal = true; mobileMenuOpen = false"
                         class="w-full py-4 bg-brand-primary text-center text-white rounded-xl font-bold shadow-lg">Join</button>
@@ -259,14 +293,14 @@
         </div>
         {{ $slot }}
     </main>
-    
+
     <!-- Global Join Syndicate Section -->
     <section id="apply" class="py-20 md:py-32 bg-[#030712] border-t border-brand-border relative overflow-hidden">
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.05)_0,transparent_70%)]"></div>
-        
+
         <div class="max-w-6xl mx-auto px-4 relative z-10">
             <div class="grid lg:grid-cols-5 gap-12 lg:gap-16 items-start">
-                
+
                 <!-- Left Side: Process Info -->
                 <div class="lg:col-span-2 space-y-12" data-aos="fade-right">
                     <div>
@@ -416,9 +450,9 @@
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ 
-            duration: 800, 
-            once: true, 
+        AOS.init({
+            duration: 800,
+            once: true,
             offset: 50,
             disable: 'mobile' // Disable animations on mobile for better performance
         });
