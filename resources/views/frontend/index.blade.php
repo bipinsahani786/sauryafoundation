@@ -61,13 +61,13 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($sectors as $sector)
-                    <a href="{{ route('sectors.detail', $sector->slug) }}" 
-                       class="group glass-card p-4 rounded-[2.5rem] block transition-all hover:scale-[1.02]" 
-                       data-aos="fade-up" 
+                    <a href="{{ route('sectors.detail', $sector->slug) }}"
+                       class="group glass-card p-4 rounded-[2.5rem] block transition-all hover:scale-[1.02]"
+                       data-aos="fade-up"
                        data-aos-delay="{{ $loop->index * 100 }}">
                         <div class="aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 relative">
-                            <img src="{{ asset('storage/' . $sector->image_path) }}" 
-                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60" 
+                            <img src="{{ asset('storage/' . $sector->image_path) }}"
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60"
                                  alt="{{ $sector->title }}"
                                  loading="lazy">
                             <div class="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent"></div>
@@ -104,7 +104,7 @@
         </div>
     </div>
 
-    <!-- 4. Key Stats Section -->
+    {{-- <!-- 4. Key Stats Section -->
     <section class="py-16 bg-[#010409]">
         <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
             <div class="text-center" data-aos="fade-up" data-aos-delay="0">
@@ -124,7 +124,7 @@
                 <p class="text-yellow-500 font-bold uppercase text-[10px] tracking-widest">Operational Assets</p>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- 5. The Core Problem vs Solution -->
     <section class="py-32 relative overflow-hidden bg-brand-dark">
@@ -149,6 +149,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
             <div class="relative" data-aos="fade-left">
                 <div class="absolute inset-0 bg-brand-primary/10 blur-[80px] rounded-full"></div>
@@ -172,7 +173,7 @@
     </section>
 
     <!-- 6. How it Works (Condensed Steps) -->
-    <section class="py-32 relative bg-brand-dark overflow-hidden">
+    {{-- <section class="py-32 relative bg-brand-dark overflow-hidden">
         <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-accent/5 rounded-full blur-[150px]"></div>
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-24" data-aos="fade-up">
@@ -181,7 +182,7 @@
             </div>
             <div class="grid md:grid-cols-4 gap-12 relative">
                 <div class="hidden md:block absolute top-[60px] left-0 right-0 h-px bg-brand-border z-0"></div>
-                
+
                 <div class="relative z-10 text-center" data-aos="fade-up" data-aos-delay="0">
                     <div class="w-16 h-16 bg-brand-dark border-2 border-brand-primary rounded-full flex items-center justify-center mx-auto mb-8 text-2xl font-black text-white shadow-[0_0_20px_rgba(14,165,233,0.3)]">1</div>
                     <h5 class="text-xl font-bold text-white mb-3">Apply</h5>
@@ -204,7 +205,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- 7. ROI Calculator / Table Preview -->
     <section class="py-32 bg-brand-card/5 border-y border-brand-border">
