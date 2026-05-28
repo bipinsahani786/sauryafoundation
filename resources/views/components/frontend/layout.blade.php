@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth bg-[#030712]">
+<html lang="en" class="scroll-smooth bg-white">
 
 <head>
     <meta charset="UTF-8">
@@ -40,16 +40,11 @@
     </script>
     <style>
         [x-cloak] { display: none !important; }
-        .glass-nav {
-            background: rgba(3, 7, 18, 0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(30, 41, 59, 0.5);
-        }
-
         .glass-card {
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.6) 0%, rgba(3, 7, 18, 0.8) 100%);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
-            border: 1px solid #1e293b;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
 
         .text-gradient {
@@ -70,11 +65,16 @@
     </style>
 </head>
 
-<body class="text-gray-300 font-sans antialiased overflow-x-hidden selection:bg-brand-primary selection:text-white"
-    x-data="{ mobileMenuOpen: false, showJoinModal: false }" @keydown.escape="showJoinModal = false">
+<body class="text-gray-800 font-sans antialiased overflow-x-hidden selection:bg-brand-primary selection:text-white"
+    x-data="{ mobileMenuOpen: false, showJoinModal: false, showCharityModal: false }" @keydown.escape="showJoinModal = false; showCharityModal = false">
 
     <!-- Floating Action Buttons -->
     <div class="fixed bottom-6 right-6 z-[60] flex flex-col space-y-3">
+        <button @click="showCharityModal = true"
+            class="flex items-center justify-center w-14 h-14 bg-purple-600 text-white rounded-full shadow-[0_0_20px_rgba(147,51,234,0.5)] hover:scale-110 transition-transform group relative">
+            <i class="fas fa-hand-holding-heart text-xl"></i>
+            <span class="absolute right-full mr-4 px-3 py-1 bg-brand-card border border-brand-border rounded-lg text-[10px] font-black uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Charity</span>
+        </button>
         <button @click="showJoinModal = true"
             class="flex items-center justify-center w-14 h-14 bg-brand-primary text-white rounded-full shadow-[0_0_20px_rgba(14,165,233,0.5)] hover:scale-110 transition-transform group relative">
             <i class="fas fa-edit text-xl"></i>
@@ -87,6 +87,8 @@
             class="flex items-center justify-center w-14 h-14 bg-brand-card border border-brand-border text-white rounded-full shadow-[0_0_15px_rgba(30,41,59,0.4)] hover:scale-110 transition-transform"><i
                 class="fas fa-phone-alt text-xl"></i></a>
     </div>
+
+    <x-frontend.charity-modal :siteSettings="$siteSettings" />
 
     <!-- Join Modal -->
     <div x-show="showJoinModal"
@@ -117,147 +119,162 @@
         </div>
     </div>
 
-    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
-                <a href="{{ route('home') }}" class="flex items-center gap-2 cursor-pointer z-50">
+    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
+        <!-- Top Bar -->
+        <div class="bg-gray-50 text-gray-700 text-[11px] md:text-sm py-2.5 border-b border-gray-200 hidden md:block">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-phone-alt text-gray-500"></i>
+                        <span class="font-medium">+91 98765 43210</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="far fa-envelope text-gray-500"></i>
+                        <span class="font-medium">info@shauryanarayanfoundation.org</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="font-medium text-gray-600">Follow Us :</span>
+                    <a href="#" target="_blank" class="text-gray-500 hover:text-brand-primary transition-colors"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" target="_blank" class="text-gray-500 hover:text-brand-primary transition-colors"><i class="fab fa-twitter"></i></a>
+                    <a href="#" target="_blank" class="text-gray-500 hover:text-brand-primary transition-colors"><i class="fab fa-instagram"></i></a>
+                    <a href="#" target="_blank" class="text-gray-500 hover:text-brand-primary transition-colors"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" target="_blank" class="text-gray-500 hover:text-brand-primary transition-colors"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="flex justify-between h-[85px] items-center">
+                <a href="{{ route('home') }}" class="flex items-center gap-2 lg:gap-3 cursor-pointer z-50 flex-shrink-0">
                     @if(isset($siteSettings['site_logo']))
-                        <img src="{{ asset('storage/' . $siteSettings['site_logo']) }}" alt="Logo" class="h-10 object-contain">
+                        <img src="{{ asset('storage/' . $siteSettings['site_logo']) }}" alt="Logo" class="h-12 object-contain">
                     @else
                         <div
-                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg">
-                            <i class="fas fa-shield-alt text-white text-xl"></i>
+                            class="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm overflow-hidden p-1">
+                            <img src="https://ui-avatars.com/api/?name=SN&background=random" alt="Logo" class="w-full h-full rounded-full">
                         </div>
                     @endif
-                    <span class="text-2xl font-bold text-white tracking-tight">{{ $siteSettings['site_name'] ?? 'Shaurya Narayan Foundation' }}<span
+                    <span class="text-[18px] xl:text-[19px] 2xl:text-[22px] font-black text-gray-900 tracking-tight whitespace-nowrap">{{ $siteSettings['site_name'] ?? 'Shaurya Narayan Foundation' }}<span
                             class="text-brand-primary">.</span></span>
                 </a>
 
-                <div class="hidden lg:flex space-x-8 items-center">
+                <div class="hidden xl:flex xl:gap-4 items-center h-full flex-shrink-0">
                     <a href="{{ route('home') }}"
-                        class="text-sm font-medium hover:text-white transition-colors {{ request()->routeIs('home') ? 'text-white' : '' }}">Home</a>
-                    <a href="{{ route('about') }}"
-                        class="text-sm font-medium hover:text-white transition-colors {{ request()->routeIs('about') ? 'text-white' : '' }}">About
-                        Us</a>
+                        class="text-sm font-bold hover:text-brand-primary transition-colors h-full flex items-center relative whitespace-nowrap {{ request()->routeIs('home') ? 'text-brand-primary' : 'text-gray-800' }}">
+                        Home
+                        @if(request()->routeIs('home'))
+                        <div class="absolute bottom-[25px] left-1/2 -translate-x-1/2 w-4 h-[3px] bg-brand-primary rounded-full"></div>
+                        @endif
+                    </a>
 
-                    <div class="relative group py-6">
-                        <button
-                            class="text-sm font-medium hover:text-white transition-colors flex items-center gap-1 {{ request()->routeIs('sectors.*') ? 'text-white' : '' }}">
-                            Sectors <i class="fas fa-chevron-down text-xs mt-0.5"></i>
-                        </button>
-                        <div
-                            class="dropdown-menu absolute left-0 top-full mt-[-10px] w-64 glass-card rounded-xl shadow-2xl opacity-0 transform translate-y-2 pointer-events-none border border-brand-border overflow-hidden">
-                            @foreach($navSectors as $navSector)
-                                <a href="{{ route('sectors.detail', $navSector->slug) }}"
-                                    class="block px-5 py-4 hover:bg-brand-card text-white border-b border-brand-border/50">
-                                    <i class="{{ $navSector->icon ?? 'fas fa-chevron-right' }} text-brand-primary w-6 text-center mr-2"></i>
-                                    {{ $navSector->title }}
-                                </a>
-                            @endforeach
-                        </div>
+                    <a href="{{ route('about.mission') }}"
+                        class="text-sm font-semibold hover:text-brand-primary transition-colors h-full flex items-center whitespace-nowrap {{ request()->is('about*') ? 'text-brand-primary' : 'text-gray-800' }}">About Us</a>
+                        
+                    <a href="{{ route('work.index') }}"
+                        class="text-sm font-semibold hover:text-brand-primary transition-colors h-full flex items-center whitespace-nowrap {{ request()->is('work*') ? 'text-brand-primary' : 'text-gray-800' }}">Our Work</a>
+                        
+                    <a href="{{ route('media.index') }}"
+                        class="text-sm font-semibold hover:text-brand-primary transition-colors h-full flex items-center whitespace-nowrap {{ request()->is('media*') ? 'text-brand-primary' : 'text-gray-800' }}">Media</a>
+                        
+                    <a href="{{ route('involved.index') }}"
+                        class="text-sm font-semibold hover:text-brand-primary transition-colors h-full flex items-center whitespace-nowrap {{ request()->is('involved*') ? 'text-brand-primary' : 'text-gray-800' }}">Get Involved</a>
+
+                    <a href="{{ route('events') }}"
+                        class="text-sm font-semibold hover:text-brand-primary transition-colors h-full flex items-center whitespace-nowrap {{ request()->routeIs('events') ? 'text-brand-primary' : 'text-gray-800' }}">Events</a>
+                    <a href="{{ route('contact') }}"
+                        class="text-sm font-semibold hover:text-brand-primary transition-colors h-full flex items-center whitespace-nowrap {{ request()->routeIs('contact') ? 'text-brand-primary' : 'text-gray-800' }}">Contact</a>
+
+                    <div class="flex items-center gap-2 ml-1 xl:ml-2 border-l border-gray-200 pl-2 xl:pl-3">
+                        @auth
+                            @php
+                                $dashboardUrl = url('/');
+                                if (Auth::user()->isAdmin()) {
+                                    $dashboardUrl = route('admin.dashboard');
+                                } elseif (Auth::user()->isSalesAgent()) {
+                                    $dashboardUrl = route('sales-agent.dashboard');
+                                } elseif (Auth::user()->isTeacher()) {
+                                    $dashboardUrl = route('teacher.dashboard');
+                                } elseif (Auth::user()->isStudent()) {
+                                    $dashboardUrl = route('student.dashboard');
+                                } elseif (Auth::user()->isSyndicate()) {
+                                    $dashboardUrl = route('syndicate.dashboard');
+                                }
+                            @endphp
+                            <a href="{{ $dashboardUrl }}" class="text-[13px] font-bold text-gray-800 hover:text-brand-primary transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                                <i class="fas fa-user-circle"></i> Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="text-[13px] font-bold text-gray-800 hover:text-brand-primary transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                            <a href="{{ route('register') }}" class="text-[13px] font-bold text-gray-800 hover:text-brand-primary transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                                <i class="fas fa-user-plus"></i> Join Us
+                            </a>
+                        @endauth
                     </div>
 
-                    <a href="{{ route('process') }}"
-                        class="text-sm font-medium hover:text-white transition-colors {{ request()->routeIs('process') ? 'text-white' : '' }}">Process</a>
-                    <a href="{{ route('returns') }}"
-                        class="text-sm font-medium hover:text-white transition-colors {{ request()->routeIs('returns') ? 'text-white' : '' }}">Returns</a>
-                    <div class="h-6 w-px bg-brand-border"></div>
-                    @auth
-                        @php
-                            $dashboardRoute = match(auth()->user()->role) {
-                                'superadmin', 'admin' => route('admin.dashboard'),
-                                'sales_agent' => route('sales-agent.dashboard'),
-                                'teacher' => route('teacher.dashboard'),
-                                'student' => route('student.dashboard'),
-                                default => route('syndicate.dashboard'),
-                            };
-                        @endphp
-                        <a href="{{ $dashboardRoute }}"
-                            class="bg-brand-primary text-white px-8 py-2.5 rounded-full text-sm font-bold hover:bg-brand-primary/80 transition-all shadow-lg shadow-brand-primary/20 flex items-center gap-2">
-                            <i class="fas fa-th-large"></i> Go to Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}"
-                            class="text-sm font-semibold text-white hover:text-brand-primary flex items-center gap-2 transition-colors"><i
-                                class="far fa-user-circle text-lg"></i> Panel Login</a>
-                        <button @click="showJoinModal = true"
-                            class="bg-white text-brand-dark px-6 py-2.5 rounded-full text-sm font-bold hover:bg-gray-200 transition-all">Join</button>
-                    @endauth
+                    <!-- Donate Button -->
+                    <button @click="showCharityModal = true"
+                        class="bg-[#0084ff] text-white px-3 xl:px-4 py-2.5 rounded-[12px] text-[13px] font-bold hover:bg-blue-600 transition-all shadow-[0_8px_15px_rgba(0,132,255,0.2)] hover:shadow-[0_12px_20px_rgba(0,132,255,0.3)] hover:-translate-y-0.5 flex items-center gap-2 ml-1 xl:ml-2 whitespace-nowrap">
+                        <i class="far fa-heart"></i> Donate Now
+                    </button>
                 </div>
 
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden text-2xl text-white">
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="xl:hidden text-2xl text-gray-900">
                     <i :class="mobileMenuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Mobile Menu -->
+        <!-- Mobile Menu (simplified for brevity, can be expanded if needed) -->
         <div x-show="mobileMenuOpen" x-cloak x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-50 translate-y-0"
+            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-4"
-            class="lg:hidden glass-nav border-t border-brand-border p-6 absolute top-full left-0 right-0 z-40 bg-brand-dark shadow-2xl">
-            <div class="flex flex-col gap-2">
-                <a href="{{ route('home') }}" class="text-lg font-bold text-white"
-                    @click="mobileMenuOpen = false">Home</a>
-                <a href="{{ route('about') }}" class="text-lg font-bold text-white"
-                    @click="mobileMenuOpen = false">About Us</a>
-              <div x-data="{ open: false }" class="flex flex-col pl-4 border-l-2 border-brand-primary/30">
-
-    <!-- Header (click to toggle) -->
-    <button
-        @click="open = !open"
-        class="flex items-center justify-between text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-    >
-        Sectors
-
-        <i class="fas" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-    </button>
-
-    <!-- Dropdown content -->
-    <div
-      <div
-    x-show="open"
-
-    @click.outside="open = false"
-
-    x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
-    x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-
-    x-transition:leave="transition ease-in duration-200"
-    x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-    x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
-
-    class="flex flex-col gap-3 mt-3 overflow-hidden origin-top"
->
-        @foreach($navSectors as $navSector)
-            <a
-                href="{{ route('sectors.detail', $navSector->slug) }}"
-                @click="mobileMenuOpen = false"
-                class="text-gray-300 font-medium hover:text-white transition"
-            >
-                {{ $navSector->title }}
-            </a>
-        @endforeach
-    </div>
-
-</div>
-                <a href="{{ route('process') }}" class="text-lg font-bold text-white"
-                    @click="mobileMenuOpen = false">Process</a>
-                <a href="{{ route('returns') }}" class="text-lg font-bold text-white"
-                    @click="mobileMenuOpen = false">Returns</a>
-                <div class="h-px bg-brand-border my-2"></div>
+            class="xl:hidden border-t border-gray-200 p-6 absolute top-full left-0 right-0 z-40 bg-white shadow-2xl h-[80vh] overflow-y-auto">
+            <div class="flex flex-col gap-4">
+                <a href="{{ route('home') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Home</a>
+                <a href="{{ route('about.mission') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">About Us</a>
+                <a href="{{ route('work.projects.ongoing') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Our Work</a>
+                <a href="{{ route('media.blog') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Media</a>
+                <a href="{{ route('involved.volunteer') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Get Involved</a>
+                <a href="{{ route('events') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Events</a>
+                <a href="{{ route('contact') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Contact</a>
+                
+                <div class="h-px bg-gray-200 my-2"></div>
+                
                 @auth
-                    <a href="{{ $dashboardRoute }}" class="w-full py-4 bg-brand-primary text-center text-white rounded-xl font-bold shadow-lg" @click="mobileMenuOpen = false">
-                        <i class="fas fa-th-large mr-2"></i> Go to Dashboard
+                    @php
+                        $mobileDashboardUrl = url('/');
+                        if (Auth::user()->isAdmin()) {
+                            $mobileDashboardUrl = route('admin.dashboard');
+                        } elseif (Auth::user()->isSalesAgent()) {
+                            $mobileDashboardUrl = route('sales-agent.dashboard');
+                        } elseif (Auth::user()->isTeacher()) {
+                            $mobileDashboardUrl = route('teacher.dashboard');
+                        } elseif (Auth::user()->isStudent()) {
+                            $mobileDashboardUrl = route('student.dashboard');
+                        } elseif (Auth::user()->isSyndicate()) {
+                            $mobileDashboardUrl = route('syndicate.dashboard');
+                        }
+                    @endphp
+                    <a href="{{ $mobileDashboardUrl }}" class="text-lg font-bold text-brand-primary flex items-center gap-2" @click="mobileMenuOpen = false">
+                        <i class="fas fa-user-circle"></i> Dashboard
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="w-full py-4 bg-brand-primary text-center text-white rounded-xl font-bold shadow-lg"
-                        @click="mobileMenuOpen = false">Member Login</a>
-                    <button @click="showJoinModal = true; mobileMenuOpen = false"
-                        class="w-full py-4 bg-brand-primary text-center text-white rounded-xl font-bold shadow-lg">Join</button>
+                    <a href="{{ route('login') }}" class="text-lg font-bold text-gray-900 flex items-center gap-2" @click="mobileMenuOpen = false">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="{{ route('register') }}" class="text-lg font-bold text-gray-900 flex items-center gap-2" @click="mobileMenuOpen = false">
+                        <i class="fas fa-user-plus"></i> Join Us
+                    </a>
                 @endauth
+                
+                <div class="h-px bg-gray-200 my-2"></div>
+                <button @click="showCharityModal = true; mobileMenuOpen = false" class="w-full py-4 bg-[#0084ff] text-center text-white rounded-xl font-bold shadow-lg">
+                    <i class="far fa-heart mr-2"></i> Donate Now
+                </button>
             </div>
         </div>
     </nav>
@@ -295,7 +312,7 @@
     </main>
 
     <!-- Global Join Syndicate Section -->
-    <section id="apply" class="py-20 md:py-32 bg-[#030712] border-t border-brand-border relative overflow-hidden">
+    <section id="apply" class="py-20 md:py-32 bg-gray-50 border-t border-gray-200 relative overflow-hidden">
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.05)_0,transparent_70%)]"></div>
 
         <div class="max-w-6xl mx-auto px-4 relative z-10">
@@ -304,30 +321,30 @@
                 <!-- Left Side: Process Info -->
                 <div class="lg:col-span-2 space-y-12" data-aos="fade-right">
                     <div>
-                        <h2 class="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">Become a Part <br>of the Mission.</h2>
-                        <p class="text-gray-400 text-lg leading-relaxed">Join Shaurya Narayan Foundation as a member, volunteer, or syndicate partner to drive real-world impact through institutional assets.</p>
+                        <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight">Become a Part <br>of the Mission.</h2>
+                        <p class="text-gray-600 text-lg leading-relaxed">Join Shaurya Narayan Foundation as a member, volunteer, or syndicate partner to drive real-world impact through institutional assets.</p>
                     </div>
 
                     <div class="space-y-8">
                         <div class="flex gap-6">
                             <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary font-black shrink-0">1</div>
                             <div>
-                                <h4 class="text-white font-bold mb-1">Submit Application</h4>
-                                <p class="text-gray-500 text-sm">Tell us about your interests and preferred sector of contribution.</p>
+                                <h4 class="text-gray-900 font-bold mb-1">Submit Application</h4>
+                                <p class="text-gray-600 text-sm">Tell us about your interests and preferred sector of contribution.</p>
                             </div>
                         </div>
                         <div class="flex gap-6">
                             <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary font-black shrink-0">2</div>
                             <div>
-                                <h4 class="text-white font-bold mb-1">Verification Call</h4>
-                                <p class="text-gray-500 text-sm">Our team will reach out to understand your goals and align them with our projects.</p>
+                                <h4 class="text-gray-900 font-bold mb-1">Verification Call</h4>
+                                <p class="text-gray-600 text-sm">Our team will reach out to understand your goals and align them with our projects.</p>
                             </div>
                         </div>
                         <div class="flex gap-6">
                             <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary font-black shrink-0">3</div>
                             <div>
-                                <h4 class="text-white font-bold mb-1">Access Dashboard</h4>
-                                <p class="text-gray-500 text-sm">Get full access to the syndicate portal and start tracking social ROI.</p>
+                                <h4 class="text-gray-900 font-bold mb-1">Access Dashboard</h4>
+                                <p class="text-gray-600 text-sm">Get full access to the syndicate portal and start tracking social ROI.</p>
                             </div>
                         </div>
                     </div>
@@ -343,7 +360,7 @@
         </div>
     </section>
 
-    <footer class="bg-[#020617] border-t border-brand-border pt-24 pb-12 relative overflow-hidden">
+    <footer class="bg-blue-50 border-t border-gray-200 pt-24 pb-12 relative overflow-hidden">
         <div
             class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-[100px] -mr-64 -mt-64">
         </div>
@@ -359,55 +376,55 @@
                                 <i class="fas fa-shield-alt text-white text-xl"></i>
                             </div>
                         @endif
-                        <span class="text-2xl font-bold text-white tracking-tight">{{ $siteSettings['site_name'] ?? 'Shaurya Narayan' }}<span
+                        <span class="text-2xl font-bold text-gray-900 tracking-tight">{{ $siteSettings['site_name'] ?? 'Shaurya Narayan' }}<span
                                 class="text-brand-primary">.</span></span>
                     </div>
-                    <p class="text-gray-400 mb-8 leading-relaxed">Pioneering the future of real-world asset tokenization
+                    <p class="text-gray-600 mb-8 leading-relaxed">Pioneering the future of real-world asset tokenization
                         and fractional ownership in India. Building wealth through transparency and community scale.</p>
                     <div class="flex gap-4">
                         <a href="{{ $siteSettings['social_linkedin'] ?? '#' }}" target="_blank"
-                            class="w-10 h-10 rounded-full bg-brand-card border border-brand-border flex items-center justify-center text-gray-400 hover:text-brand-primary hover:border-brand-primary transition-all"><i
+                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-brand-primary hover:border-brand-primary transition-all"><i
                                 class="fab fa-linkedin-in"></i></a>
                         <a href="{{ $siteSettings['social_twitter'] ?? '#' }}" target="_blank"
-                            class="w-10 h-10 rounded-full bg-brand-card border border-brand-border flex items-center justify-center text-gray-400 hover:text-brand-primary hover:border-brand-primary transition-all"><i
+                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-brand-primary hover:border-brand-primary transition-all"><i
                                 class="fab fa-twitter"></i></a>
                         <a href="{{ $siteSettings['social_instagram'] ?? '#' }}" target="_blank"
-                            class="w-10 h-10 rounded-full bg-brand-card border border-brand-border flex items-center justify-center text-gray-400 hover:text-brand-primary hover:border-brand-primary transition-all"><i
+                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-brand-primary hover:border-brand-primary transition-all"><i
                                 class="fab fa-instagram"></i></a>
                         <a href="{{ $siteSettings['social_facebook'] ?? '#' }}" target="_blank"
-                            class="w-10 h-10 rounded-full bg-brand-card border border-brand-border flex items-center justify-center text-gray-400 hover:text-brand-primary hover:border-brand-primary transition-all"><i
+                            class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-brand-primary hover:border-brand-primary transition-all"><i
                                 class="fab fa-facebook-f"></i></a>
                     </div>
                 </div>
 
                 <div>
-                    <h4 class="text-white font-bold mb-8 uppercase text-xs tracking-[0.2em]">Quick Links</h4>
+                    <h4 class="text-gray-900 font-bold mb-8 uppercase text-xs tracking-[0.2em]">Quick Links</h4>
                     <ul class="space-y-4">
                         <li><a href="{{ route('about') }}"
-                                class="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><i
+                                class="text-gray-600 hover:text-brand-primary transition-colors flex items-center gap-2"><i
                                     class="fas fa-chevron-right text-[10px] text-brand-primary"></i> About Our
                                 Mission</a></li>
                         <li><a href="{{ route('process') }}"
-                                class="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><i
+                                class="text-gray-600 hover:text-brand-primary transition-colors flex items-center gap-2"><i
                                     class="fas fa-chevron-right text-[10px] text-brand-primary"></i> Investment
                                 Process</a></li>
                         <li><a href="{{ route('returns') }}"
-                                class="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><i
+                                class="text-gray-600 hover:text-brand-primary transition-colors flex items-center gap-2"><i
                                     class="fas fa-chevron-right text-[10px] text-brand-primary"></i> ROI Projections</a>
                         </li>
                         <li><a href="{{ route('home') }}#apply"
-                                class="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><i
+                                class="text-gray-600 hover:text-brand-primary transition-colors flex items-center gap-2"><i
                                     class="fas fa-chevron-right text-[10px] text-brand-primary"></i> Join Syndicate</a>
                         </li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="text-white font-bold mb-8 uppercase text-xs tracking-[0.2em]">Our Sectors</h4>
+                    <h4 class="text-gray-900 font-bold mb-8 uppercase text-xs tracking-[0.2em]">Our Sectors</h4>
                     <ul class="space-y-4">
                         @foreach($navSectors as $navSector)
                             <li><a href="{{ route('sectors.detail', $navSector->slug) }}"
-                                    class="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
+                                    class="text-gray-600 hover:text-brand-primary transition-colors flex items-center gap-2">
                                     <i class="{{ $navSector->icon ?? 'fas fa-chevron-right' }} text-xs text-brand-primary"></i>
                                     {{ $navSector->title }}
                                 </a>
@@ -417,19 +434,19 @@
                 </div>
 
                 <div>
-                    <h4 class="text-white font-bold mb-8 uppercase text-xs tracking-[0.2em]">Office Address</h4>
+                    <h4 class="text-gray-900 font-bold mb-8 uppercase text-xs tracking-[0.2em]">Office Address</h4>
                     <div class="space-y-6">
                         <div class="flex items-start gap-4">
                             <i class="fas fa-map-marker-alt text-brand-primary mt-1"></i>
-                            <p class="text-gray-400 text-sm leading-relaxed whitespace-pre-line">{{ $siteSettings['site_address'] ?? "Level 4, Shaurya Narayan Heights, Cyber City, Gurgaon, Haryana - 122002" }}</p>
+                            <p class="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{{ $siteSettings['site_address'] ?? "Level 4, Shaurya Narayan Heights, Cyber City, Gurgaon, Haryana - 122002" }}</p>
                         </div>
                         <div class="flex items-center gap-4">
                             <i class="fas fa-phone-alt text-brand-primary"></i>
-                            <p class="text-gray-400 text-sm">{{ $siteSettings['site_phone'] ?? '+91 124 456 7890' }}</p>
+                            <p class="text-gray-600 text-sm">{{ $siteSettings['site_phone'] ?? '+91 124 456 7890' }}</p>
                         </div>
                         <div class="flex items-center gap-4">
                             <i class="fas fa-envelope text-brand-primary"></i>
-                            <p class="text-gray-400 text-sm">{{ $siteSettings['site_email'] ?? 'invest@shaurya.in' }}</p>
+                            <p class="text-gray-600 text-sm">{{ $siteSettings['site_email'] ?? 'invest@shaurya.in' }}</p>
                         </div>
                     </div>
                 </div>

@@ -153,6 +153,35 @@
                     </div>
                 </div>
 
+                <!-- Get Involved Page Settings -->
+                <div class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm" x-data="{ involvedHeroPreview: '{{ isset($settings['involved_hero_image']) ? asset('storage/' . $settings['involved_hero_image']) : '' }}' }">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-10 h-1 rounded-full bg-green-500"></div>
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Get Involved Page Settings</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 mb-8">
+                        <!-- Hero Image -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Hero Background Image</label>
+                            <div class="relative group h-full min-h-[200px]">
+                                <input type="file" name="involved_hero_image" @change="let reader = new FileReader(); reader.onload = (e) => { involvedHeroPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="h-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-4 text-center flex flex-col items-center justify-center group-hover:border-green-500 transition-all">
+                                    <template x-if="involvedHeroPreview">
+                                        <img :src="involvedHeroPreview" class="h-24 w-full object-cover mb-4 rounded-xl shadow-lg">
+                                    </template>
+                                    <template x-if="!involvedHeroPreview">
+                                        <div class="mb-4">
+                                            <i class="fas fa-image text-4xl text-slate-300"></i>
+                                        </div>
+                                    </template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="involvedHeroPreview ? 'Change' : 'Upload'"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Bank details & QR -->
                 <div class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm" x-data="{ qrPreview: '{{ isset($settings['admin_qr_code']) ? asset('storage/' . $settings['admin_qr_code']) : '' }}' }">
                     <div class="flex items-center gap-3 mb-8">
@@ -194,6 +223,507 @@
                                         </div>
                                     </template>
                                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="qrPreview ? 'Change QR Code' : 'Upload Payment QR'"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About Me Images -->
+                <div class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm mb-8" x-data="{ 
+                        aboutMeTopPreview: '{{ isset($settings['about_me_top_image']) ? asset('storage/' . $settings['about_me_top_image']) : '' }}',
+                        aboutMeLeftPreview: '{{ isset($settings['about_me_left_image']) ? asset('storage/' . $settings['about_me_left_image']) : '' }}',
+                        aboutMeRightPreview: '{{ isset($settings['about_me_right_image']) ? asset('storage/' . $settings['about_me_right_image']) : '' }}'
+                    }">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-10 h-1 rounded-full bg-blue-500"></div>
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">About Me Section Images</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Top Image -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Top Banner Image</label>
+                            <div class="relative group h-full min-h-[200px]">
+                                <input type="file" name="about_me_top_image" @change="let reader = new FileReader(); reader.onload = (e) => { aboutMeTopPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="h-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-4 text-center flex flex-col items-center justify-center group-hover:border-blue-500 transition-all">
+                                    <template x-if="aboutMeTopPreview">
+                                        <img :src="aboutMeTopPreview" class="h-24 w-full object-cover mb-4 rounded-xl shadow-lg">
+                                    </template>
+                                    <template x-if="!aboutMeTopPreview">
+                                        <div class="mb-4">
+                                            <i class="fas fa-image text-4xl text-slate-300"></i>
+                                        </div>
+                                    </template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="aboutMeTopPreview ? 'Change' : 'Upload'"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Left Image -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Bottom Left Image</label>
+                            <div class="relative group h-full min-h-[200px]">
+                                <input type="file" name="about_me_left_image" @change="let reader = new FileReader(); reader.onload = (e) => { aboutMeLeftPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="h-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-4 text-center flex flex-col items-center justify-center group-hover:border-blue-500 transition-all">
+                                    <template x-if="aboutMeLeftPreview">
+                                        <img :src="aboutMeLeftPreview" class="h-24 w-24 object-cover mb-4 rounded-xl shadow-lg">
+                                    </template>
+                                    <template x-if="!aboutMeLeftPreview">
+                                        <div class="mb-4">
+                                            <i class="fas fa-image text-4xl text-slate-300"></i>
+                                        </div>
+                                    </template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="aboutMeLeftPreview ? 'Change' : 'Upload'"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Image -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Bottom Right Image</label>
+                            <div class="relative group h-full min-h-[200px]">
+                                <input type="file" name="about_me_right_image" @change="let reader = new FileReader(); reader.onload = (e) => { aboutMeRightPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="h-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-4 text-center flex flex-col items-center justify-center group-hover:border-blue-500 transition-all">
+                                    <template x-if="aboutMeRightPreview">
+                                        <img :src="aboutMeRightPreview" class="h-24 w-24 object-cover mb-4 rounded-xl shadow-lg">
+                                    </template>
+                                    <template x-if="!aboutMeRightPreview">
+                                        <div class="mb-4">
+                                            <i class="fas fa-image text-4xl text-slate-300"></i>
+                                        </div>
+                                    </template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="aboutMeRightPreview ? 'Change' : 'Upload'"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About Us Page Images -->
+                <div class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm mb-8" x-data="{ 
+                        aboutUsHeroPreview: '{{ isset($settings['about_us_hero_image']) ? asset('storage/' . $settings['about_us_hero_image']) : '' }}',
+                        aboutUsMissionPreview: '{{ isset($settings['about_us_mission_image']) ? asset('storage/' . $settings['about_us_mission_image']) : '' }}'
+                    }">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-10 h-1 rounded-full bg-fuchsia-500"></div>
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">About Us Page Images</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Hero Image -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Hero Background Image</label>
+                            <div class="relative group h-full min-h-[200px]">
+                                <input type="file" name="about_us_hero_image" @change="let reader = new FileReader(); reader.onload = (e) => { aboutUsHeroPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="h-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-4 text-center flex flex-col items-center justify-center group-hover:border-fuchsia-500 transition-all">
+                                    <template x-if="aboutUsHeroPreview">
+                                        <img :src="aboutUsHeroPreview" class="h-24 w-full object-cover mb-4 rounded-xl shadow-lg">
+                                    </template>
+                                    <template x-if="!aboutUsHeroPreview">
+                                        <div class="mb-4">
+                                            <i class="fas fa-image text-4xl text-slate-300"></i>
+                                        </div>
+                                    </template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="aboutUsHeroPreview ? 'Change' : 'Upload'"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mission Image -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Our Mission Image</label>
+                            <div class="relative group h-full min-h-[200px]">
+                                <input type="file" name="about_us_mission_image" @change="let reader = new FileReader(); reader.onload = (e) => { aboutUsMissionPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="h-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-4 text-center flex flex-col items-center justify-center group-hover:border-fuchsia-500 transition-all">
+                                    <template x-if="aboutUsMissionPreview">
+                                        <img :src="aboutUsMissionPreview" class="h-24 w-full object-cover mb-4 rounded-xl shadow-lg">
+                                    </template>
+                                    <template x-if="!aboutUsMissionPreview">
+                                        <div class="mb-4">
+                                            <i class="fas fa-image text-4xl text-slate-300"></i>
+                                        </div>
+                                    </template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="aboutUsMissionPreview ? 'Change' : 'Upload'"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Our Work Page Images -->
+                <div class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm mb-8" x-data="{ 
+                        ourWorkHeroPreview: '{{ isset($settings['our_work_hero_image']) ? asset('storage/' . $settings['our_work_hero_image']) : '' }}'
+                    }">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-10 h-1 rounded-full bg-orange-500"></div>
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Our Work Page Images</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-8">
+                        <!-- Hero Image -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Hero Background Image</label>
+                            <div class="relative group h-full min-h-[200px]">
+                                <input type="file" name="our_work_hero_image" @change="let reader = new FileReader(); reader.onload = (e) => { ourWorkHeroPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="h-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-4 text-center flex flex-col items-center justify-center group-hover:border-orange-500 transition-all">
+                                    <template x-if="ourWorkHeroPreview">
+                                        <img :src="ourWorkHeroPreview" class="h-24 w-full object-cover mb-4 rounded-xl shadow-lg">
+                                    </template>
+                                    <template x-if="!ourWorkHeroPreview">
+                                        <div class="mb-4">
+                                            <i class="fas fa-image text-4xl text-slate-300"></i>
+                                        </div>
+                                    </template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="ourWorkHeroPreview ? 'Change' : 'Upload'"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Page Settings -->
+                <div class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm mb-8" x-data="{ 
+                        mediaHeroPreview: '{{ isset($settings['media_hero_image']) ? asset('storage/' . $settings['media_hero_image']) : '' }}',
+                        vid1Preview: '{{ isset($settings['media_vid_1_thumb']) ? asset('storage/' . $settings['media_vid_1_thumb']) : '' }}',
+                        vid2Preview: '{{ isset($settings['media_vid_2_thumb']) ? asset('storage/' . $settings['media_vid_2_thumb']) : '' }}',
+                        vid3Preview: '{{ isset($settings['media_vid_3_thumb']) ? asset('storage/' . $settings['media_vid_3_thumb']) : '' }}',
+                        vid4Preview: '{{ isset($settings['media_vid_4_thumb']) ? asset('storage/' . $settings['media_vid_4_thumb']) : '' }}',
+                        story1Preview: '{{ isset($settings['media_story_1_image']) ? asset('storage/' . $settings['media_story_1_image']) : '' }}',
+                        story2Preview: '{{ isset($settings['media_story_2_image']) ? asset('storage/' . $settings['media_story_2_image']) : '' }}'
+                    }">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-10 h-1 rounded-full bg-cyan-500"></div>
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Media Page Settings</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 mb-8">
+                        <!-- Hero Image -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Hero Background Image</label>
+                            <div class="relative group h-full min-h-[200px]">
+                                <input type="file" name="media_hero_image" @change="let reader = new FileReader(); reader.onload = (e) => { mediaHeroPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="h-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-4 text-center flex flex-col items-center justify-center group-hover:border-cyan-500 transition-all">
+                                    <template x-if="mediaHeroPreview">
+                                        <img :src="mediaHeroPreview" class="h-24 w-full object-cover mb-4 rounded-xl shadow-lg">
+                                    </template>
+                                    <template x-if="!mediaHeroPreview">
+                                        <div class="mb-4">
+                                            <i class="fas fa-image text-4xl text-slate-300"></i>
+                                        </div>
+                                    </template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="mediaHeroPreview ? 'Change' : 'Upload'"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-sm font-bold text-gray-800 mb-4 border-b pb-2">Latest Updates (Media Page)</h4>
+                    <div class="space-y-8 mb-8">
+                        
+                        <!-- Update 1 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-3xl">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 1 Title</label>
+                                <input type="text" name="media_update_1_title" value="{{ $settings['media_update_1_title'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. New Computer Lab">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 1 Date</label>
+                                <input type="text" name="media_update_1_date" value="{{ $settings['media_update_1_date'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. May 15, 2025">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 1 Description</label>
+                                <textarea name="media_update_1_desc" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" rows="2" placeholder="Brief description...">{{ $settings['media_update_1_desc'] ?? '' }}</textarea>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 1 Icon Class (FontAwesome)</label>
+                                <input type="text" name="media_update_1_icon" value="{{ $settings['media_update_1_icon'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. fas fa-desktop">
+                            </div>
+                        </div>
+
+                        <!-- Update 2 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-3xl">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 2 Title</label>
+                                <input type="text" name="media_update_2_title" value="{{ $settings['media_update_2_title'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. Donation Drive">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 2 Date</label>
+                                <input type="text" name="media_update_2_date" value="{{ $settings['media_update_2_date'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. May 10, 2025">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 2 Description</label>
+                                <textarea name="media_update_2_desc" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" rows="2" placeholder="Brief description...">{{ $settings['media_update_2_desc'] ?? '' }}</textarea>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 2 Icon Class (FontAwesome)</label>
+                                <input type="text" name="media_update_2_icon" value="{{ $settings['media_update_2_icon'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. fas fa-hand-holding-heart">
+                            </div>
+                        </div>
+
+                        <!-- Update 3 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-3xl">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 3 Title</label>
+                                <input type="text" name="media_update_3_title" value="{{ $settings['media_update_3_title'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. Workshop on Hygiene">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 3 Date</label>
+                                <input type="text" name="media_update_3_date" value="{{ $settings['media_update_3_date'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. May 06, 2025">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 3 Description</label>
+                                <textarea name="media_update_3_desc" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" rows="2" placeholder="Brief description...">{{ $settings['media_update_3_desc'] ?? '' }}</textarea>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 3 Icon Class (FontAwesome)</label>
+                                <input type="text" name="media_update_3_icon" value="{{ $settings['media_update_3_icon'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. fas fa-hands-wash">
+                            </div>
+                        </div>
+
+                        <!-- Update 4 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-3xl">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 4 Title</label>
+                                <input type="text" name="media_update_4_title" value="{{ $settings['media_update_4_title'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. Food Distribution">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 4 Date</label>
+                                <input type="text" name="media_update_4_date" value="{{ $settings['media_update_4_date'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. May 02, 2025">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 4 Description</label>
+                                <textarea name="media_update_4_desc" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" rows="2" placeholder="Brief description...">{{ $settings['media_update_4_desc'] ?? '' }}</textarea>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update 4 Icon Class (FontAwesome)</label>
+                                <input type="text" name="media_update_4_icon" value="{{ $settings['media_update_4_icon'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. fas fa-box-open">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <h4 class="text-sm font-bold text-gray-800 mb-4 border-b pb-2">Success Stories (Media Page)</h4>
+                    <div class="space-y-8 mb-8">
+                        
+                        <!-- Story 1 -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-6 rounded-3xl">
+                            <div class="space-y-2 col-span-2">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Story 1 Category/Tag</label>
+                                    <input type="text" name="media_story_1_tag" value="{{ $settings['media_story_1_tag'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. Education">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Story 1 Title</label>
+                                    <input type="text" name="media_story_1_title" value="{{ $settings['media_story_1_title'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. From Village Student to Engineer">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Story 1 Description</label>
+                                    <textarea name="media_story_1_desc" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" rows="3" placeholder="Brief description...">{{ $settings['media_story_1_desc'] ?? '' }}</textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Story 1 Link</label>
+                                    <input type="text" name="media_story_1_link" value="{{ $settings['media_story_1_link'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="Link to full story">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Story 1 Image</label>
+                                <div class="relative group h-full min-h-[120px]">
+                                    <input type="file" name="media_story_1_image" @change="let reader = new FileReader(); reader.onload = (e) => { story1Preview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    <div class="h-full bg-white border-2 border-dashed border-slate-200 rounded-xl p-2 text-center flex flex-col items-center justify-center group-hover:border-cyan-500 transition-all">
+                                        <template x-if="story1Preview"><img :src="story1Preview" class="h-24 w-full object-cover mb-2 rounded-lg"></template>
+                                        <template x-if="!story1Preview"><i class="fas fa-image text-3xl text-slate-300 mb-2"></i></template>
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="story1Preview ? 'Change' : 'Upload'"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Story 2 -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-6 rounded-3xl">
+                            <div class="space-y-2 col-span-2">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Story 2 Category/Tag</label>
+                                    <input type="text" name="media_story_2_tag" value="{{ $settings['media_story_2_tag'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. Elderly Care">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Story 2 Title</label>
+                                    <input type="text" name="media_story_2_title" value="{{ $settings['media_story_2_title'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. A New Life at Anath Ashram">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Story 2 Description</label>
+                                    <textarea name="media_story_2_desc" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" rows="3" placeholder="Brief description...">{{ $settings['media_story_2_desc'] ?? '' }}</textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Story 2 Link</label>
+                                    <input type="text" name="media_story_2_link" value="{{ $settings['media_story_2_link'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="Link to full story">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Story 2 Image</label>
+                                <div class="relative group h-full min-h-[120px]">
+                                    <input type="file" name="media_story_2_image" @change="let reader = new FileReader(); reader.onload = (e) => { story2Preview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    <div class="h-full bg-white border-2 border-dashed border-slate-200 rounded-xl p-2 text-center flex flex-col items-center justify-center group-hover:border-cyan-500 transition-all">
+                                        <template x-if="story2Preview"><img :src="story2Preview" class="h-24 w-full object-cover mb-2 rounded-lg"></template>
+                                        <template x-if="!story2Preview"><i class="fas fa-image text-3xl text-slate-300 mb-2"></i></template>
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="story2Preview ? 'Change' : 'Upload'"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-sm font-bold text-gray-800 mb-4 border-b pb-2">Video Slots (Scrollable List)</h4>
+                    <div class="space-y-8">
+                        
+                        <!-- Video 1 -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-6 rounded-3xl">
+                            <div class="space-y-2 col-span-2">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 1 Title</label>
+                                    <input type="text" name="media_vid_1_title" value="{{ $settings['media_vid_1_title'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. Plantation Drive 2025">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 1 Link (YouTube)</label>
+                                    <input type="text" name="media_vid_1_url" value="{{ $settings['media_vid_1_url'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="https://www.youtube.com/watch?v=...">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 1 Duration</label>
+                                    <input type="text" name="media_vid_1_duration" value="{{ $settings['media_vid_1_duration'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. 05:20">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Video 1 Thumbnail</label>
+                                <div class="relative group h-full min-h-[120px]">
+                                    <input type="file" name="media_vid_1_thumb" @change="let reader = new FileReader(); reader.onload = (e) => { vid1Preview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    <div class="h-full bg-white border-2 border-dashed border-slate-200 rounded-xl p-2 text-center flex flex-col items-center justify-center group-hover:border-cyan-500 transition-all">
+                                        <template x-if="vid1Preview"><img :src="vid1Preview" class="h-16 w-full object-cover mb-2 rounded-lg"></template>
+                                        <template x-if="!vid1Preview"><i class="fas fa-video text-2xl text-slate-300 mb-2"></i></template>
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="vid1Preview ? 'Change' : 'Upload'"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video 2 -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-6 rounded-3xl">
+                            <div class="space-y-2 col-span-2">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 2 Title</label>
+                                    <input type="text" name="media_vid_2_title" value="{{ $settings['media_vid_2_title'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. Health Camp Highlights">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 2 Link (YouTube)</label>
+                                    <input type="text" name="media_vid_2_url" value="{{ $settings['media_vid_2_url'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="https://www.youtube.com/watch?v=...">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 2 Duration</label>
+                                    <input type="text" name="media_vid_2_duration" value="{{ $settings['media_vid_2_duration'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20" placeholder="e.g. 04:35">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Video 2 Thumbnail</label>
+                                <div class="relative group h-full min-h-[120px]">
+                                    <input type="file" name="media_vid_2_thumb" @change="let reader = new FileReader(); reader.onload = (e) => { vid2Preview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    <div class="h-full bg-white border-2 border-dashed border-slate-200 rounded-xl p-2 text-center flex flex-col items-center justify-center group-hover:border-cyan-500 transition-all">
+                                        <template x-if="vid2Preview"><img :src="vid2Preview" class="h-16 w-full object-cover mb-2 rounded-lg"></template>
+                                        <template x-if="!vid2Preview"><i class="fas fa-video text-2xl text-slate-300 mb-2"></i></template>
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="vid2Preview ? 'Change' : 'Upload'"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video 3 -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-6 rounded-3xl">
+                            <div class="space-y-2 col-span-2">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 3 Title</label>
+                                    <input type="text" name="media_vid_3_title" value="{{ $settings['media_vid_3_title'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 3 Link (YouTube)</label>
+                                    <input type="text" name="media_vid_3_url" value="{{ $settings['media_vid_3_url'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 3 Duration</label>
+                                    <input type="text" name="media_vid_3_duration" value="{{ $settings['media_vid_3_duration'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Video 3 Thumbnail</label>
+                                <div class="relative group h-full min-h-[120px]">
+                                    <input type="file" name="media_vid_3_thumb" @change="let reader = new FileReader(); reader.onload = (e) => { vid3Preview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    <div class="h-full bg-white border-2 border-dashed border-slate-200 rounded-xl p-2 text-center flex flex-col items-center justify-center group-hover:border-cyan-500 transition-all">
+                                        <template x-if="vid3Preview"><img :src="vid3Preview" class="h-16 w-full object-cover mb-2 rounded-lg"></template>
+                                        <template x-if="!vid3Preview"><i class="fas fa-video text-2xl text-slate-300 mb-2"></i></template>
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="vid3Preview ? 'Change' : 'Upload'"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video 4 -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-6 rounded-3xl">
+                            <div class="space-y-2 col-span-2">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 4 Title</label>
+                                    <input type="text" name="media_vid_4_title" value="{{ $settings['media_vid_4_title'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 4 Link (YouTube)</label>
+                                    <input type="text" name="media_vid_4_url" value="{{ $settings['media_vid_4_url'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Video 4 Duration</label>
+                                    <input type="text" name="media_vid_4_duration" value="{{ $settings['media_vid_4_duration'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500/20">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center">Video 4 Thumbnail</label>
+                                <div class="relative group h-full min-h-[120px]">
+                                    <input type="file" name="media_vid_4_thumb" @change="let reader = new FileReader(); reader.onload = (e) => { vid4Preview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    <div class="h-full bg-white border-2 border-dashed border-slate-200 rounded-xl p-2 text-center flex flex-col items-center justify-center group-hover:border-cyan-500 transition-all">
+                                        <template x-if="vid4Preview"><img :src="vid4Preview" class="h-16 w-full object-cover mb-2 rounded-lg"></template>
+                                        <template x-if="!vid4Preview"><i class="fas fa-video text-2xl text-slate-300 mb-2"></i></template>
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="vid4Preview ? 'Change' : 'Upload'"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Events Page Settings -->
+                <div class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm" x-data="{
+                    eventsHeroPreview: '{{ isset($settings['events_hero_image']) ? asset('storage/' . $settings['events_hero_image']) : '' }}',
+                    eventsWorkshopPreview: '{{ isset($settings['events_workshop_image']) ? asset('storage/' . $settings['events_workshop_image']) : '' }}'
+                }">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-10 h-1 rounded-full bg-green-600"></div>
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Events Page Settings</h3>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Events Hero Image</label>
+                            <div class="relative group">
+                                <input type="file" name="events_hero_image" @change="let reader = new FileReader(); reader.onload = (e) => { eventsHeroPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 text-center group-hover:border-green-500 transition-all">
+                                    <template x-if="eventsHeroPreview"><img :src="eventsHeroPreview" class="h-24 mx-auto mb-2 object-cover w-full rounded-xl"></template>
+                                    <template x-if="!eventsHeroPreview"><i class="fas fa-image text-3xl text-slate-300 mb-2"></i></template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="eventsHeroPreview ? 'Change Image' : 'Upload Hero Image'"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Workshops Section Image</label>
+                            <div class="relative group">
+                                <input type="file" name="events_workshop_image" @change="let reader = new FileReader(); reader.onload = (e) => { eventsWorkshopPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 text-center group-hover:border-green-500 transition-all">
+                                    <template x-if="eventsWorkshopPreview"><img :src="eventsWorkshopPreview" class="h-24 mx-auto mb-2 object-cover w-full rounded-xl"></template>
+                                    <template x-if="!eventsWorkshopPreview"><i class="fas fa-image text-3xl text-slate-300 mb-2"></i></template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="eventsWorkshopPreview ? 'Change Image' : 'Upload Workshop Image'"></p>
                                 </div>
                             </div>
                         </div>

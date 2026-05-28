@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer(['components.frontend.layout', 'components.dashboard.layout', 'backend.admin.settings.index', 'frontend.*'], function ($view) {
+        View::composer(['components.frontend.layout', 'components.frontend.*', 'components.dashboard.layout', 'backend.admin.settings.index', 'frontend.*'], function ($view) {
             $view->with('navSectors', \App\Models\HomeSector::where('is_active', true)
                 ->whereNotNull('slug')
                 ->where('slug', '!=', '')

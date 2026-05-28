@@ -1,176 +1,251 @@
 <x-frontend.layout>
     <x-slot name="title">Home | {{ $siteSettings['site_name'] ?? 'Shaurya Narayan Foundation' }}</x-slot>
 
-    <!-- 1. Dynamic Banner Slider -->
-    <section class="relative pt-20 overflow-hidden bg-brand-dark">
-        <div class="swiper bannerSwiper">
-            <div class="swiper-wrapper">
-                @forelse($banners as $banner)
-                    <div class="swiper-slide relative min-h-[70vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden">
-                        <!-- Background Image with Overlay -->
-                        <div class="absolute inset-0 z-0">
-                            <img src="{{ asset('storage/' . $banner->image_path) }}" class="w-full h-full object-cover opacity-40 scale-105 animate-slow-zoom" alt="{{ $banner->title }}">
-                            <div class="absolute inset-0 bg-gradient-to-b from-brand-dark via-transparent to-brand-dark"></div>
-                        </div>
+    <!-- New Hero Section -->
+    <section class="relative bg-white pt-[112px] flex flex-col lg:flex-row overflow-hidden lg:h-[700px]">
+        
+        <!-- Left Side: Text Content -->
+        <div class="w-full lg:w-[55%] flex flex-col justify-center pl-6 md:pl-12 lg:pl-20 pr-6 lg:pr-32 py-16 relative z-10">
+            <!-- Background subtle image blend -->
+            <div class="absolute bottom-0 left-0 w-full h-[60%] opacity-20 pointer-events-none" style="background: url('{{ $banners->first() ? asset('storage/' . $banners->first()->image_path) : 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80' }}') center bottom/cover; mask-image: linear-gradient(to top, black, transparent); -webkit-mask-image: linear-gradient(to top, black, transparent);"></div>
+            
+            <div class="relative z-10 max-w-2xl">
+                <h1 class="text-[#0a1c3a] text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-[1.1] mb-2">
+                    Together, we can
+                </h1>
+                <h2 class="text-[#278c3c] text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[1.1] mb-6">
+                    Build a better<br>tomorrow
+                </h2>
+                
+                <p class="text-gray-600 text-sm md:text-base leading-relaxed mb-8 max-w-lg font-medium">
+                    Shaurya Narayan Foundation is dedicated to creating positive change through education, healthcare, elderly care, environment protection and community development.
+                </p>
 
-                        <!-- Content -->
-                        <div class="max-w-6xl mx-auto px-4 relative z-10 text-center">
-                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-border bg-brand-card/50 mb-8 text-xs md:text-sm animate-fade-in-up">
-                                <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-brand-accent"></span></span>
-                                <span class="font-bold tracking-tight text-gray-200 uppercase tracking-widest">Syndicate Open FY 2026</span>
-                            </div>
-                            <h1 class="text-4xl md:text-7xl lg:text-8xl font-extrabold text-white tracking-tighter leading-tight mb-8 animate-fade-in-up" style="animation-delay: 200ms;">
-                                {!! nl2br(e($banner->title)) !!}
-                            </h1>
-                            <p class="text-lg md:text-2xl text-gray-400 font-light mb-10 max-w-3xl mx-auto leading-relaxed animate-fade-in-up" style="animation-delay: 400ms;">
-                                {{ $banner->description }}
-                            </p>
-                            @if($banner->link)
-                                <div class="flex justify-center animate-fade-in-up" style="animation-delay: 600ms;">
-                                    <a href="{{ $banner->link }}" class="px-8 md:px-12 py-4 md:py-5 bg-brand-primary text-white rounded-full font-extrabold text-lg md:text-xl hover:-translate-y-1 transition-all shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_50px_rgba(14,165,233,0.5)]">Explore Opportunity <i class="fas fa-arrow-right ml-2 text-sm"></i></a>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @empty
-                    <!-- Fallback Hero if no banners -->
-                    <div class="swiper-slide relative min-h-[85vh] flex items-center justify-center">
-                        <div class="absolute top-0 -left-10 w-[500px] h-[500px] bg-brand-primary rounded-full mix-blend-multiply blur-[180px] opacity-20 animate-blob"></div>
-                        <div class="max-w-6xl mx-auto px-4 relative z-10 text-center">
-                            <h1 class="text-6xl md:text-8xl font-extrabold text-white tracking-tighter leading-[1] mb-10">Institutional <span class="text-gradient">Real Asset</span> Syndication.</h1>
-                            <p class="text-xl md:text-2xl text-gray-400 font-light mb-12 max-w-3xl mx-auto leading-relaxed">Unlock high-yield commercial assets through community-driven capital.</p>
-                            <a href="#apply" class="px-10 py-5 bg-brand-primary text-white rounded-full font-extrabold text-xl hover:-translate-y-1 transition-all">Start Your Journey</a>
-                        </div>
-                    </div>
-                @endforelse
-            </div>
-            <!-- Navigation -->
-            <div class="swiper-button-next !text-white !opacity-20 hover:!opacity-100 transition-opacity hidden md:flex"></div>
-            <div class="swiper-button-prev !text-white !opacity-20 hover:!opacity-100 transition-opacity hidden md:flex"></div>
-            <div class="swiper-pagination"></div>
-        </div>
-    </section>
-
-    <!-- 2. Dynamic Investment Sectors (Moved here and made dynamic) -->
-    <section class="py-24 bg-brand-card/5 border-b border-brand-border" id="sectors">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-xs">Opportunities</h2>
-                <h3 class="text-4xl md:text-5xl font-extrabold text-white mb-6">Sectors You Can Invest In.</h3>
-                <p class="text-gray-400 max-w-2xl mx-auto text-lg">We handpick recession-resistant industries to ensure safety and scale.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @forelse($sectors as $sector)
-                    <a href="{{ route('sectors.detail', $sector->slug) }}"
-                       class="group glass-card p-4 rounded-[2.5rem] block transition-all hover:scale-[1.02]"
-                       data-aos="fade-up"
-                       data-aos-delay="{{ $loop->index * 100 }}">
-                        <div class="aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 relative">
-                            <img src="{{ asset('storage/' . $sector->image_path) }}"
-                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60"
-                                 alt="{{ $sector->title }}"
-                                 loading="lazy">
-                            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent"></div>
-                            @if($sector->tag)
-                                <div class="absolute bottom-6 left-6">
-                                    <span class="px-4 py-1.5 bg-brand-primary/20 backdrop-blur-md border border-brand-primary/30 rounded-full text-brand-primary text-xs font-bold uppercase tracking-widest">
-                                        {{ $sector->tag }}
-                                    </span>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="px-4 pb-6">
-                            <h4 class="text-2xl font-bold text-white mb-3">{{ $sector->title }}</h4>
-                            <p class="text-gray-500 text-sm mb-6 leading-relaxed">{{ $sector->description }}</p>
-                            <span class="text-brand-primary font-bold inline-flex items-center gap-2 group-hover:gap-4 transition-all uppercase text-xs tracking-widest">
-                                Learn More <i class="fas fa-arrow-right"></i>
-                            </span>
-                        </div>
+                <div class="flex flex-wrap gap-4">
+                    <a href="{{ route('involved.donate') }}" class="px-6 py-3 bg-[#278c3c] text-white rounded-full font-bold text-sm hover:bg-[#1f7230] transition-colors shadow-lg flex items-center gap-2">
+                        <i class="fas fa-heart"></i> DONATE NOW
                     </a>
-                @empty
-                    <div class="col-span-full py-12 text-center text-gray-500 italic">No investment sectors configured yet.</div>
-                @endforelse
+                    <a href="#about" class="px-6 py-3 bg-white text-[#278c3c] border-2 border-[#278c3c] rounded-full font-bold text-sm hover:bg-[#278c3c] hover:text-white transition-colors flex items-center gap-2">
+                        <i class="fas fa-users"></i> JOIN US
+                    </a>
+                </div>
             </div>
+        </div>
+
+        <!-- Right Side: Image Collage -->
+        <div class="w-full lg:w-[55%] h-[500px] lg:absolute lg:top-0 lg:right-0 lg:bottom-0 lg:h-auto relative overflow-hidden bg-white z-20" style="clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);">
+            
+            <!-- Diagonal Wrapper to slant everything uniformly -->
+            <div class="absolute inset-0 -left-[10%] w-[120%] h-[120%] -top-[10%]">
+                
+                <!-- Position 1 (Top Left) -->
+                @if(isset($sectors[0]))
+                <a href="{{ route('sectors.detail', $sectors[0]->slug) }}" class="absolute top-0 left-0 w-[55%] h-[55%] border-[4px] border-white overflow-hidden z-10 group" style="clip-path: polygon(0 0, 100% 0, 75% 100%, 0 100%);">
+                    <img src="{{ asset('storage/' . $sectors[0]->image_path) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="{{ $sectors[0]->title }}">
+                    <div class="absolute bottom-10 right-[30%] bg-white px-3 py-1 rounded-full flex items-center gap-2 text-[10px] font-bold shadow-lg uppercase text-green-700 group-hover:bg-green-700 group-hover:text-white transition-colors">
+                        <i class="fab fa-envira"></i> {{ $sectors[0]->title }}
+                    </div>
+                </a>
+                @endif
+
+                <!-- Position 2 (Top Right) -->
+                @if(isset($sectors[1]))
+                <a href="{{ route('sectors.detail', $sectors[1]->slug) }}" class="absolute top-0 right-0 w-[55%] h-[45%] border-[4px] border-white overflow-hidden z-10 group" style="clip-path: polygon(25% 0, 100% 0, 100% 100%, 0 100%);">
+                    <img src="{{ asset('storage/' . $sectors[1]->image_path) }}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" alt="{{ $sectors[1]->title }}">
+                    <div class="absolute bottom-6 left-1/4 bg-white px-3 py-1 rounded-full flex items-center gap-2 text-[10px] font-bold shadow-lg uppercase text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-graduation-cap"></i> {{ $sectors[1]->title }}
+                    </div>
+                </a>
+                @endif
+
+                <!-- Position 3 (Bottom Left) -->
+                @if(isset($sectors[2]))
+                <a href="{{ route('sectors.detail', $sectors[2]->slug) }}" class="absolute bottom-0 left-0 w-[50%] h-[55%] border-[4px] border-white overflow-hidden z-10 group" style="clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);">
+                    <img src="{{ asset('storage/' . $sectors[2]->image_path) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="{{ $sectors[2]->title }}">
+                    <div class="absolute bottom-12 left-10 bg-white px-3 py-1 rounded-full flex items-center gap-2 text-[10px] font-bold shadow-lg uppercase text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-hands-helping"></i> {{ $sectors[2]->title }}
+                    </div>
+                </a>
+                @endif
+
+                <!-- Position 4 (Bottom Center) -->
+                @if(isset($sectors[3]))
+                <a href="{{ route('sectors.detail', $sectors[3]->slug) }}" class="absolute bottom-0 right-[25%] w-[45%] h-[55%] border-[4px] border-white overflow-hidden z-20 group" style="clip-path: polygon(20% 0, 100% 0, 80% 100%, 0 100%);">
+                    <img src="{{ asset('storage/' . $sectors[3]->image_path) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="{{ $sectors[3]->title }}">
+                    <div class="absolute bottom-12 left-[20%] bg-white px-3 py-1 rounded-full flex items-center gap-2 text-[10px] font-bold shadow-lg uppercase text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-users"></i> {{ $sectors[3]->title }}
+                    </div>
+                </a>
+                @endif
+
+                <!-- Position 5 (Right Edge) -->
+                @if(isset($sectors[4]))
+                <a href="{{ route('sectors.detail', $sectors[4]->slug) }}" class="absolute top-[35%] right-0 w-[30%] h-[65%] border-[4px] border-white overflow-hidden z-10 group" style="clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%);">
+                    <img src="{{ asset('storage/' . $sectors[4]->image_path) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="{{ $sectors[4]->title }}">
+                    <div class="absolute top-[40%] left-6 bg-white px-3 py-1 rounded-full flex items-center gap-2 text-[10px] font-bold shadow-lg uppercase text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-heartbeat"></i> {{ $sectors[4]->title }}
+                    </div>
+                </a>
+                @endif
+            </div>
+
+            <!-- Central Logo Badge -->
+            <div class="absolute top-1/2 left-[45%] -translate-x-1/2 -translate-y-1/2 w-32 h-32 md:w-40 md:h-40 bg-white rounded-full border-[6px] border-[#278c3c] shadow-2xl flex flex-col items-center justify-center p-3 z-30 transform hover:scale-105 transition-transform duration-500">
+                @if(isset($siteSettings['site_logo']))
+                    <img src="{{ asset('storage/' . $siteSettings['site_logo']) }}" alt="Logo" class="w-12 h-12 md:w-16 md:h-16 object-contain mb-1">
+                @else
+                    <div class="w-12 h-12 bg-gray-100 rounded-full mb-1"></div>
+                @endif
+                <div class="text-center leading-tight">
+                    <span class="text-[#278c3c] font-black text-[9px] md:text-[11px] block">SHAURYA NARAYAN</span>
+                    <span class="text-[#278c3c] font-bold text-[7px] md:text-[9px] tracking-widest block">FOUNDATION</span>
+                </div>
+            </div>
+            
         </div>
     </section>
 
-    <!-- 3. Trust Bar / Marquee (Kept same) -->
-    <div class="py-12 border-b border-brand-border bg-brand-card/30 flex overflow-hidden">
-        <div class="flex whitespace-nowrap animate-marquee items-center gap-24 px-4 opacity-50">
-            <span class="text-xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-check-double text-brand-accent"></i> ISO-9001 Certified</span>
-            <span class="text-xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-university text-brand-primary"></i> RERA Compliant</span>
-            <span class="text-xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-balance-scale-right text-brand-accent"></i> Legal Trustee Backed</span>
-            <span class="text-xl font-black uppercase tracking-[.25em] text-gray-500 flex items-center gap-3"><i class="fas fa-chart-pie text-brand-primary"></i> 18%+ Projected IRR</span>
-        </div>
-    </div>
-
-    {{-- <!-- 4. Key Stats Section -->
-    <section class="py-16 bg-[#010409]">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="text-center" data-aos="fade-up" data-aos-delay="0">
-                <p class="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">₹45Cr+</p>
-                <p class="text-brand-primary font-bold uppercase text-[10px] tracking-widest">AUM Managed</p>
-            </div>
-            <div class="text-center" data-aos="fade-up" data-aos-delay="100">
-                <p class="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">1200+</p>
-                <p class="text-brand-accent font-bold uppercase text-[10px] tracking-widest">Active Members</p>
-            </div>
-            <div class="text-center" data-aos="fade-up" data-aos-delay="200">
-                <p class="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">18.4%</p>
-                <p class="text-purple-500 font-bold uppercase text-[10px] tracking-widest">Average IRR</p>
-            </div>
-            <div class="text-center" data-aos="fade-up" data-aos-delay="300">
-                <p class="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">12+</p>
-                <p class="text-yellow-500 font-bold uppercase text-[10px] tracking-widest">Operational Assets</p>
-            </div>
-        </div>
-    </section> --}}
-
-    <!-- 5. The Core Problem vs Solution -->
-    <section class="py-32 relative overflow-hidden bg-brand-dark">
-        <div class="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-20 items-center">
-            <div data-aos="fade-right">
-                <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-sm">The Paradigm Shift</h2>
-                <h3 class="text-5xl font-extrabold text-white leading-tight mb-8">Breaking the Barriers of <br>Infrastructure Investing.</h3>
-                <p class="text-xl text-gray-400 leading-relaxed mb-10">Traditionally, only the ultra-wealthy could own marriage halls or educational institutes. Shaurya Narayan Foundation democratizes this through fractional ownership.</p>
-                <div class="space-y-6">
-                    <div class="flex items-start gap-4 p-6 glass-card rounded-2xl border-l-4 border-l-red-500/50">
-                        <i class="fas fa-times-circle text-red-500 text-2xl mt-1"></i>
-                        <div>
-                            <h5 class="text-white font-bold text-lg mb-1">High Capital Requirements</h5>
-                            <p class="text-gray-500 text-sm">Commercial properties usually require ₹5Cr+ entry capital.</p>
-                        </div>
+    <!-- New Stats Bar -->
+    <section class="bg-[#0a1c3a] py-8 border-t-4 border-[#278c3c]">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 divide-x divide-gray-700/50">
+                
+                <!-- Stat 1 -->
+                <div class="flex items-center gap-4 px-4 justify-center md:justify-start">
+                    <div class="w-12 h-12 rounded-full bg-[#278c3c] flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-users text-white text-xl"></i>
                     </div>
-                    <div class="flex items-start gap-4 p-6 glass-card rounded-2xl border-l-4 border-l-brand-accent/50">
-                        <i class="fas fa-check-circle text-brand-accent text-2xl mt-1"></i>
-                        <div>
-                            <h5 class="text-white font-bold text-lg mb-1">Shaurya Narayan Foundation Model</h5>
-                            <p class="text-gray-500 text-sm">Participate in Crores worth of assets with accessible stake sizes.</p>
-                        </div>
+                    <div>
+                        <h4 class="text-white font-black text-xl md:text-2xl leading-none mb-1">10,000+</h4>
+                        <p class="text-gray-300 text-xs font-medium">Lives Impacted</p>
+                    </div>
+                </div>
+
+                <!-- Stat 2 -->
+                <div class="flex items-center gap-4 px-4 justify-center md:justify-start">
+                    <div class="w-12 h-12 rounded-full bg-[#278c3c] flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-graduation-cap text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-black text-xl md:text-2xl leading-none mb-1">500+</h4>
+                        <p class="text-gray-300 text-xs font-medium">Students Supported</p>
+                    </div>
+                </div>
+
+                <!-- Stat 3 -->
+                <div class="flex items-center gap-4 px-4 justify-center md:justify-start">
+                    <div class="w-12 h-12 rounded-full bg-[#278c3c] flex items-center justify-center flex-shrink-0">
+                        <i class="fab fa-envira text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-black text-xl md:text-2xl leading-none mb-1">100+</h4>
+                        <p class="text-gray-300 text-xs font-medium">Plantation Drives</p>
+                    </div>
+                </div>
+
+                <!-- Stat 4 -->
+                <div class="flex items-center gap-4 px-4 justify-center md:justify-start">
+                    <div class="w-12 h-12 rounded-full bg-[#278c3c] flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-briefcase-medical text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-black text-xl md:text-2xl leading-none mb-1">50+</h4>
+                        <p class="text-gray-300 text-xs font-medium">Health Camps</p>
+                    </div>
+                </div>
+
+                <!-- Stat 5 -->
+                <div class="flex items-center gap-4 px-4 justify-center md:justify-start col-span-2 lg:col-span-1">
+                    <div class="w-12 h-12 rounded-full bg-[#278c3c] flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-hands-helping text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-black text-xl md:text-2xl leading-none mb-1">20+</h4>
+                        <p class="text-gray-300 text-xs font-medium">Community Programs</p>
                     </div>
                 </div>
 
             </div>
-            <div class="relative" data-aos="fade-left">
-                <div class="absolute inset-0 bg-brand-primary/10 blur-[80px] rounded-full"></div>
-                <div class="glass-card p-1 rounded-3xl overflow-hidden shadow-2xl relative">
-                    <img src="{{ asset('images/marriage-1.png') }}" class="w-full h-auto opacity-80" alt="Syndicate Asset" loading="lazy">
-                    <div class="absolute bottom-6 left-6 right-6 p-6 glass-nav rounded-2xl border border-brand-border">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="text-brand-primary font-bold text-xs uppercase tracking-widest">Latest Acquisition</p>
-                                <p class="text-white font-bold text-xl">Heritage Banquet, Gurgaon</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-gray-400 text-xs">Target Yield</p>
-                                <p class="text-brand-accent font-black">21.5% IRR</p>
+        </div>
+    </section>
+ 
+
+    <!-- Our Sectors Section -->
+    @if($sectors->count() > 0)
+    <section class="py-20 bg-white" id="sectors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Section Header -->
+            <div class="text-center mb-14" data-aos="fade-up">
+                <span class="inline-block text-[#278c3c] text-xs font-black uppercase tracking-[0.25em] mb-3">What We Do</span>
+                <h2 class="text-4xl md:text-5xl font-black text-[#0a1c3a] mb-5 leading-tight">Our Sectors of <span class="text-[#278c3c]">Work</span></h2>
+                <p class="text-gray-500 max-w-2xl mx-auto text-base leading-relaxed">
+                    We work across multiple domains to create holistic, lasting impact in communities across Bihar and beyond.
+                </p>
+                <div class="w-16 h-1 bg-[#278c3c] rounded-full mx-auto mt-6"></div>
+            </div>
+
+            <!-- Sector Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+                @foreach($sectors as $index => $sector)
+                <a href="{{ route('sectors.detail', $sector->slug) }}"
+                   class="group relative bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col"
+                   data-aos="fade-up" data-aos-delay="{{ ($index % 3) * 100 }}">
+
+                    <!-- Image -->
+                    <div class="relative h-52 overflow-hidden">
+                        <img src="{{ asset('storage/' . $sector->image_path) }}"
+                             alt="{{ $sector->title }}"
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <!-- Gradient overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0a1c3a]/80 via-[#0a1c3a]/20 to-transparent"></div>
+
+                        <!-- Icon badge -->
+                        <div class="absolute top-4 right-4 w-11 h-11 bg-white/90 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-[#278c3c] transition-colors duration-300">
+                            <i class="{{ $sector->icon ?? 'fas fa-leaf' }} text-[#278c3c] group-hover:text-white transition-colors duration-300 text-lg"></i>
+                        </div>
+
+                        <!-- Tag badge -->
+                        @if($sector->tag)
+                        <div class="absolute top-4 left-4 bg-[#278c3c] text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
+                            {{ $sector->tag }}
+                        </div>
+                        @endif
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-lg font-black text-[#0a1c3a] mb-2 group-hover:text-[#278c3c] transition-colors duration-300 leading-snug">
+                            {{ $sector->title }}
+                        </h3>
+                        <p class="text-gray-500 text-sm leading-relaxed flex-grow">
+                            {{ Str::limit($sector->description, 100) }}
+                        </p>
+
+                        <!-- Arrow link -->
+                        <div class="mt-5 flex items-center justify-between pt-4 border-t border-gray-100">
+                            <span class="text-xs font-black text-[#278c3c] uppercase tracking-widest">Learn More</span>
+                            <div class="w-8 h-8 bg-gray-50 group-hover:bg-[#278c3c] rounded-xl flex items-center justify-center transition-all duration-300">
+                                <i class="fas fa-arrow-right text-gray-400 group-hover:text-white text-xs transition-colors duration-300"></i>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
+                @endforeach
+            </div>
+
+            <!-- View All CTA -->
+            <div class="text-center mt-12" data-aos="fade-up">
+                <a href="{{ route('work.index') }}"
+                   class="inline-flex items-center gap-3 px-8 py-4 bg-[#0a1c3a] hover:bg-[#278c3c] text-white font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-sm">
+                    <i class="fas fa-th-large"></i>
+                    View All Our Work
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </a>
             </div>
         </div>
     </section>
+    @endif
 
     <!-- 6. How it Works (Condensed Steps) -->
     {{-- <section class="py-32 relative bg-brand-dark overflow-hidden">
@@ -207,76 +282,13 @@
         </div>
     </section> --}}
 
-    <!-- 7. ROI Calculator / Table Preview -->
-    <section class="py-32 bg-brand-card/5 border-y border-brand-border">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid lg:grid-cols-2 gap-20 items-center">
-                <div data-aos="fade-right">
-                    <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-sm">Transparency</h2>
-                    <h3 class="text-5xl font-extrabold text-white mb-8">Data-Driven <br>ROI Projections.</h3>
-                    <p class="text-gray-400 text-lg mb-10">We prioritize long-term capital preservation plus operational alpha. See how different sectors perform over a 5-year cycle.</p>
-                    <div class="space-y-4">
-                        <div class="px-8 py-5 glass-card rounded-2xl flex justify-between items-center group hover:border-brand-primary transition-all">
-                            <span class="text-white font-bold">Marriage Halls</span>
-                            <span class="text-brand-primary font-black text-xl">21.4% IRR</span>
-                        </div>
-                        <div class="px-8 py-5 glass-card rounded-2xl flex justify-between items-center group hover:border-brand-accent transition-all">
-                            <span class="text-white font-bold">Education Infra</span>
-                            <span class="text-brand-accent font-black text-xl">16.2% IRR</span>
-                        </div>
-                        <div class="px-8 py-5 glass-card rounded-2xl flex justify-between items-center group hover:border-purple-500 transition-all">
-                            <span class="text-white font-bold">Digital Coaching</span>
-                            <span class="text-purple-400 font-black text-xl">28.5% IRR</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="glass-card p-10 rounded-[3rem] relative" data-aos="fade-left">
-                    <div class="absolute top-0 right-0 w-48 h-48 bg-brand-primary/10 blur-[60px] overflow-hidden"></div>
-                    <h5 class="text-2xl font-bold text-white mb-10 flex items-center gap-3"><i class="fas fa-chart-line text-brand-primary"></i> 5-Year Growth Forecast</h5>
-                    <div class="space-y-8">
-                        <div>
-                            <div class="flex justify-between mb-3 text-sm font-bold tracking-wider">
-                                <span class="text-gray-400 uppercase">Capital Appreciation</span>
-                                <span class="text-brand-primary">78.5%</span>
-                            </div>
-                            <div class="h-2.5 w-full bg-brand-border rounded-full overflow-hidden">
-                                <div class="h-full bg-brand-primary rounded-full w-[78%]" data-aos="slide-right" data-aos-delay="500"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-3 text-sm font-bold tracking-wider">
-                                <span class="text-gray-400 uppercase">Operational Yield</span>
-                                <span class="text-brand-accent">12.4% / Yr</span>
-                            </div>
-                            <div class="h-2.5 w-full bg-brand-border rounded-full overflow-hidden">
-                                <div class="h-full bg-brand-accent rounded-full w-[65%]" data-aos="slide-right" data-aos-delay="700"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-3 text-sm font-bold tracking-wider">
-                                <span class="text-gray-400 uppercase">Secondary Market Exit</span>
-                                <span class="text-purple-400">95% Liquidity</span>
-                            </div>
-                            <div class="h-2.5 w-full bg-brand-border rounded-full overflow-hidden">
-                                <div class="h-full bg-purple-500 rounded-full w-[95%]" data-aos="slide-right" data-aos-delay="900"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-12 p-6 bg-brand-primary/5 border border-brand-primary/20 rounded-2xl text-center">
-                        <p class="text-gray-400 text-sm">Calculated based on FY 2024-25 average market rental data and asset revaluation indices.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- 8. Managed by Experts (Team) -->
-    <section class="py-32 bg-brand-dark overflow-hidden">
+    <section class="py-32 bg-white overflow-hidden">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-24" data-aos="fade-up">
                 <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-sm">Leadership</h2>
-                <h3 class="text-5xl font-extrabold text-white mb-6">Our Leadership</h3>
-                <p class="text-gray-400 max-w-2xl mx-auto text-lg">Our leadership team brings decades of experience in real estate, finance, and technology.</p>
+                <h3 class="text-5xl font-extrabold text-gray-900 mb-6">Our Leadership</h3>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Our leadership team brings decades of experience in real estate, finance, and technology.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 lg:gap-24">
                 @foreach($experts as $index => $expert)
@@ -284,44 +296,43 @@
                     <div class="text-center group" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
                         <div class="relative w-56 h-56 md:w-64 md:h-64 mx-auto mb-8">
                             <div class="absolute inset-0 bg-{{ $index % 2 == 0 ? 'brand-primary' : 'brand-accent' }}/20 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
-                            <img src="{{ asset('storage/' . $expert->image) }}" class="relative w-full h-full rounded-full border-4 border-brand-border group-hover:border-{{ $index % 2 == 0 ? 'brand-primary' : 'brand-accent' }} transition-all object-cover" alt="{{ $expert->name }}" loading="lazy">
+                            <img src="{{ asset('storage/' . $expert->image) }}" class="relative w-full h-full rounded-full border-4 border-gray-200 group-hover:border-{{ $index % 2 == 0 ? 'brand-primary' : 'brand-accent' }} transition-all object-cover" alt="{{ $expert->name }}" loading="lazy">
                             @if($expert->linkedin_url)
                                 <a href="{{ $expert->linkedin_url }}" target="_blank" class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-{{ $index % 2 == 0 ? 'brand-primary' : 'brand-accent' }} text-white p-3 rounded-xl shadow-xl hover:scale-110 transition-transform"><i class="fab fa-linkedin-in"></i></a>
                             @endif
                         </div>
-                        <h5 class="text-3xl font-black text-white mb-2">{{ $expert->name }}</h5>
+                        <h5 class="text-3xl font-black text-gray-900 mb-2">{{ $expert->name }}</h5>
                         <p class="text-{{ $index % 2 == 0 ? 'brand-primary' : 'brand-accent' }} font-bold uppercase tracking-widest text-xs mb-4">{{ $expert->designation }}</p>
-                        <p class="text-gray-500 text-sm leading-relaxed px-4">{{ $expert->bio }}</p>
+                        <p class="text-gray-600 text-sm leading-relaxed px-4">{{ $expert->bio }}</p>
                     </div>
                 @endforeach
             </div>
     </section>
-
     <!-- 9. Voices of the Syndicate (Reviews) -->
-    <section class="py-32 bg-brand-card/5 border-t border-brand-border">
+    <section class="py-32 bg-gray-50 border-t border-gray-200">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-24" data-aos="fade-up">
-                <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-sm">Community</h2>
-                <h3 class="text-5xl font-extrabold text-white mb-6">Voices of the Syndicate.</h3>
+                <h2 class="text-[#278c3c] font-bold tracking-widest uppercase mb-4 text-sm">Community</h2>
+                <h3 class="text-5xl font-extrabold text-[#0a1c3a] mb-6">Voices of the Syndicate.</h3>
             </div>
             <div class="grid lg:grid-cols-3 gap-10">
                 @php
-                    $colors = ['brand-primary', 'brand-accent', 'purple-500'];
+                    $colors = ['[#278c3c]', '[#0a1c3a]', 'gray-500'];
                 @endphp
                 @foreach($testimonials as $index => $testimonial)
-                    <div class="glass-card p-10 rounded-[3rem] border-{{ $colors[$index % 3] }}/20 relative" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
-                        <i class="fas fa-quote-left text-{{ $colors[$index % 3] }}/10 text-8xl absolute top-8 left-8"></i>
+                    <div class="bg-white p-10 rounded-[3rem] shadow-sm border border-gray-100 relative" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                        <i class="fas fa-quote-left text-gray-100 text-8xl absolute top-8 left-8"></i>
                         <div class="flex gap-1 mb-8 relative z-10 text-yellow-500">
                             @for($i = 1; $i <= 5; $i++)
-                                <i class="fas fa-star {{ $i <= $testimonial->rating ? '' : 'text-slate-600' }}"></i>
+                                <i class="fas fa-star {{ $i <= $testimonial->rating ? '' : 'text-slate-200' }}"></i>
                             @endfor
                         </div>
-                        <p class="text-gray-300 mb-10 text-lg leading-relaxed relative z-10 italic">"{{ $testimonial->content }}"</p>
-                        <div class="flex items-center gap-5 pt-8 border-t border-brand-border">
-                            <img src="{{ $testimonial->image ? asset('storage/' . $testimonial->image) : asset('images/default-avatar.png') }}" class="w-16 h-16 rounded-3xl object-cover border-2 border-{{ $colors[$index % 3] }}" alt="{{ $testimonial->name }}" loading="lazy">
+                        <p class="text-gray-700 mb-10 text-lg leading-relaxed relative z-10 italic">"{{ $testimonial->content }}"</p>
+                        <div class="flex items-center gap-5 pt-8 border-t border-gray-100">
+                            <img src="{{ $testimonial->image ? asset('storage/' . $testimonial->image) : asset('images/default-avatar.png') }}" class="w-16 h-16 rounded-3xl object-cover border-2 border-[#278c3c]" alt="{{ $testimonial->name }}" loading="lazy">
                             <div>
-                                <p class="text-white font-black text-xl">{{ $testimonial->name }}</p>
-                                <p class="text-{{ $colors[$index % 3] }} font-bold text-xs uppercase tracking-widest">{{ $testimonial->designation }}</p>
+                                <p class="text-[#0a1c3a] font-black text-xl">{{ $testimonial->name }}</p>
+                                <p class="text-[#278c3c] font-bold text-xs uppercase tracking-widest">{{ $testimonial->designation }}</p>
                             </div>
                         </div>
                     </div>
@@ -330,83 +341,138 @@
         </div>
     </section>
 
-    <!-- 10. Risk Management & Legal -->
-    <section class="py-32 bg-brand-dark">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="glass-card p-12 md:p-20 rounded-[4rem] border-brand-border relative overflow-hidden" data-aos="zoom-in">
-                <div class="absolute -top-24 -right-24 w-96 h-96 bg-brand-primary/10 rounded-full blur-[100px]"></div>
-                <div class="grid lg:grid-cols-5 gap-16 items-center">
-                    <div class="lg:col-span-3">
-                        <h2 class="text-brand-primary font-bold tracking-widest uppercase mb-4 text-sm">Legal Safety</h2>
-                        <h3 class="text-5xl font-extrabold text-white mb-8">Your Investment, <br>Legally Secured.</h3>
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <div class="flex items-start gap-4">
-                                <i class="fas fa-shield-alt text-brand-primary text-2xl mt-1"></i>
-                                <div><h6 class="text-white font-bold mb-2">Escrow Protected</h6><p class="text-gray-500 text-sm">Capital stays in RBI-regulated escrow until asset deployment.</p></div>
-                            </div>
-                            <div class="flex items-start gap-4">
-                                <i class="fas fa-file-contract text-brand-accent text-2xl mt-1"></i>
-                                <div><h6 class="text-white font-bold mb-2">LLP Structure</h6><p class="text-gray-500 text-sm">Each asset is held by an independent LLP with audited books.</p></div>
-                            </div>
+    <!-- What People Says Section -->
+    <section class="py-24 bg-[#0a1c3a] relative overflow-hidden" id="testimonials">
+        <!-- Background Overlay -->
+        <div class="absolute inset-0 opacity-10 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80');"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 relative z-10 mb-20">
+            <h3 class="text-3xl md:text-4xl font-bold text-white uppercase tracking-wider">What People Says</h3>
+            <div class="w-32 h-1 bg-[#278c3c] mt-4"></div>
+        </div>
+
+        <!-- Marquee Container -->
+        <div class="relative z-10 w-full overflow-hidden pb-12 flex group">
+            @php
+            $staticReviews = [
+                (object)[
+                    'name' => 'Mr. Rohit Singh',
+                    'content' => 'I\'m glad I chose Shaurya Narayan Foundation for my studies. The well-equipped facilities and real-world simulations provided a real taste of what the field is like, making my transition into my job seamless.',
+                    'image' => 'https://ui-avatars.com/api/?name=Rohit+Singh&background=0284c7&color=fff'
+                ],
+                (object)[
+                    'name' => 'Ms. Aditi Singh',
+                    'content' => 'At Shaurya Narayan Foundation, we strive to create an environment where everyone can thrive academically, socially, and personally. Our dedication to quality education and character development ensures that our students are well-prepared for the challenges of tomorrow.',
+                    'image' => 'https://ui-avatars.com/api/?name=Aditi+Singh&background=7e22ce&color=fff'
+                ],
+                (object)[
+                    'name' => 'Mr. Prem Shanker',
+                    'content' => 'Through a blend of innovative teaching and values-based learning, Shaurya Narayan Foundation aims to inspire and equip students to become thoughtful leaders and lifelong learners who contribute positively to society.',
+                    'image' => 'https://ui-avatars.com/api/?name=Prem+Shanker&background=c2410c&color=fff'
+                ]
+            ];
+            @endphp
+
+            <!-- First Marquee Track -->
+            <div class="flex animate-marquee min-w-full flex-shrink-0 group-hover:[animation-play-state:paused]">
+                @foreach($staticReviews as $testimonial)
+                <div class="w-[350px] md:w-[450px] flex-shrink-0 px-4 pt-10 mx-4">
+                    <div class="bg-white p-8 pb-12 relative shadow-xl min-h-[220px]">
+                        <!-- Avatar -->
+                        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 bg-white rounded-full p-1.5 shadow-md">
+                            <img src="{{ $testimonial->image }}" class="w-full h-full rounded-full object-cover" alt="{{ $testimonial->name }}">
+                        </div>
+                        
+                        <!-- Top Quote Icon -->
+                        <div class="text-[#278c3c] text-3xl mb-3 mt-4">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+
+                        <h5 class="text-lg font-bold text-gray-900 mb-3">{{ $testimonial->name }}</h5>
+                        
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                            "{{ $testimonial->content }}"
+                        </p>
+
+                        <!-- Bottom Quote Icon -->
+                        <div class="absolute bottom-4 right-6 text-[#278c3c] text-3xl">
+                            <i class="fas fa-quote-right"></i>
                         </div>
                     </div>
-                    <div class="lg:col-span-2 text-center lg:text-right">
-                        <p class="text-6xl font-black text-white mb-2">ZERO</p>
-                        <p class="text-gray-500 uppercase tracking-widest text-sm mb-10">LITIGATION HISTORY</p>
-                        <a href="{{ route('terms') }}" class="text-brand-primary font-bold hover:underline">View Compliance Framework <i class="fas fa-long-arrow-alt-right ml-2"></i></a>
+                </div>
+                @endforeach
+            </div>
+
+            <!-- Second Marquee Track (for seamless loop) -->
+            <div class="flex animate-marquee min-w-full flex-shrink-0 group-hover:[animation-play-state:paused]" aria-hidden="true">
+                @foreach($staticReviews as $testimonial)
+                <div class="w-[350px] md:w-[450px] flex-shrink-0 px-4 pt-10 mx-4">
+                    <div class="bg-white p-8 pb-12 relative shadow-xl min-h-[220px]">
+                        <!-- Avatar -->
+                        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 bg-white rounded-full p-1.5 shadow-md">
+                            <img src="{{ $testimonial->image }}" class="w-full h-full rounded-full object-cover" alt="{{ $testimonial->name }}">
+                        </div>
+                        
+                        <!-- Top Quote Icon -->
+                        <div class="text-[#278c3c] text-3xl mb-3 mt-4">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+
+                        <h5 class="text-lg font-bold text-gray-900 mb-3">{{ $testimonial->name }}</h5>
+                        
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                            "{{ $testimonial->content }}"
+                        </p>
+
+                        <!-- Bottom Quote Icon -->
+                        <div class="absolute bottom-4 right-6 text-[#278c3c] text-3xl">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
                     </div>
                 </div>
+                @endforeach
             </div>
         </div>
     </section>
 
-    <!-- 11. FAQ Section -->
-    <section class="py-32 bg-[#010409]">
-        <div class="max-w-4xl mx-auto px-4">
-            <h2 class="text-4xl font-extrabold text-white text-center mb-16" data-aos="fade-up">Frequently Asked Questions</h2>
-            <div class="space-y-6">
-                <!-- FAQ 1 -->
-                <div class="glass-card rounded-[2rem] border-brand-border overflow-hidden" data-aos="fade-up" data-aos-delay="0">
-                    <details class="group p-8">
-                        <summary class="flex justify-between items-center cursor-pointer list-none">
-                            <h5 class="text-xl font-bold text-white pr-8">How is my ownership legal documented?</h5>
-                            <span class="text-brand-primary transition-transform group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
-                        </summary>
-                        <p class="mt-6 text-gray-500 leading-relaxed text-lg">Every asset is registered under a separate LLP (Limited Liability Partnership). As an investor, you become a partner in that LLP with a profit-sharing percentage proportional to your investment contribution.</p>
-                    </details>
-                </div>
-                <!-- FAQ 2 -->
-                <div class="glass-card rounded-[2rem] border-brand-border overflow-hidden" data-aos="fade-up" data-aos-delay="100">
-                    <details class="group p-8">
-                        <summary class="flex justify-between items-center cursor-pointer list-none">
-                            <h5 class="text-xl font-bold text-white pr-8">When do I start receiving payouts?</h5>
-                            <span class="text-brand-primary transition-transform group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
-                        </summary>
-                        <p class="mt-6 text-gray-500 leading-relaxed text-lg">Operational yield starts as soon as the asset becomes functional. For Marriage Halls, this is typically 6-8 months after capital deployment if it's a new build, or immediate for acquisitions.</p>
-                    </details>
-                </div>
-                <!-- FAQ 3 -->
-                <div class="glass-card rounded-[2rem] border-brand-border overflow-hidden" data-aos="fade-up" data-aos-delay="200">
-                    <details class="group p-8">
-                        <summary class="flex justify-between items-center cursor-pointer list-none">
-                            <h5 class="text-xl font-bold text-white pr-8">How do I exit the investment?</h5>
-                            <span class="text-brand-primary transition-transform group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
-                        </summary>
-                        <p class="mt-6 text-gray-500 leading-relaxed text-lg">You can list your fractional stake on our internal secondary market panel for other members to buy, or wait for the full asset exit (sale) at the end of the 5-7 year cycle.</p>
-                    </details>
-                </div>
-            </div>
+    <!-- Partners & Sponsors -->
+    <section class="py-24 bg-white border-t border-gray-100 overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-black text-[#0a1c3a] mb-8">Partners & Sponsors</h2>
+            
+            <h4 class="text-xl font-bold text-[#278c3c] mb-6">Investment & Partnership Opportunity</h4>
+            
+            <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                Our organization is actively working on projects across these sectors.<br>
+                You too can contribute your valuable time and financial support as a part of our cooperation and development model.
+            </p>
+            
+            <p class="text-gray-800 font-bold text-lg">
+                Together, we can create positive social impact and build a better future for society.
+            </p>
         </div>
-    </section>
 
-    <!-- 12. Final CTA & Portfolio Glimpse -->
-    <section class="py-32 border-t border-brand-border relative overflow-hidden bg-brand-dark">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center text-center">
-            <h2 class="text-5xl md:text-7xl font-black text-white tracking-tighter mb-12" data-aos="fade-up">Ready to Revolutionize <br>Your Portfolio?</h2>
-            <div class="bg-brand-primary/10 p-8 rounded-[3rem] border border-brand-primary/20 mb-16" data-aos="zoom-in">
-                <p class="text-brand-primary font-black uppercase tracking-[0.4em] mb-4">Limited Slots Available</p>
-                <p class="text-gray-400 max-w-xl mx-auto italic">"Only 4 spots remaining for the NCR Banquet Syndicate project closing this Friday."</p>
+        <!-- Marquee Logos -->
+        <div class="relative w-full overflow-hidden flex group pt-10">
+            @if(isset($partners) && $partners->count() > 0)
+            <!-- First Track -->
+            <div class="flex animate-marquee min-w-full flex-shrink-0 items-center group-hover:[animation-play-state:paused]">
+                @foreach($partners as $partner)
+                <div class="w-[200px] md:w-[250px] flex-shrink-0 px-8 mx-4 transition-all duration-300">
+                    <img src="{{ asset('storage/' . $partner->image_path) }}" class="w-full h-auto object-contain hover:scale-110 transition-transform cursor-pointer" alt="{{ $partner->name }}">
+                </div>
+                @endforeach
             </div>
+
+            <!-- Second Track -->
+            <div class="flex animate-marquee min-w-full flex-shrink-0 items-center group-hover:[animation-play-state:paused]" aria-hidden="true">
+                @foreach($partners as $partner)
+                <div class="w-[200px] md:w-[250px] flex-shrink-0 px-8 mx-4 transition-all duration-300">
+                    <img src="{{ asset('storage/' . $partner->image_path) }}" class="w-full h-auto object-contain hover:scale-110 transition-transform cursor-pointer" alt="{{ $partner->name }}">
+                </div>
+                @endforeach
+            </div>
+            @endif
         </div>
     </section>
 

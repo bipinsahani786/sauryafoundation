@@ -9,7 +9,7 @@ use App\Models\Banner;
 use App\Models\HomeSector;
 use App\Models\Testimonial;
 use App\Models\IndustryExpert;
-
+use App\Models\Partner;
 class HomeController extends Controller
 {
     public function index()
@@ -22,8 +22,9 @@ class HomeController extends Controller
             ->get();
         $experts = IndustryExpert::active()->get();
         $testimonials = Testimonial::active()->get();
+        $partners = Partner::where('is_active', true)->orderBy('order')->get();
         
-        return view('frontend.index', compact('banners', 'sectors', 'experts', 'testimonials'));
+        return view('frontend.index', compact('banners', 'sectors', 'experts', 'testimonials', 'partners'));
     }
 
     public function about()

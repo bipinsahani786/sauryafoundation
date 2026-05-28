@@ -2,14 +2,21 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\CharityController;
+use App\Http\Controllers\Frontend\EventController as FrontendEventController;
+use App\Http\Controllers\Frontend\ContactController;
+use App\Http\Controllers\Backend\Admin\ContactMessageController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Backend\Admin\AdminController;
+use App\Http\Controllers\Backend\Admin\CharityController as AdminCharityController;
 use App\Http\Controllers\Backend\Admin\PlanController;
 use App\Http\Controllers\Backend\Admin\UserController;
 use App\Http\Controllers\Backend\Admin\BannerController;
+use App\Http\Controllers\Backend\Admin\PartnerController;
 use App\Http\Controllers\Backend\Admin\HomeSectorController;
 use App\Http\Controllers\Backend\Admin\TestimonialController;
 use App\Http\Controllers\Backend\Admin\IndustryExpertController;
+use App\Http\Controllers\Backend\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Backend\SalesAgent\SalesAgentController;
 use App\Http\Controllers\Backend\Syndicate\SyndicateController;
 use App\Http\Controllers\Backend\ProfileController;
@@ -62,6 +69,50 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('/apply', 'apply')->name('apply');
 });
 
+// Mega Menu Routes
+Route::prefix('about')->name('about.')->group(function () {
+    Route::view('mission', 'frontend.pages.about.mission')->name('mission');
+    Route::view('vision', 'frontend.pages.about.vision')->name('vision');
+    Route::view('team', 'frontend.pages.about.team')->name('team');
+    Route::view('partners', 'frontend.pages.about.partners')->name('partners');
+    Route::view('reports', 'frontend.pages.about.reports')->name('reports');
+});
+
+Route::prefix('work')->name('work.')->group(function () {
+    Route::view('/our-work', 'frontend.pages.work.index')->name('index');
+    Route::prefix('projects')->name('projects.')->group(function () {
+        Route::view('ongoing', 'frontend.pages.work.projects.ongoing')->name('ongoing');
+        Route::view('completed', 'frontend.pages.work.projects.completed')->name('completed');
+        Route::view('upcoming', 'frontend.pages.work.projects.upcoming')->name('upcoming');
+    });
+    Route::view('campaigns', 'frontend.pages.work.campaigns')->name('campaigns');
+    Route::view('awareness', 'frontend.pages.work.awareness')->name('awareness');
+});
+
+Route::prefix('media')->name('media.')->group(function () {
+    Route::view('/media-and-stories', 'frontend.pages.media.index')->name('index');
+    Route::view('blog', 'frontend.pages.media.blog')->name('blog');
+    Route::view('updates', 'frontend.pages.media.updates')->name('updates');
+    Route::view('stories', 'frontend.pages.media.stories')->name('stories');
+    Route::view('videos', 'frontend.pages.media.videos')->name('videos');
+});
+
+Route::prefix('involved')->name('involved.')->group(function () {
+    Route::view('/', 'frontend.pages.involved.index')->name('index');
+    Route::view('volunteer', 'frontend.pages.involved.volunteer')->name('volunteer');
+    Route::view('internship', 'frontend.pages.involved.internship')->name('internship');
+    Route::view('partner', 'frontend.pages.involved.partner')->name('partner');
+    Route::view('donate', 'frontend.pages.involved.donate')->name('donate');
+    Route::view('support', 'frontend.pages.involved.support')->name('support');
+    Route::post('submit', [App\Http\Controllers\Frontend\ApplicationController::class, 'store'])->name('submit');
+});
+
+Route::get('events', [FrontendEventController::class, 'index'])->name('events');
+Route::get('contact', [ContactController::class, 'index'])->name('contact');
+Route::post('contact', [ContactController::class, 'store'])->name('contact.store');
+
+Route::post('/charity/donate', [CharityController::class, 'store'])->name('charity.donate');
+
 Route::controller(AuthController::class)->group(function () {
     Route::get('/login', 'showLogin')->name('login');
     Route::post('/login', 'login');
@@ -78,6 +129,25 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/docs', [AdminController::class, 'docs'])->name('docs');
     Route::get('/applications', [AdminController::class, 'applications'])->name('applications')->middleware('permission:view_applications');
+
+    // Contact Messages
+    Route::get('contact-messages', [ContactMessageController::class, 'index'])->name('contact-messages.index');
+    Route::get('contact-messages/{contactMessage}', [ContactMessageController::class, 'show'])->name('contact-messages.show');
+    Route::post('contact-messages/{contactMessage}/status', [ContactMessageController::class, 'updateStatus'])->name('contact-messages.status');
+    Route::delete('contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('contact-messages.destroy');
+
+    // Events Management
+    Route::get('events', [AdminEventController::class, 'index'])->name('events.index');
+    Route::get('events/create', [AdminEventController::class, 'create'])->name('events.create');
+    Route::post('events', [AdminEventController::class, 'store'])->name('events.store');
+    Route::get('events/{event}/edit', [AdminEventController::class, 'edit'])->name('events.edit');
+    Route::put('events/{event}', [AdminEventController::class, 'update'])->name('events.update');
+    Route::post('events/{event}/toggle-status', [AdminEventController::class, 'toggleStatus'])->name('events.toggle-status');
+    Route::delete('events/{event}', [AdminEventController::class, 'destroy'])->name('events.destroy');
+
+    // Get Involved Applications
+    Route::get('/applications-list', [App\Http\Controllers\Admin\ApplicationController::class, 'index'])->name('applications.index');
+    Route::post('/applications-list/{id}/status', [App\Http\Controllers\Admin\ApplicationController::class, 'updateStatus'])->name('applications.status');
 
     Route::middleware('permission:view_plans')->group(function () {
         Route::get('plans', [PlanController::class, 'index'])->name('plans.index');
@@ -129,6 +199,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::post('/payouts/{payout}/approve', [AdminController::class, 'approvePayout'])->name('payout.approve')->middleware('permission:approve_payouts');
     });
 
+    // Charity Funds
+    Route::get('/charity-funds', [AdminCharityController::class, 'index'])->name('charity.index');
+    Route::post('/charity-funds/settings', [AdminCharityController::class, 'updateSettings'])->name('charity.settings');
+    Route::patch('/charity-funds/{charityDonation}', [AdminCharityController::class, 'update'])->name('charity.update');
+
     // Dynamic Classes Management
     Route::middleware('permission:view_classes')->group(function () {
         Route::get('student-classes', [\App\Http\Controllers\Backend\Admin\StudentClassController::class, 'index'])->name('student-classes.index');
@@ -166,6 +241,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::put('banners/{banner}', [BannerController::class, 'update'])->name('banners.update')->middleware('permission:edit_banners');
         Route::post('/banners/{banner}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status')->middleware('permission:edit_banners');
         Route::delete('banners/{banner}', [BannerController::class, 'destroy'])->name('banners.destroy')->middleware('permission:delete_banners');
+
+        // Partners Routes
+        Route::get('partners', [PartnerController::class, 'index'])->name('partners.index');
+        Route::get('partners/create', [PartnerController::class, 'create'])->name('partners.create');
+        Route::post('partners', [PartnerController::class, 'store'])->name('partners.store');
+        Route::get('partners/{partner}/edit', [PartnerController::class, 'edit'])->name('partners.edit');
+        Route::put('partners/{partner}', [PartnerController::class, 'update'])->name('partners.update');
+        Route::post('/partners/{partner}/toggle-status', [PartnerController::class, 'toggleStatus'])->name('partners.toggle-status');
+        Route::delete('partners/{partner}', [PartnerController::class, 'destroy'])->name('partners.destroy');
     });
 
     // Home Sectors
@@ -288,13 +372,15 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     Route::get('/students', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'students'])->name('students');
     Route::get('/students/create', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'createStudent'])->name('students.create');
     Route::post('/students', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'addStudent'])->name('students.add');
-    Route::get('/students/{student}/edit', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'editStudent'])->name('students.edit');
-    Route::put('/students/{student}', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'updateStudent'])->name('students.update');
-    Route::get('/students/{student}/progress', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'studentProgress'])->name('students.progress');
-    Route::post('/students/{student}/add-money', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'addMoney'])->name('students.add-money');
+        Route::get('/students/{student}/edit', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'editStudent'])->name('students.edit');
+        Route::put('/students/{student}', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'updateStudent'])->name('students.update');
+        Route::get('/students/{student}/progress', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'studentProgress'])->name('students.progress');
+        Route::post('/students/{student}/add-money', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'addMoney'])->name('students.add-money');
 
-    // Quizzes
-    Route::resource('quizzes', App\Http\Controllers\Backend\Teacher\QuizController::class);
+        // Banners
+        Route::resource('banners', App\Http\Controllers\Backend\Admin\BannerController::class);
+
+
     Route::get('quizzes/sample-csv', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'downloadSampleCSV'])->name('quizzes.sample-csv');
     Route::get('quizzes/{quiz}/results', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'results'])->name('quizzes.results');
     Route::post('quizzes/{quiz}/questions', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'addQuestion'])->name('quizzes.add-question');

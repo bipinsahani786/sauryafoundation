@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('charity_donations', function (Blueprint $table) {
+            $table->id();
+            $table->string('donation_id')->unique();
+            $table->string('name')->nullable();
+            $table->string('email')->nullable();
+            $table->decimal('amount', 10, 2);
+            $table->enum('payment_method', ['upi', 'bank_transfer', 'qr_code']);
+            $table->string('transaction_id')->nullable();
+            $table->enum('status', ['pending', 'approved', 'failed'])->default('pending');
+            $table->string('receipt_path')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('charity_donations');
+    }
+};

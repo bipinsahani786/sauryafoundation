@@ -107,6 +107,19 @@
                         </div>
                         @endif
 
+                        <div x-data="{ open: {{ request()->routeIs('admin.partners.*') ? 'true' : 'false' }} }">
+                            <button @click="open = !open" class="w-full {{ $linkClasses }} {{ $inactiveClasses }}">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas fa-handshake w-4"></i> <span>Partners</span>
+                                </span>
+                                <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                            </button>
+                            <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1 border-l border-slate-100">
+                                <a href="{{ route('admin.partners.index') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.partners.index') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">View All</a>
+                                <a href="{{ route('admin.partners.create') }}" class="block px-4 py-2 text-[10px] font-black uppercase tracking-widest {{ request()->routeIs('admin.partners.create') ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600' }}">Add New</a>
+                            </div>
+                        </div>
+
                         @if(Auth::user()->hasPermission('view_sectors'))
                         <div x-data="{ open: {{ request()->routeIs('admin.home-sectors.*') ? 'true' : 'false' }} }">
                             <button @click="open = !open" class="w-full {{ $linkClasses }} {{ $inactiveClasses }}">
@@ -183,6 +196,10 @@
                             <i class="fas fa-file-invoice-dollar w-4"></i> <span>Financial Ledger</span>
                         </a>
                         @endif
+
+                        <a href="{{ route('admin.charity.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.charity.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-hand-holding-heart w-4 text-purple-500"></i> <span class="text-purple-600">Charity Funds</span>
+                        </a>
 
                         @if(Auth::user()->hasPermission('view_audit_logs'))
                         <a href="{{ route('admin.activity-logs.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.activity-logs.*') ? $activeClasses : $inactiveClasses }}">
@@ -298,6 +315,13 @@
                         <i class="fas fa-user-circle w-4"></i> <span>My Profile</span>
                     </a>
                 </nav>
+                        <div class="my-4 border-t border-slate-100"></div>
+                        <p class="px-4 text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">Get Involved</p>
+                        <a href="{{ route('admin.applications.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.applications.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-inbox w-4"></i> <span>Applications</span>
+                        </a>
+
+                        <div class="my-4 border-t border-slate-100"></div>
             </div>
 
             <div class="mt-auto p-6 border-t border-slate-100">
