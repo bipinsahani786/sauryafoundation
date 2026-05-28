@@ -169,6 +169,60 @@
         </div>
     </section>
  
+    <!-- About Founder Section -->
+    <section class="py-20 bg-gray-50 border-b border-gray-100" id="about-founder">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+                <!-- Left: Image Collage -->
+                <div class="w-full lg:w-1/2" data-aos="fade-right">
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Top wide image -->
+                        <div class="col-span-2 h-48 md:h-64 rounded-2xl overflow-hidden shadow-lg group">
+                            <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80" alt="Foundation Work" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                        <!-- Bottom left image -->
+                        <div class="h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg group">
+                            <img src="https://images.unsplash.com/photo-1593113580556-9a55c2f35472?auto=format&fit=crop&q=80" alt="Team" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                        <!-- Bottom right stacked -->
+                        <div class="flex flex-col gap-4">
+                            <!-- Founder Name Block -->
+                            <div class="bg-[#0a1c3a] text-white p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center text-center h-24 md:h-28 hover:bg-[#278c3c] transition-colors duration-500 cursor-default">
+                                <h4 class="font-black text-sm md:text-base tracking-wide">Mr. KAUSHAL KUMAR</h4>
+                                <p class="text-[10px] md:text-xs font-medium text-gray-300 uppercase tracking-widest mt-1">Founder</p>
+                            </div>
+                            <!-- Small image -->
+                            <div class="flex-grow rounded-2xl overflow-hidden shadow-lg group h-20 md:h-24">
+                                <img src="https://images.unsplash.com/photo-1542810634-71277d95dc8c?auto=format&fit=crop&q=80" alt="Community" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Content -->
+                <div class="w-full lg:w-1/2" data-aos="fade-left">
+                    <span class="inline-block text-[#278c3c] text-xs font-black uppercase tracking-[0.25em] mb-3">ABOUT ME!</span>
+                    <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-[#0a1c3a] mb-6 leading-tight">
+                        A life dedicated to<br>
+                        <span class="text-[#278c3c]">service</span>
+                    </h2>
+                    
+                    <div class="w-16 h-1 bg-[#278c3c] rounded-full mb-8"></div>
+
+                    <p class="text-gray-600 text-base md:text-lg leading-relaxed mb-6 font-medium">
+                        Shauryanarayan foundation has a bold vision for Empowering Communities Through Education, Healthcare & Sustainable Development
+                    </p>
+                    
+                    <a href="{{ route('about.mission') }}" class="inline-flex items-center gap-3 px-8 py-4 bg-[#0a1c3a] hover:bg-[#278c3c] text-white font-bold rounded-full transition-all duration-300 shadow-[0_10px_20px_rgba(10,28,58,0.2)] hover:shadow-[0_10px_20px_rgba(39,140,60,0.3)] hover:-translate-y-1 text-sm group mt-4">
+                        Know More
+                        <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Our Sectors Section -->
     @if($sectors->count() > 0)
