@@ -221,8 +221,8 @@
                     </button>
                 </div>
 
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="xl:hidden text-2xl text-gray-900">
-                    <i :class="mobileMenuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="xl:hidden text-2xl text-gray-900 w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors z-50">
+                    <i class="fas" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
                 </button>
             </div>
         </div>
@@ -237,7 +237,7 @@
                 <a href="{{ route('home') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Home</a>
                 <a href="{{ route('about.mission') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">About Us</a>
                 <a href="{{ route('work.projects.ongoing') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Our Work</a>
-                <a href="{{ route('media.blog') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Media</a>
+                <a href="{{ route('media.index') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Media</a>
                 <a href="{{ route('involved.volunteer') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Get Involved</a>
                 <a href="{{ route('events') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Events</a>
                 <a href="{{ route('contact') }}" class="text-lg font-bold text-gray-900" @click="mobileMenuOpen = false">Contact</a>
