@@ -188,7 +188,7 @@
                         <div class="flex flex-col gap-4">
                             <!-- Founder Name Block -->
                             <div class="bg-[#0a1c3a] text-white p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center text-center h-24 md:h-28 hover:bg-[#278c3c] transition-colors duration-500 cursor-default">
-                                <h4 class="font-black text-sm md:text-base tracking-wide">Mr. KAUSHAL KUMAR</h4>
+                                <h4 class="font-black text-sm md:text-base tracking-wide">Mr. Kaushal Kumar</h4>
                                 <p class="text-[10px] md:text-xs font-medium text-gray-300 uppercase tracking-widest mt-1">Founder</p>
                             </div>
                             <!-- Small image -->
