@@ -37,6 +37,22 @@ class User extends Authenticatable
         'class_id',
         'commission_percent',
         'profile_photo_path',
+        'dob',
+        'gender',
+        'blood_group',
+        'aadhaar_number',
+        'category',
+        'mobile_number',
+        'address',
+        'father_name',
+        'mother_name',
+        'guardian_name',
+        'alternate_contact',
+        'state',
+        'district',
+        'block',
+        'pin_code',
+        'coaching_or_school',
     ];
 
     public function commissions()

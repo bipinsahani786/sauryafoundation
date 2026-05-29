@@ -18,7 +18,8 @@ class BannerController extends Controller
     public function create()
     {
         $sectors = \App\Models\HomeSector::where('is_active', true)->whereNotNull('slug')->get();
-        return view('backend.admin.banners.create', compact('sectors'));
+        $classes = \App\Models\StudentClass::where('status', 'active')->get();
+        return view('backend.admin.banners.create', compact('sectors', 'classes'));
     }
 
     public function show(Banner $banner)
@@ -35,7 +36,11 @@ class BannerController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'link' => 'nullable|string',
             'order' => 'integer',
+            'class_id' => 'nullable|exists:student_classes,id',
+            'is_global' => 'nullable|boolean',
         ]);
+
+        $validated['is_global'] = $request->has('is_global');
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('banners', 'public');
@@ -50,7 +55,8 @@ class BannerController extends Controller
     public function edit(Banner $banner)
     {
         $sectors = \App\Models\HomeSector::where('is_active', true)->whereNotNull('slug')->get();
-        return view('backend.admin.banners.edit', compact('banner', 'sectors'));
+        $classes = \App\Models\StudentClass::where('status', 'active')->get();
+        return view('backend.admin.banners.edit', compact('banner', 'sectors', 'classes'));
     }
 
     public function update(Request $request, Banner $banner)
@@ -63,7 +69,11 @@ class BannerController extends Controller
             'link' => 'nullable|string',
             'order' => 'integer',
             'is_active' => 'boolean',
+            'class_id' => 'nullable|exists:student_classes,id',
+            'is_global' => 'nullable|boolean',
         ]);
+
+        $validated['is_global'] = $request->has('is_global');
 
         if ($request->hasFile('image')) {
             if ($banner->image_path) {

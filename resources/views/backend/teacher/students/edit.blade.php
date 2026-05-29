@@ -40,6 +40,97 @@
                                 <i class="fas fa-check-circle mr-2"></i> Active Portal Access
                             </div>
                         </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Date of Birth</label>
+                            <input type="date" name="dob" value="{{ old('dob', $student->dob) }}" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Gender</label>
+                            <select name="gender" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic appearance-none">
+                                <option value="">Select Gender</option>
+                                <option value="male" {{ old('gender', $student->gender) == 'male' ? 'selected' : '' }}>Male</option>
+                                <option value="female" {{ old('gender', $student->gender) == 'female' ? 'selected' : '' }}>Female</option>
+                                <option value="other" {{ old('gender', $student->gender) == 'other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Blood Group</label>
+                            <input type="text" name="blood_group" value="{{ old('blood_group', $student->blood_group) }}" placeholder="e.g. O+" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Aadhaar Number</label>
+                            <input type="text" name="aadhaar_number" value="{{ old('aadhaar_number', $student->aadhaar_number) }}" placeholder="XXXX XXXX XXXX" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Category</label>
+                            <select name="category" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic appearance-none">
+                                <option value="">Select Category</option>
+                                <option value="General" {{ old('category', $student->category) == 'General' ? 'selected' : '' }}>General</option>
+                                <option value="OBC" {{ old('category', $student->category) == 'OBC' ? 'selected' : '' }}>OBC</option>
+                                <option value="SC" {{ old('category', $student->category) == 'SC' ? 'selected' : '' }}>SC</option>
+                                <option value="ST" {{ old('category', $student->category) == 'ST' ? 'selected' : '' }}>ST</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Mobile Number</label>
+                            <input type="text" name="mobile_number" value="{{ old('mobile_number', $student->mobile_number) }}" placeholder="e.g. 9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Father Name</label>
+                            <input type="text" name="father_name" value="{{ old('father_name', $student->father_name) }}" placeholder="Father's Name" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Mother Name</label>
+                            <input type="text" name="mother_name" value="{{ old('mother_name', $student->mother_name) }}" placeholder="Mother's Name" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Guardian Name</label>
+                            <input type="text" name="guardian_name" value="{{ old('guardian_name', $student->guardian_name) }}" placeholder="Guardian's Name" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Alternate Contact</label>
+                            <input type="text" name="alternate_contact" value="{{ old('alternate_contact', $student->alternate_contact) }}" placeholder="e.g. 9876543211" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="col-span-1 md:col-span-2 space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Village / Street Address</label>
+                            <input type="text" name="address" value="{{ old('address', $student->address) }}" placeholder="Full Address" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Block</label>
+                            <input type="text" name="block" value="{{ old('block', $student->block) }}" placeholder="Block" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">District</label>
+                            <input type="text" name="district" value="{{ old('district', $student->district) }}" placeholder="District" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">State</label>
+                            <input type="text" name="state" value="{{ old('state', $student->state) }}" placeholder="State" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">PIN Code</label>
+                            <input type="text" name="pin_code" value="{{ old('pin_code', $student->pin_code) }}" placeholder="PIN Code" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
+                        
+                        <div class="col-span-1 md:col-span-2 space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 italic">Coaching or School (Optional)</label>
+                            <input type="text" name="coaching_or_school" value="{{ old('coaching_or_school', $student->coaching_or_school) }}" placeholder="Coaching or School Name" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all italic">
+                        </div>
                     </div>
 
                     <div class="pt-6 border-t border-slate-100 flex items-center justify-between">

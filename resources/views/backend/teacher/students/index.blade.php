@@ -1,11 +1,26 @@
 <x-dashboard.layout>
     <x-slot name="title">Student Management</x-slot>
 
-    <div class="mb-6 flex justify-between items-center">
+    <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
             <h2 class="text-xl font-black text-slate-900 tracking-tight">My Students</h2>
             <p class="text-xs text-slate-400 font-bold italic">Manage enrollments for your coaching group.</p>
         </div>
+        
+        <form action="{{ route('teacher.students') }}" method="GET" class="w-full md:w-auto flex items-center">
+            <div class="relative w-full md:w-64">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <i class="fas fa-search text-slate-400 text-xs"></i>
+                </div>
+                <input type="text" name="search" value="{{ request('search') }}" class="bg-white border border-slate-200 text-slate-900 text-xs font-bold rounded-l-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 px-4 py-2.5 outline-none transition-all" placeholder="Search mobile or name...">
+            </div>
+            <button type="submit" class="p-2.5 text-xs font-bold text-white bg-indigo-600 rounded-r-xl border border-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 transition-all uppercase tracking-widest shadow-sm">
+                Search
+            </button>
+            @if(request('search'))
+                <a href="{{ route('teacher.students') }}" class="ml-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-red-500 transition-colors">Clear</a>
+            @endif
+        </form>
     </div>
 
     <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden text-[10px]" x-data="{ creditModal: false, selectedStudent: null, studentName: '' }">
@@ -45,7 +60,7 @@
                             </td>
                             <td class="px-8 py-6 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('teacher.students.edit', $student) }}" class="text-slate-400 hover:bg-slate-900 hover:text-white font-black uppercase tracking-widest text-[8px] border border-slate-100 px-3 py-2 rounded-xl transition-all shadow-sm active:scale-95 bg-slate-50">
+                                    <a href="{{ route('teacher.students.edit', $student) }}" class="text-slate-400 hover:bg-slate-900 hover:text-white font-black uppercase tracking-widest text-[8px] border border-slate-100 px-3 py-2 rounded-xl transition-all shadow-sm active:scale-95 bg-slate-50" title="Edit Student">
                                         <i class="fas fa-pencil-alt"></i>
                                     </a>
                                     <button @click="creditModal = true; selectedStudent = {{ $student->id }}; studentName = '{{ $student->name }}'" class="text-emerald-600 hover:bg-emerald-600 hover:text-white font-black uppercase tracking-widest text-[8px] border border-emerald-100 px-3 py-2 rounded-xl transition-all shadow-sm active:scale-95 bg-emerald-50 group">
@@ -53,6 +68,9 @@
                                     </button>
                                     <a href="{{ route('teacher.students.progress', $student->id) }}" class="text-indigo-600 hover:bg-indigo-600 hover:text-white font-black uppercase tracking-widest text-[8px] border border-indigo-100 px-3 py-2 rounded-xl transition-all shadow-sm active:scale-95 bg-indigo-50 group">
                                         <i class="fas fa-chart-line mr-1 group-hover:scale-110 transition-transform"></i> Tracking
+                                    </a>
+                                    <a href="{{ route('teacher.students.dashboard', $student->id) }}" target="_blank" class="text-sky-600 hover:bg-sky-600 hover:text-white font-black uppercase tracking-widest text-[8px] border border-sky-100 px-3 py-2 rounded-xl transition-all shadow-sm active:scale-95 bg-sky-50 group">
+                                        <i class="fas fa-desktop mr-1 group-hover:scale-110 transition-transform"></i> Dashboard
                                     </a>
                                 </div>
                             </td>

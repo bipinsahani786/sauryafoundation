@@ -34,10 +34,14 @@
                             </select>
                         </div>
                         <div class="space-y-2">
-                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Visibility Terminal</label>
-                             <div class="w-full bg-indigo-50 border border-indigo-100 rounded-2xl px-6 py-4 text-[10px] font-black text-indigo-600 uppercase tracking-widest flex items-center justify-center italic">
-                                <i class="fas fa-globe mr-2"></i> UNIVERSAL PLATFORM GLOBAL
-                             </div>
+                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Target Class (Optional)</label>
+                             <select name="class_id" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all appearance-none italic">
+                                 <option value="">-- ALL CLASSES (GLOBAL) --</option>
+                                 @foreach($classes as $class)
+                                     <option value="{{ $class->id }}" @if(old('class_id', $studyMaterial->class_id) == $class->id) selected @endif>{{ $class->name }}</option>
+                                 @endforeach
+                             </select>
+                             <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest ml-4 mt-1">Leave empty to make it available to everyone</p>
                         </div>
                     </div>
 

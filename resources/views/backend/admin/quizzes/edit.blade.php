@@ -63,8 +63,8 @@
                     <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group shadow-sm">
                         <input type="checkbox" name="is_global" value="1" x-model="isGlobal" class="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600">
                         <div>
-                            <span class="block text-xs font-black uppercase text-slate-900 leading-none">Global Exam</span>
-                            <span class="text-[9px] text-slate-500 font-bold italic">Available to all students across all classes.</span>
+                            <span class="block text-xs font-black uppercase text-slate-900 leading-none">Global Exam (All Teachers)</span>
+                            <span class="text-[9px] text-slate-500 font-bold italic">Available to all students (regardless of their teacher).</span>
                         </div>
                     </label>
                     <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-purple-600 transition-all group shadow-sm">
@@ -83,8 +83,8 @@
                     </label>
                 </div>
 
-                <div x-show="!isGlobal" x-transition>
-                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 italic ml-1">Target Classes</label>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 italic ml-1">Target Classes (Leave empty for ALL classes)</label>
                     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
                         @foreach($classes as $class)
                             <label class="relative flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group">

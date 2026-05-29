@@ -48,9 +48,28 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Target Link (Optional)</label>
-                        <input type="text" name="link" value="{{ old('link') }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" placeholder="e.g. #apply or route name">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Target Link (Optional)</label>
+                            <input type="text" name="link" value="{{ old('link') }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" placeholder="e.g. #apply or route name">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Target Class (For Student Dashboard)</label>
+                            <select name="class_id" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all font-bold">
+                                <option value="">All Classes (Global Banner)</option>
+                                @foreach($classes as $class)
+                                    <option value="{{ $class->id }}" {{ old('class_id') == $class->id ? 'selected' : '' }}>{{ $class->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group w-fit">
+                        <input type="checkbox" name="is_global" value="1" checked class="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer">
+                        <div>
+                            <span class="block text-xs font-black uppercase text-slate-900 leading-none">Global Banner (All Teachers)</span>
+                            <span class="text-[9px] text-slate-500 font-bold italic">Available to all students (regardless of their teacher).</span>
+                        </div>
                     </div>
                 </div>
 

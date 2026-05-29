@@ -36,9 +36,13 @@ class StudyMaterial extends Model
     public function scopeForStudent($query, $user)
     {
         return $query->where('status', 'active')
-            ->where(function ($q) use ($user) {
-                $q->where('is_global', true) // Admin or Global
-                  ->orWhere('teacher_id', $user->teacher_id); // Student's Teacher
+            ->where(function($classQuery) use ($user) {
+                $classQuery->where('class_id', $user->class_id)
+                           ->orWhereNull('class_id');
+            })
+            ->where(function($teacherQuery) use ($user) {
+                $teacherQuery->where('is_global', true)
+                             ->orWhere('teacher_id', $user->teacher_id);
             });
     }
 }

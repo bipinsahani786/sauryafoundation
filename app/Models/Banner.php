@@ -14,6 +14,8 @@ class Banner extends Model
         'link',
         'order',
         'is_active',
+        'class_id',
+        'is_global',
     ];
 
     protected $casts = [

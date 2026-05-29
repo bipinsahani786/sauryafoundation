@@ -242,8 +242,8 @@
                         </a>
                         @endif
 
-                        <a href="{{ route('admin.docs') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.docs') ? $activeClasses : $inactiveClasses }} mt-6 border-t border-slate-100 pt-6">
-                            <i class="fas fa-book-reader w-4 text-indigo-600"></i> <span class="text-indigo-600">Project Docs (Tutorial)</span>
+                        <a href="{{ route('admin.docs') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.docs') ? $activeClasses : 'text-indigo-600 hover:bg-slate-50' }} mt-6 border-t border-slate-100 pt-6">
+                            <i class="fas fa-book-reader w-4"></i> <span>Project Docs (Tutorial)</span>
                         </a>
                     @elseif(Auth::user()->role === 'teacher')
                         <a href="{{ route('teacher.dashboard') }}" class="{{ $linkClasses }} {{ request()->routeIs('teacher.dashboard') ? $activeClasses : $inactiveClasses }}">
@@ -315,13 +315,14 @@
                         <i class="fas fa-user-circle w-4"></i> <span>My Profile</span>
                     </a>
                 </nav>
+                        @if(Auth::user()->hasPermission('view_applications'))
                         <div class="my-4 border-t border-slate-100"></div>
                         <p class="px-4 text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">Get Involved</p>
                         <a href="{{ route('admin.applications.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.applications.*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-inbox w-4"></i> <span>Applications</span>
                         </a>
-
                         <div class="my-4 border-t border-slate-100"></div>
+                        @endif
             </div>
 
             <div class="mt-auto p-6 border-t border-slate-100">

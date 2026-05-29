@@ -84,15 +84,44 @@
                 <p class="text-xs text-indigo-100 mb-4 font-medium italic opacity-80">Quickly enroll a new student into your coaching terminal.</p>
                 <form action="{{ route('teacher.students.add') }}" method="POST" class="space-y-3">
                     @csrf
-                    <input type="text" name="name" placeholder="Full Name" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required>
-                    <input type="email" name="email" placeholder="Email Address" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required>
-                    <input type="password" name="password" placeholder="Temporary Password" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required>
-                    <select name="class_id" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white focus:bg-white/20 outline-none transition-all font-bold appearance-none italic" required>
-                        <option value="" class="text-slate-900">Select Class</option>
-                        @foreach($classes as $class)
-                            <option value="{{ $class->id }}" class="text-slate-900">{{ $class->name }}</option>
-                        @endforeach
-                    </select>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <input type="text" name="name" placeholder="Full Name" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required>
+                        <input type="email" name="email" placeholder="Email Address" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required>
+                        <input type="password" name="password" placeholder="Temporary Password" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required>
+                        <select name="class_id" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white focus:bg-white/20 outline-none transition-all font-bold appearance-none italic" required>
+                            <option value="" class="text-slate-900">Select Class</option>
+                            @foreach($classes as $class)
+                                <option value="{{ $class->id }}" class="text-slate-900">{{ $class->name }}</option>
+                            @endforeach
+                        </select>
+                        <input type="date" name="dob" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <select name="gender" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white focus:bg-white/20 outline-none transition-all font-bold appearance-none italic">
+                            <option value="" class="text-slate-900">Select Gender</option>
+                            <option value="male" class="text-slate-900">Male</option>
+                            <option value="female" class="text-slate-900">Female</option>
+                            <option value="other" class="text-slate-900">Other</option>
+                        </select>
+                        <input type="text" name="blood_group" placeholder="Blood Group (e.g., O+)" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="aadhaar_number" placeholder="Aadhaar Number (Optional)" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <select name="category" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white focus:bg-white/20 outline-none transition-all font-bold appearance-none italic">
+                            <option value="" class="text-slate-900">Select Category</option>
+                            <option value="General" class="text-slate-900">General</option>
+                            <option value="OBC" class="text-slate-900">OBC</option>
+                            <option value="SC" class="text-slate-900">SC</option>
+                            <option value="ST" class="text-slate-900">ST</option>
+                        </select>
+                        <input type="text" name="mobile_number" placeholder="Mobile No. (Student/Parent)" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="father_name" placeholder="Father's Name" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="mother_name" placeholder="Mother's Name" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="guardian_name" placeholder="Guardian Name (Optional)" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="alternate_contact" placeholder="Alternate Contact No." class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="address" placeholder="Village / Street Address" class="col-span-2 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="block" placeholder="Block" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="district" placeholder="District" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="state" placeholder="State" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="pin_code" placeholder="PIN Code" class="col-span-2 md:col-span-1 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                        <input type="text" name="coaching_or_school" placeholder="Coaching or School (Optional)" class="col-span-2 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold">
+                    </div>
                     <button type="submit" class="w-full bg-white text-indigo-600 font-black py-2.5 rounded-xl text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all shadow-xl">
                         Admit Student
                     </button>

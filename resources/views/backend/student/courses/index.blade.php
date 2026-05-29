@@ -2,6 +2,12 @@
     <x-slot name="title">Academy | Shaurya Narayan Foundation</x-slot>
 
     <div class="space-y-8">
+        <div class="mb-2">
+            <a href="{{ route('student.dashboard') }}" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
+                <i class="fas fa-arrow-left"></i> Return to Dashboard
+            </a>
+        </div>
+        
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-black text-slate-900 tracking-tight">Learning Academy</h1>

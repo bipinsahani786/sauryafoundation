@@ -28,9 +28,20 @@ class TeacherController extends Controller
         return view('backend.teacher.dashboard', compact('stats', 'recent_quizzes', 'classes'));
     }
 
-    public function students()
+    public function students(Request $request)
     {
-        $students = auth()->user()->students()->latest()->paginate(20);
+        $query = auth()->user()->students()->latest();
+        
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('mobile_number', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('email', 'like', '%' . $searchTerm . '%');
+            });
+        }
+        
+        $students = $query->paginate(20)->withQueryString();
         return view('backend.teacher.students.index', compact('students'));
     }
 
@@ -47,6 +58,22 @@ class TeacherController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'class_id' => 'required|exists:student_classes,id',
+            'dob' => 'nullable|date',
+            'gender' => 'nullable|string|in:male,female,other',
+            'blood_group' => 'nullable|string|max:10',
+            'aadhaar_number' => 'nullable|string|max:20',
+            'category' => 'nullable|string|in:General,OBC,SC,ST',
+            'mobile_number' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
+            'guardian_name' => 'nullable|string|max:255',
+            'alternate_contact' => 'nullable|string|max:20',
+            'state' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'block' => 'nullable|string|max:255',
+            'pin_code' => 'nullable|string|max:20',
+            'coaching_or_school' => 'nullable|string|max:255',
         ]);
 
         User::create([
@@ -54,6 +81,22 @@ class TeacherController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'class_id' => $validated['class_id'],
+            'dob' => $validated['dob'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'blood_group' => $validated['blood_group'] ?? null,
+            'aadhaar_number' => $validated['aadhaar_number'] ?? null,
+            'category' => $validated['category'] ?? null,
+            'mobile_number' => $validated['mobile_number'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'father_name' => $validated['father_name'] ?? null,
+            'mother_name' => $validated['mother_name'] ?? null,
+            'guardian_name' => $validated['guardian_name'] ?? null,
+            'alternate_contact' => $validated['alternate_contact'] ?? null,
+            'state' => $validated['state'] ?? null,
+            'district' => $validated['district'] ?? null,
+            'block' => $validated['block'] ?? null,
+            'pin_code' => $validated['pin_code'] ?? null,
+            'coaching_or_school' => $validated['coaching_or_school'] ?? null,
             'role' => 'student',
             'teacher_id' => auth()->id(),
             'referred_by' => auth()->id(),
@@ -78,12 +121,44 @@ class TeacherController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $student->id,
             'class_id' => 'required|exists:student_classes,id',
+            'dob' => 'nullable|date',
+            'gender' => 'nullable|string|in:male,female,other',
+            'blood_group' => 'nullable|string|max:10',
+            'aadhaar_number' => 'nullable|string|max:20',
+            'category' => 'nullable|string|in:General,OBC,SC,ST',
+            'mobile_number' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
+            'guardian_name' => 'nullable|string|max:255',
+            'alternate_contact' => 'nullable|string|max:20',
+            'state' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'block' => 'nullable|string|max:255',
+            'pin_code' => 'nullable|string|max:20',
+            'coaching_or_school' => 'nullable|string|max:255',
         ]);
 
         $student->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'class_id' => $validated['class_id'],
+            'dob' => $validated['dob'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'blood_group' => $validated['blood_group'] ?? null,
+            'aadhaar_number' => $validated['aadhaar_number'] ?? null,
+            'category' => $validated['category'] ?? null,
+            'mobile_number' => $validated['mobile_number'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'father_name' => $validated['father_name'] ?? null,
+            'mother_name' => $validated['mother_name'] ?? null,
+            'guardian_name' => $validated['guardian_name'] ?? null,
+            'alternate_contact' => $validated['alternate_contact'] ?? null,
+            'state' => $validated['state'] ?? null,
+            'district' => $validated['district'] ?? null,
+            'block' => $validated['block'] ?? null,
+            'pin_code' => $validated['pin_code'] ?? null,
+            'coaching_or_school' => $validated['coaching_or_school'] ?? null,
         ]);
 
         return redirect()->route('teacher.students')->with('success', 'Student details updated/promoted successfully.');
@@ -142,6 +217,54 @@ class TeacherController extends Controller
         $quizAttempts = $student->quizAttempts()->with('quiz')->latest()->get();
         
         return view('backend.teacher.students.progress', compact('student', 'enrolledCourses', 'completions', 'quizAttempts'));
+    }
+
+    public function studentDashboardView(User $student)
+    {
+        if ($student->teacher_id !== auth()->id()) abort(403);
+        
+        $user = $student;
+        
+        $stats = [
+            'total_exams' => \App\Models\Quiz::where('status', 'published')
+                ->where(function($q) use ($user) {
+                    $q->where(function($classQuery) use ($user) {
+                        $classQuery->whereHas('studentClasses', function($sq) use ($user) {
+                            $sq->where('student_classes.id', $user->class_id);
+                        })->orWhereDoesntHave('studentClasses');
+                    })->where(function($teacherQuery) use ($user) {
+                        $teacherQuery->where('is_global', true)
+                                     ->orWhere('teacher_id', $user->teacher_id);
+                    });
+                })
+                ->count(),
+            'attempted_exams' => $user->quizAttempts()->count(),
+            'average_score' => $user->quizAttempts()->avg('score') ?? 0,
+            'courses_enrolled' => $user->enrolledCourses()->count(),
+            'lessons_completed' => $user->contentCompletions()->count(),
+        ];
+
+        $upcoming_exams = \App\Models\Quiz::where('status', 'published')
+            ->where(function($q) use ($user) {
+                $q->where(function($classQuery) use ($user) {
+                    $classQuery->whereHas('studentClasses', function($sq) use ($user) {
+                        $sq->where('student_classes.id', $user->class_id);
+                    })->orWhereDoesntHave('studentClasses');
+                })->where(function($teacherQuery) use ($user) {
+                    $teacherQuery->where('is_global', true)
+                                 ->orWhere('teacher_id', $user->teacher_id);
+                });
+            })
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $banners = \App\Models\Banner::where('is_active', true)->where('type', 'student')->orderBy('order')->get();
+        $recent_materials = \App\Models\StudyMaterial::forStudent($user)->latest()->take(5)->get();
+
+        $studentUser = $user;
+        return view('backend.student.dashboard', compact('stats', 'upcoming_exams', 'banners', 'recent_materials', 'studentUser'));
     }
 
     public function wallet()

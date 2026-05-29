@@ -1,106 +1,144 @@
 <x-dashboard.layout>
     <x-slot name="title">Manage Users</x-slot>
 
-    <div class="mb-6 flex justify-between items-center">
+    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
             <h2 class="text-lg font-bold text-slate-900 tracking-tight">User Management</h2>
-            <p class="text-[10px] text-slate-400 font-medium italic">Manage Admins and Syndicate Members.</p>
+            <p class="text-[10px] text-slate-400 font-medium italic">Manage Admins, Teachers, Students, Sales Agents and Syndicate Members.</p>
         </div>
-        @if(Auth::user()->hasPermission('create_users'))
-        <a href="{{ route('admin.users.create') }}" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-indigo-700 transition-all">
-            <i class="fas fa-user-plus mr-1"></i> Add New User
-        </a>
-        @endif
+        <div class="flex flex-col md:flex-row items-center gap-3">
+            <!-- Search Form -->
+            <form action="{{ route('admin.users.index') }}" method="GET" class="relative w-full md:w-auto">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or email..." class="w-full md:w-64 pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm transition-all">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                @if(request('search'))
+                    <a href="{{ route('admin.users.index') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500" title="Clear Search"><i class="fas fa-times"></i></a>
+                @endif
+            </form>
+
+            @if(Auth::user()->hasPermission('create_users'))
+            <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-indigo-700 transition-all whitespace-nowrap">
+                <i class="fas fa-user-plus mr-1"></i> Add New User
+            </a>
+            @endif
+        </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden text-[10px]">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left table-standard">
-                <thead class="bg-slate-50 text-slate-400 font-bold uppercase tracking-widest text-[9px]">
-                    <tr>
-                        <th class="px-4 py-2 bg-slate-50 border-b">User</th>
-                        <th class="px-4 py-2 bg-slate-50 border-b">Email</th>
-                        <th class="px-4 py-2 bg-slate-50 border-b text-center">Role</th>
-                        <th class="px-4 py-2 bg-slate-50 border-b text-center">Joined</th>
-                        <th class="px-4 py-2 bg-slate-50 border-b text-center">Status</th>
-                        <th class="px-4 py-2 bg-slate-50 border-b text-right">Action</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 italic font-medium">
-                    @forelse($users as $user)
-                        <tr class="hover:bg-slate-50/50 transition-all font-medium">
-                            <td class="px-4 py-2">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded bg-slate-50 border border-slate-100 flex items-center justify-center text-indigo-600 font-bold text-[9px] uppercase">{{ substr($user->name, 0, 1) }}</div>
-                                    <span class="text-slate-900 font-bold text-xs">{{ $user->name }}</span>
-                                </div>
-                            </td>
-                            <td class="px-4 py-2 text-slate-700 font-bold">{{ $user->email }}</td>
-                            <td class="px-4 py-2 text-center">
-                                <span class="px-2 py-0.5 rounded text-[8px] font-bold uppercase border
-                                    {{ $user->role == 'admin' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-slate-50 text-slate-600 border-slate-100' }}">
-                                    {{ $user->role }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-2 text-center text-slate-500 font-bold uppercase">
-                                {{ $user->created_at->format('d M y') }}
-                            </td>
-                            <td class="px-4 py-2 text-center">
-                                <span class="px-2 py-0.5 rounded text-[8px] font-bold uppercase border
-                                    {{ $user->status == 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-red-50 text-red-600 border-red-100' }}">
-                                    {{ $user->status }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-2 text-right">
-                                <div class="flex items-center justify-end gap-1.5">
-                                    @if($user->id !== auth()->id() && Auth::user()->hasPermission('impersonate_users'))
-                                        <form action="{{ route('admin.users.impersonate', $user->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="p-1.5 border border-indigo-100 rounded bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-1.5 px-3" title="View Dashboard">
-                                                <i class="fas fa-eye text-[9px]"></i> <span class="text-[8px] uppercase font-black tracking-tighter">View</span>
-                                            </button>
-                                        </form>
-                                    @endif
-                                    @if(Auth::user()->hasPermission('view_wallet'))
-                                    <a href="{{ route('admin.wallet.index', ['user_id' => $user->id, 'user_name' => $user->name]) }}" class="p-1.5 border border-emerald-100 rounded bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all transition-all flex items-center justify-center" title="Add/Deduct Money">
-                                        <i class="fas fa-wallet text-[10px]"></i>
-                                    </a>
-                                    @endif
-                                    @if(Auth::user()->hasPermission('edit_users'))
-                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="p-1.5 border border-slate-100 rounded hover:bg-white text-slate-400 hover:text-indigo-600 transition-all"><i class="fas fa-edit text-[10px]"></i></a>
-                                    @endif
-                                    @if($user->id !== auth()->id())
-                                        @if(Auth::user()->hasPermission('edit_users'))
-                                        <form action="{{ route('admin.users.toggle-status', $user->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="p-1.5 border {{ $user->status == 'active' ? 'border-emerald-100 text-emerald-600 hover:bg-emerald-50' : 'border-red-100 text-red-600 hover:bg-red-50' }} rounded transition-all" title="Toggle Status">
-                                                <i class="fas {{ $user->status == 'active' ? 'fa-user-check' : 'fa-user-slash' }} text-[10px]"></i>
-                                            </button>
-                                        </form>
-                                        @endif
-                                        @if(Auth::user()->hasPermission('delete_users'))
-                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Delete this user account?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="p-1.5 border border-slate-100 rounded hover:bg-white text-slate-400 hover:text-red-600 transition-all"><i class="fas fa-trash-alt text-[10px]"></i></button>
-                                        </form>
-                                        @endif
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="px-4 py-10 text-center text-slate-400 italic">No users found.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <!-- Alpine Tabs Wrapper -->
+    <div x-data="{ activeTab: 'students' }" class="space-y-4">
+        
+        <!-- Tab Navigation -->
+        <div class="flex space-x-1 bg-slate-100 p-1.5 rounded-xl w-full md:w-max border border-slate-200 overflow-x-auto custom-scrollbar">
+            <button @click="activeTab = 'students'" :class="activeTab === 'students' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all duration-200 focus:outline-none">
+                <i class="fas fa-user-graduate mr-1"></i> Students ({{ $students->total() }})
+            </button>
+            <button @click="activeTab = 'teachers'" :class="activeTab === 'teachers' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all duration-200 focus:outline-none">
+                <i class="fas fa-chalkboard-teacher mr-1"></i> Teachers ({{ $teachers->total() }})
+            </button>
+            <button @click="activeTab = 'sales'" :class="activeTab === 'sales' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all duration-200 focus:outline-none">
+                <i class="fas fa-headset mr-1"></i> Sales ({{ $salesAgents->total() }})
+            </button>
+            <button @click="activeTab = 'syndicates'" :class="activeTab === 'syndicates' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all duration-200 focus:outline-none">
+                <i class="fas fa-handshake mr-1"></i> Syndicate ({{ $syndicates->total() }})
+            </button>
+            <button @click="activeTab = 'admins'" :class="activeTab === 'admins' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all duration-200 focus:outline-none">
+                <i class="fas fa-user-shield mr-1"></i> Admins ({{ $admins->total() }})
+            </button>
         </div>
-        @if($users->hasPages())
-            <div class="px-4 py-3 bg-slate-50 border-t border-slate-100">
-                {{ $users->links() }}
+
+        <!-- Tab Contents Wrapper -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden text-[10px]">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left table-standard">
+                    <thead class="bg-slate-50 text-slate-400 font-bold uppercase tracking-widest text-[9px]">
+                        <tr>
+                            <th class="px-4 py-2 bg-slate-50 border-b">User</th>
+                            <th class="px-4 py-2 bg-slate-50 border-b">Email</th>
+                            <th class="px-4 py-2 bg-slate-50 border-b text-center">Role</th>
+                            <th class="px-4 py-2 bg-slate-50 border-b text-center">Joined</th>
+                            <th class="px-4 py-2 bg-slate-50 border-b text-center">Status</th>
+                            <th class="px-4 py-2 bg-slate-50 border-b text-right">Action</th>
+                        </tr>
+                    </thead>
+
+                    <!-- Students Tab -->
+                    <tbody x-show="activeTab === 'students'" x-cloak class="divide-y divide-slate-100 italic font-medium">
+                        @forelse($students as $user)
+                            @include('backend.admin.users.partials._user_row', ['user' => $user])
+                        @empty
+                            <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400 italic">No students found.</td></tr>
+                        @endforelse
+                    </tbody>
+
+                    <!-- Teachers Tab -->
+                    <tbody x-show="activeTab === 'teachers'" x-cloak class="divide-y divide-slate-100 italic font-medium">
+                        @forelse($teachers as $user)
+                            @include('backend.admin.users.partials._user_row', ['user' => $user])
+                        @empty
+                            <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400 italic">No teachers found.</td></tr>
+                        @endforelse
+                    </tbody>
+
+                    <!-- Sales Tab -->
+                    <tbody x-show="activeTab === 'sales'" x-cloak class="divide-y divide-slate-100 italic font-medium">
+                        @forelse($salesAgents as $user)
+                            @include('backend.admin.users.partials._user_row', ['user' => $user])
+                        @empty
+                            <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400 italic">No sales agents found.</td></tr>
+                        @endforelse
+                    </tbody>
+
+                    <!-- Syndicates Tab -->
+                    <tbody x-show="activeTab === 'syndicates'" x-cloak class="divide-y divide-slate-100 italic font-medium">
+                        @forelse($syndicates as $user)
+                            @include('backend.admin.users.partials._user_row', ['user' => $user])
+                        @empty
+                            <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400 italic">No syndicate members found.</td></tr>
+                        @endforelse
+                    </tbody>
+
+                    <!-- Admins Tab -->
+                    <tbody x-show="activeTab === 'admins'" x-cloak class="divide-y divide-slate-100 italic font-medium">
+                        @forelse($admins as $user)
+                            @include('backend.admin.users.partials._user_row', ['user' => $user])
+                        @empty
+                            <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400 italic">No admins found.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-        @endif
+            
+            <!-- Pagination Controls -->
+            <div x-show="activeTab === 'students'" x-cloak>
+                @if($students->hasPages())
+                    <div class="px-4 py-3 bg-slate-50 border-t border-slate-100">{{ $students->appends(request()->except('students_page'))->links() }}</div>
+                @endif
+            </div>
+            
+            <div x-show="activeTab === 'teachers'" x-cloak>
+                @if($teachers->hasPages())
+                    <div class="px-4 py-3 bg-slate-50 border-t border-slate-100">{{ $teachers->appends(request()->except('teachers_page'))->links() }}</div>
+                @endif
+            </div>
+
+            <div x-show="activeTab === 'sales'" x-cloak>
+                @if($salesAgents->hasPages())
+                    <div class="px-4 py-3 bg-slate-50 border-t border-slate-100">{{ $salesAgents->appends(request()->except('sales_agents_page'))->links() }}</div>
+                @endif
+            </div>
+
+            <div x-show="activeTab === 'syndicates'" x-cloak>
+                @if($syndicates->hasPages())
+                    <div class="px-4 py-3 bg-slate-50 border-t border-slate-100">{{ $syndicates->appends(request()->except('syndicates_page'))->links() }}</div>
+                @endif
+            </div>
+
+            <div x-show="activeTab === 'admins'" x-cloak>
+                @if($admins->hasPages())
+                    <div class="px-4 py-3 bg-slate-50 border-t border-slate-100">{{ $admins->appends(request()->except('admins_page'))->links() }}</div>
+                @endif
+            </div>
+
+        </div>
     </div>
 </x-dashboard.layout>

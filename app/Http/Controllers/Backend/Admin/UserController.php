@@ -11,11 +11,24 @@ use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('backend.admin.users.index', [
-            'users' => User::latest()->paginate(10),
-        ]);
+        $search = $request->get('search');
+        
+        $query = User::when($search, function($q) use ($search) {
+            $q->where(function($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+            });
+        })->latest();
+
+        $admins = (clone $query)->whereIn('role', ['admin', 'superadmin'])->paginate(10, ['*'], 'admins_page');
+        $teachers = (clone $query)->where('role', 'teacher')->paginate(10, ['*'], 'teachers_page');
+        $students = (clone $query)->where('role', 'student')->paginate(10, ['*'], 'students_page');
+        $syndicates = (clone $query)->where('role', 'syndicate')->paginate(10, ['*'], 'syndicates_page');
+        $salesAgents = (clone $query)->where('role', 'sales_agent')->paginate(10, ['*'], 'sales_agents_page');
+
+        return view('backend.admin.users.index', compact('admins', 'teachers', 'students', 'syndicates', 'salesAgents', 'search'));
     }
 
     public function create()

@@ -375,12 +375,13 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
         Route::get('/students/{student}/edit', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'editStudent'])->name('students.edit');
         Route::put('/students/{student}', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'updateStudent'])->name('students.update');
         Route::get('/students/{student}/progress', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'studentProgress'])->name('students.progress');
+        Route::get('/students/{student}/dashboard', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'studentDashboardView'])->name('students.dashboard');
         Route::post('/students/{student}/add-money', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'addMoney'])->name('students.add-money');
 
         // Banners
         Route::resource('banners', App\Http\Controllers\Backend\Admin\BannerController::class);
 
-
+    Route::resource('quizzes', App\Http\Controllers\Backend\Teacher\QuizController::class);
     Route::get('quizzes/sample-csv', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'downloadSampleCSV'])->name('quizzes.sample-csv');
     Route::get('quizzes/{quiz}/results', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'results'])->name('quizzes.results');
     Route::post('quizzes/{quiz}/questions', [App\Http\Controllers\Backend\Teacher\QuizController::class, 'addQuestion'])->name('quizzes.add-question');

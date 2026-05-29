@@ -1,6 +1,13 @@
 <x-dashboard.layout>
     <x-slot name="title">Exam Portal</x-slot>
 
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="{{ route('student.dashboard') }}" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
+            <i class="fas fa-arrow-left"></i> Return to Dashboard
+        </a>
+    </div>
+
     <!-- Banner/Header -->
     <div class="mb-10 bg-slate-900 rounded-[3rem] p-10 text-white relative overflow-hidden">
         <div class="relative z-10">

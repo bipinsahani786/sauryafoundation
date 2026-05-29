@@ -32,7 +32,7 @@ class QuizController extends Controller
     {
         $validated = $request->validate([
             'is_global' => 'nullable|boolean',
-            'class_ids' => 'required_without:is_global|array',
+            'class_ids' => 'nullable|array',
             'class_ids.*' => 'exists:student_classes,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -71,7 +71,7 @@ class QuizController extends Controller
             'is_practice_set' => $request->has('is_practice_set'),
         ]);
 
-        if (!$request->has('is_global') && isset($validated['class_ids'])) {
+        if (isset($validated['class_ids'])) {
             $quiz->studentClasses()->sync($validated['class_ids']);
         }
 
@@ -194,7 +194,7 @@ class QuizController extends Controller
     {
         $validated = $request->validate([
             'is_global' => 'nullable|boolean',
-            'class_ids' => 'required_without:is_global|array',
+            'class_ids' => 'nullable|array',
             'class_ids.*' => 'exists:student_classes,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -229,7 +229,7 @@ class QuizController extends Controller
             'is_practice_set' => $request->has('is_practice_set'),
         ]);
 
-        if (!$request->has('is_global')) {
+        if (isset($validated['class_ids'])) {
             $quiz->studentClasses()->sync($validated['class_ids']);
         } else {
             $quiz->studentClasses()->detach();

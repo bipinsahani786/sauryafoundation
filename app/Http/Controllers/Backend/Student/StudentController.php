@@ -17,13 +17,14 @@ class StudentController extends Controller
         $stats = [
             'total_exams' => Quiz::where('status', 'published')
                 ->where(function($q) use ($user) {
-                    $q->where('is_global', true)
-                      ->orWhere(function($sub) use ($user) {
-                          $sub->where('teacher_id', $user->teacher_id)
-                              ->whereHas('studentClasses', function($sq) use ($user) {
-                                  $sq->where('student_classes.id', $user->class_id);
-                              });
-                      });
+                    $q->where(function($classQuery) use ($user) {
+                        $classQuery->whereHas('studentClasses', function($sq) use ($user) {
+                            $sq->where('student_classes.id', $user->class_id);
+                        })->orWhereDoesntHave('studentClasses');
+                    })->where(function($teacherQuery) use ($user) {
+                        $teacherQuery->where('is_global', true)
+                                     ->orWhere('teacher_id', $user->teacher_id);
+                    });
                 })
                 ->count(),
             'attempted_exams' => $user->quizAttempts()->count(),
@@ -34,23 +35,32 @@ class StudentController extends Controller
 
         $upcoming_exams = Quiz::where('status', 'published')
             ->where(function($q) use ($user) {
-                $q->where('is_global', true)
-                  ->orWhere(function($sub) use ($user) {
-                      $sub->where('teacher_id', $user->teacher_id)
-                          ->whereHas('studentClasses', function($sq) use ($user) {
-                              $sq->where('student_classes.id', $user->class_id);
-                          });
-                  });
+                $q->where(function($classQuery) use ($user) {
+                    $classQuery->whereHas('studentClasses', function($sq) use ($user) {
+                        $sq->where('student_classes.id', $user->class_id);
+                    })->orWhereDoesntHave('studentClasses');
+                })->where(function($teacherQuery) use ($user) {
+                    $teacherQuery->where('is_global', true)
+                                 ->orWhere('teacher_id', $user->teacher_id);
+                });
             })
             ->where('expires_at', '>', now())
             ->latest()
             ->take(5)
             ->get();
 
-        $banners = \App\Models\Banner::where('is_active', true)->where('type', 'student')->orderBy('order')->get();
+        $banners = \App\Models\Banner::where('is_active', true)
+            ->where('type', 'student')
+            ->where(function($q) use ($user) {
+                $q->whereNull('class_id')
+                  ->orWhere('class_id', $user->class_id);
+            })
+            ->orderBy('order')
+            ->get();
         $recent_materials = \App\Models\StudyMaterial::forStudent($user)->latest()->take(5)->get();
 
-        return view('backend.student.dashboard', compact('stats', 'upcoming_exams', 'banners', 'recent_materials'));
+        $studentUser = $user;
+        return view('backend.student.dashboard', compact('stats', 'upcoming_exams', 'banners', 'recent_materials', 'studentUser'));
     }
 
     public function exams()
@@ -60,13 +70,14 @@ class StudentController extends Controller
 
         $allQuizzes = Quiz::where('status', 'published')
             ->where(function($q) use ($user) {
-                $q->where('is_global', true)
-                  ->orWhere(function($sub) use ($user) {
-                      $sub->where('teacher_id', $user->teacher_id)
-                          ->whereHas('studentClasses', function($sq) use ($user) {
-                              $sq->where('student_classes.id', $user->class_id);
-                          });
-                  });
+                $q->where(function($classQuery) use ($user) {
+                    $classQuery->whereHas('studentClasses', function($sq) use ($user) {
+                        $sq->where('student_classes.id', $user->class_id);
+                    })->orWhereDoesntHave('studentClasses');
+                })->where(function($teacherQuery) use ($user) {
+                    $teacherQuery->where('is_global', true)
+                                 ->orWhere('teacher_id', $user->teacher_id);
+                });
             })
             ->withCount(['attempts as quiz_attempts_count' => function($query) {
                 $query->where('student_id', auth()->id());
@@ -90,7 +101,10 @@ class StudentController extends Controller
     {
         // Check if student has access
         $user = auth()->user();
-        if (!$quiz->is_global && ($quiz->teacher_id !== $user->teacher_id || !$quiz->studentClasses()->where('student_class_id', $user->class_id)->exists())) {
+        $hasClass = $quiz->studentClasses()->where('student_class_id', $user->class_id)->exists() || $quiz->studentClasses()->count() === 0;
+        $hasTeacherOrGlobal = $quiz->is_global || $quiz->teacher_id === $user->teacher_id;
+        
+        if (!$hasClass || !$hasTeacherOrGlobal) {
              abort(403);
         }
         
@@ -102,7 +116,10 @@ class StudentController extends Controller
     {
         $user = auth()->user();
         
-        if (!$quiz->is_global && $quiz->teacher_id !== $user->teacher_id) {
+        $hasClass = $quiz->studentClasses()->where('student_class_id', $user->class_id)->exists() || $quiz->studentClasses()->count() === 0;
+        $hasTeacherOrGlobal = $quiz->is_global || $quiz->teacher_id === $user->teacher_id;
+        
+        if (!$hasClass || !$hasTeacherOrGlobal) {
              abort(403);
         }
 
@@ -314,11 +331,13 @@ class StudentController extends Controller
         $user = auth()->user();
         $courses = \App\Models\Course::where('status', 'published')
             ->where(function($q) use ($user) {
-                $q->where('is_global', true)
-                  ->orWhere(function($sub) use ($user) {
-                      $sub->where('teacher_id', $user->teacher_id)
-                          ->where('class_id', $user->class_id);
-                  });
+                $q->where(function($classQuery) use ($user) {
+                    $classQuery->where('class_id', $user->class_id)
+                               ->orWhereNull('class_id');
+                })->where(function($teacherQuery) use ($user) {
+                    $teacherQuery->where('is_global', true)
+                                 ->orWhere('teacher_id', $user->teacher_id);
+                });
             })
             ->withCount('students')
             ->get();
@@ -329,7 +348,10 @@ class StudentController extends Controller
     public function showCourse(\App\Models\Course $course)
     {
         $user = auth()->user();
-        if (!$course->is_global && ($course->teacher_id !== $user->teacher_id || $course->class_id != $user->class_id)) {
+        $hasClass = $course->class_id == $user->class_id || is_null($course->class_id);
+        $hasTeacherOrGlobal = $course->is_global || $course->teacher_id === $user->teacher_id;
+        
+        if (!$hasClass || !$hasTeacherOrGlobal) {
              abort(403);
         }
         
@@ -347,7 +369,10 @@ class StudentController extends Controller
     {
         $user = auth()->user();
         
-        if (!$course->is_global && $course->teacher_id !== $user->teacher_id) {
+        $hasClass = $course->class_id == $user->class_id || is_null($course->class_id);
+        $hasTeacherOrGlobal = $course->is_global || $course->teacher_id === $user->teacher_id;
+        
+        if (!$hasClass || !$hasTeacherOrGlobal) {
              abort(403);
         }
 

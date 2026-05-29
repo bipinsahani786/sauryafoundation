@@ -2,6 +2,11 @@
     <x-slot name="title">Study Materials Vault | Shaurya Narayan Foundation</x-slot>
 
     <div class="space-y-10 italic">
+        <div class="mb-2">
+            <a href="{{ route('student.dashboard') }}" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
+                <i class="fas fa-arrow-left"></i> Return to Dashboard
+            </a>
+        </div>
         <!-- Header -->
         <div class="relative overflow-hidden bg-slate-900 rounded-[3rem] p-12 text-white shadow-2xl border border-slate-800 group">
              <div class="absolute -top-20 -right-20 w-64 h-64 bg-indigo-600/20 blur-[100px] rounded-full group-hover:bg-indigo-600/30 transition-all duration-1000"></div>

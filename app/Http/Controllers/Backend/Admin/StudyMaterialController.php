@@ -19,7 +19,8 @@ class StudyMaterialController extends Controller
 
     public function create()
     {
-        return view('backend.admin.study_materials.create');
+        $classes = \App\Models\StudentClass::where('status', 'active')->get();
+        return view('backend.admin.study_materials.create', compact('classes'));
     }
 
     public function store(Request $request)
@@ -27,6 +28,7 @@ class StudyMaterialController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|in:note,pdf,book,other',
+            'class_id' => 'nullable|exists:student_classes,id',
             'description' => 'nullable|string',
             'file' => 'required|file|mimes:pdf,doc,docx,txt,png,jpg,jpeg|max:20480',
         ]);
@@ -48,7 +50,8 @@ class StudyMaterialController extends Controller
 
     public function edit(StudyMaterial $studyMaterial)
     {
-        return view('backend.admin.study_materials.edit', compact('studyMaterial'));
+        $classes = \App\Models\StudentClass::where('status', 'active')->get();
+        return view('backend.admin.study_materials.edit', compact('studyMaterial', 'classes'));
     }
 
     public function update(Request $request, StudyMaterial $studyMaterial)
@@ -56,6 +59,7 @@ class StudyMaterialController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|in:note,pdf,book,other',
+            'class_id' => 'nullable|exists:student_classes,id',
             'description' => 'nullable|string',
             'file' => 'nullable|file|mimes:pdf,doc,docx,txt,png,jpg,jpeg|max:20480',
         ]);

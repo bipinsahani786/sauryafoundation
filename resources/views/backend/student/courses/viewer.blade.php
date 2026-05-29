@@ -11,7 +11,20 @@
                 <h1 class="text-sm font-black text-slate-900 tracking-tight truncate">{{ $course->title }}</h1>
                 <div class="mt-2 h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                     @php 
-                        $allContents = $course->subjects->flatMap->topics->flatMap->contents;
+                        $allContents = collect();
+                        if ($course->subjects) {
+                            foreach($course->subjects as $subject) {
+                                if ($subject->topics) {
+                                    foreach($subject->topics as $topic) {
+                                        if ($topic->contents) {
+                                            foreach($topic->contents as $content) {
+                                                $allContents->push($content);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         $totalContent = $allContents->count();
                         $completedCount = auth()->user()->contentCompletions()->whereIn('content_id', $allContents->pluck('id'))->count();
                         $progress = $totalContent > 0 ? round(($completedCount / $totalContent) * 100) : 0;
