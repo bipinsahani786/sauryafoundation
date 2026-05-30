@@ -87,6 +87,9 @@ class AuthController extends Controller
         if ($user->isStudent()) {
             return redirect('/student/dashboard');
         }
+        if ($user->isSalesAgent()) {
+            return redirect('/sales-agent/dashboard');
+        }
         return redirect('/dashboard');
     }
 
