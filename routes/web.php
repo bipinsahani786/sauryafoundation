@@ -287,6 +287,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::post('/quizzes/{quiz}/unpublish', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'unpublish'])->name('quizzes.unpublish')->middleware('permission:publish_exams');
         Route::post('/quizzes/{quiz}/promote', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'calculateAndPromote'])->name('quizzes.promote')->middleware('permission:publish_exams');
         Route::delete('/questions/{question}', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'deleteQuestion'])->name('questions.destroy')->middleware('permission:edit_exams');
+        
+        // Admit Cards
+        Route::resource('admit-cards', \App\Http\Controllers\Backend\Admin\AdmitCardController::class);
+        Route::get('admit-cards/{admit_card}/pdf', [\App\Http\Controllers\Backend\Admin\AdmitCardController::class, 'downloadPdf'])->name('admit-cards.pdf');
     });
 
     // Testimonials
@@ -444,4 +448,8 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
 
     // Wallet
     Route::get('/wallet', [App\Http\Controllers\Backend\Student\StudentController::class, 'wallet'])->name('wallet');
+
+    // Admit Cards
+    Route::get('/admit-cards', [App\Http\Controllers\Backend\Student\StudentController::class, 'admitCards'])->name('admit-cards.index');
+    Route::get('/admit-cards/{admit_card}/pdf', [App\Http\Controllers\Backend\Student\StudentController::class, 'downloadAdmitCardPdf'])->name('admit-cards.pdf');
 });

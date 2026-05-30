@@ -221,6 +221,10 @@
                         <a href="{{ route('admin.quizzes.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.quizzes.*') ? $activeClasses : $inactiveClasses }}">
                             <i class="fas fa-vial w-4"></i> <span>Manage Exams</span>
                         </a>
+                        
+                        <a href="{{ route('admin.admit-cards.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('admin.admit-cards.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-id-card w-4"></i> <span>Admit Cards</span>
+                        </a>
                         @endif
 
                         @if(Auth::user()->hasPermission('view_classes'))
@@ -295,6 +299,9 @@
                         </a>
                         <a href="{{ route('student.exams') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.exams*', 'student.results*') ? $activeClasses : $inactiveClasses }}" id="sidebar_link_student_portal">
                             <i class="fas fa-vial-circle-check w-4"></i> <span>Test Portal</span>
+                        </a>
+                        <a href="{{ route('student.admit-cards.index') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.admit-cards.*') ? $activeClasses : $inactiveClasses }}">
+                            <i class="fas fa-id-card w-4"></i> <span>Admit Cards</span>
                         </a>
                         <a href="{{ route('student.wallet') }}" class="{{ $linkClasses }} {{ request()->routeIs('student.wallet*') ? $activeClasses : $inactiveClasses }}" id="sidebar_wallet_link_student">
                             <i class="fas fa-wallet w-4"></i> <span>My Wallet</span>

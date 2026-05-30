@@ -457,4 +457,22 @@ class StudentController extends Controller
         $transactions = auth()->user()->transactions()->latest()->paginate(20);
         return view('backend.student.wallet.index', compact('transactions'));
     }
+
+    public function admitCards()
+    {
+        $admitCards = \App\Models\AdmitCard::where('user_id', auth()->id())->latest()->get();
+        return view('backend.student.admit_cards.index', compact('admitCards'));
+    }
+
+    public function downloadAdmitCardPdf(\App\Models\AdmitCard $admitCard)
+    {
+        if ($admitCard->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        $admitCard->load('user');
+        $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
+        
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('backend.admin.admit_cards.pdf', compact('admitCard', 'siteSettings'));
+        return $pdf->download('Admit_Card_' . $admitCard->roll_no . '.pdf');
+    }
 }
