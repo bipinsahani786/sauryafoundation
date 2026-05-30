@@ -32,13 +32,25 @@ class SalesAgentController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'coaching_or_school' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'mobile_number' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'block' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
             'password' => 'required|string|min:8',
         ]);
 
         User::create([
             'name' => $validated['name'],
+            'coaching_or_school' => $validated['coaching_or_school'],
             'email' => $validated['email'],
+            'mobile_number' => $validated['mobile_number'],
+            'address' => $validated['address'],
+            'block' => $validated['block'],
+            'district' => $validated['district'],
+            'state' => $validated['state'],
             'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
             'role' => 'teacher',
             'referred_by' => auth()->id(),

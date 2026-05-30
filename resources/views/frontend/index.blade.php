@@ -178,11 +178,11 @@
                     <div class="grid grid-cols-2 gap-4">
                         <!-- Top wide image -->
                         <div class="col-span-2 h-48 md:h-64 rounded-2xl overflow-hidden shadow-lg group">
-                            <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80" alt="Foundation Work" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <img src="{{ isset($siteSettings['about_me_top_image']) ? asset('storage/' . $siteSettings['about_me_top_image']) : 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80' }}" alt="Foundation Work" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                         </div>
                         <!-- Bottom left image -->
                         <div class="h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg group">
-                            <img src="https://images.unsplash.com/photo-1593113580556-9a55c2f35472?auto=format&fit=crop&q=80" alt="Team" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <img src="{{ isset($siteSettings['about_me_left_image']) ? asset('storage/' . $siteSettings['about_me_left_image']) : 'https://images.unsplash.com/photo-1593113580556-9a55c2f35472?auto=format&fit=crop&q=80' }}" alt="Team" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                         </div>
                         <!-- Bottom right stacked -->
                         <div class="flex flex-col gap-4">
@@ -193,7 +193,7 @@
                             </div>
                             <!-- Small image -->
                             <div class="flex-grow rounded-2xl overflow-hidden shadow-lg group h-20 md:h-24">
-                                <img src="https://images.unsplash.com/photo-1542810634-71277d95dc8c?auto=format&fit=crop&q=80" alt="Community" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                <img src="{{ isset($siteSettings['about_me_right_image']) ? asset('storage/' . $siteSettings['about_me_right_image']) : 'https://images.unsplash.com/photo-1542810634-71277d95dc8c?auto=format&fit=crop&q=80' }}" alt="Community" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                             </div>
                         </div>
                     </div>

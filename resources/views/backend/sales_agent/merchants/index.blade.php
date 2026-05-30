@@ -26,8 +26,36 @@
                 <form action="{{ route('sales-agent.merchants.store') }}" method="POST" class="space-y-4">
                     @csrf
                     <div class="space-y-1.5">
+                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-3">Merchant Name</label>
+                        <input type="text" name="name" placeholder="John Doe" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:border-indigo-600 outline-none transition-all" required>
+                    </div>
+                    <div class="space-y-1.5">
                         <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-3">Coaching Name</label>
-                        <input type="text" name="name" placeholder="ABC Coaching Center" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:border-indigo-600 outline-none transition-all" required>
+                        <input type="text" name="coaching_or_school" placeholder="ABC Coaching Center" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:border-indigo-600 outline-none transition-all" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-3">Mobile Number</label>
+                            <input type="text" name="mobile_number" placeholder="9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:border-indigo-600 outline-none transition-all" required>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-3">Village / Address</label>
+                            <input type="text" name="address" placeholder="Village Name or Address" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:border-indigo-600 outline-none transition-all" required>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-3">Block</label>
+                            <input type="text" name="block" placeholder="Block Name" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:border-indigo-600 outline-none transition-all" required>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-3">District</label>
+                            <input type="text" name="district" placeholder="District Name" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:border-indigo-600 outline-none transition-all" required>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-3">State</label>
+                            <input type="text" name="state" placeholder="State Name" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:border-indigo-600 outline-none transition-all" required>
+                        </div>
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-3">Merchant Email</label>
