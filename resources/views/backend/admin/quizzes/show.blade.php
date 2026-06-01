@@ -52,29 +52,47 @@
                     
                     <form action="{{ route('admin.quizzes.add-question', $quiz->id) }}" method="POST" class="space-y-4">
                         @csrf
+                        @if($errors->has('question_text') || $errors->has('option_0') || $errors->has('option_1') || $errors->has('option_2') || $errors->has('option_3') || $errors->has('marks'))
+                            <div class="p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-100 text-[10px] font-bold mb-4">
+                                Please check the form for validation errors.
+                            </div>
+                        @endif
                         <div class="space-y-1.5">
                             <label class="block text-[8px] font-black text-white/60 uppercase tracking-widest ml-1">Question Body</label>
-                            <textarea name="question_text" rows="3" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required></textarea>
+                            <textarea name="question_text" rows="3" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:bg-white/20 outline-none transition-all font-bold" required>{{ old('question_text') }}</textarea>
+                            @error('question_text') <span class="text-red-300 text-[10px] font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="space-y-3">
                             <label class="block text-[8px] font-black text-white/60 uppercase tracking-widest ml-1">Options Hub</label>
                             <div class="space-y-2">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[9px] font-black w-4">A.</span>
-                                    <input type="text" name="option_0" placeholder="Alpha Option" class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-[10px] text-white placeholder:text-white/40 outline-none transition-all" required>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[9px] font-black w-4">A.</span>
+                                        <input type="text" name="option_0" value="{{ old('option_0') }}" placeholder="Alpha Option" class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-[10px] text-white placeholder:text-white/40 outline-none transition-all" required>
+                                    </div>
+                                    @error('option_0') <span class="text-red-300 text-[10px] font-bold ml-6">{{ $message }}</span> @enderror
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[9px] font-black w-4">B.</span>
-                                    <input type="text" name="option_1" placeholder="Beta Option" class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-[10px] text-white placeholder:text-white/40 outline-none transition-all" required>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[9px] font-black w-4">B.</span>
+                                        <input type="text" name="option_1" value="{{ old('option_1') }}" placeholder="Beta Option" class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-[10px] text-white placeholder:text-white/40 outline-none transition-all" required>
+                                    </div>
+                                    @error('option_1') <span class="text-red-300 text-[10px] font-bold ml-6">{{ $message }}</span> @enderror
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[9px] font-black w-4">C.</span>
-                                    <input type="text" name="option_2" placeholder="Gamma Option" class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-[10px] text-white placeholder:text-white/40 outline-none transition-all" required>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[9px] font-black w-4">C.</span>
+                                        <input type="text" name="option_2" value="{{ old('option_2') }}" placeholder="Gamma Option" class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-[10px] text-white placeholder:text-white/40 outline-none transition-all" required>
+                                    </div>
+                                    @error('option_2') <span class="text-red-300 text-[10px] font-bold ml-6">{{ $message }}</span> @enderror
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[9px] font-black w-4">D.</span>
-                                    <input type="text" name="option_3" placeholder="Delta Option" class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-[10px] text-white placeholder:text-white/40 outline-none transition-all" required>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[9px] font-black w-4">D.</span>
+                                        <input type="text" name="option_3" value="{{ old('option_3') }}" placeholder="Delta Option" class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-[10px] text-white placeholder:text-white/40 outline-none transition-all" required>
+                                    </div>
+                                    @error('option_3') <span class="text-red-300 text-[10px] font-bold ml-6">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>
@@ -83,15 +101,16 @@
                             <div class="space-y-1.5">
                                 <label class="block text-[8px] font-black text-white/60 uppercase tracking-widest ml-1">Key Index</label>
                                 <select name="correct_option" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none transition-all font-bold appearance-none">
-                                    <option value="0" class="text-slate-900">Index A</option>
-                                    <option value="1" class="text-slate-900">Index B</option>
-                                    <option value="2" class="text-slate-900">Index C</option>
-                                    <option value="3" class="text-slate-900">Index D</option>
+                                    <option value="0" class="text-slate-900" {{ old('correct_option') == '0' ? 'selected' : '' }}>Index A</option>
+                                    <option value="1" class="text-slate-900" {{ old('correct_option') == '1' ? 'selected' : '' }}>Index B</option>
+                                    <option value="2" class="text-slate-900" {{ old('correct_option') == '2' ? 'selected' : '' }}>Index C</option>
+                                    <option value="3" class="text-slate-900" {{ old('correct_option') == '3' ? 'selected' : '' }}>Index D</option>
                                 </select>
                             </div>
                             <div class="space-y-1.5">
                                 <label class="block text-[8px] font-black text-white/60 uppercase tracking-widest ml-1">Marks Value</label>
-                                <input type="number" name="marks" value="1" min="1" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none transition-all font-bold">
+                                <input type="number" name="marks" value="{{ old('marks', 1) }}" min="1" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none transition-all font-bold" required>
+                                @error('marks') <span class="text-red-300 text-[10px] font-bold">{{ $message }}</span> @enderror
                             </div>
                         </div>
 

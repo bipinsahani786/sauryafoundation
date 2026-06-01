@@ -56,7 +56,18 @@
                                 </div>
                                 
                                 <h3 class="font-black text-slate-900 text-lg mb-1 pr-20 tracking-tighter">{{ $quiz->title }}</h3>
-                                <p class="text-[10px] text-slate-400 font-bold italic line-clamp-1">{{ $quiz->description ?? 'Multi-stage assessment.' }}</p>
+                                <p class="text-[10px] text-slate-400 font-bold italic line-clamp-1 mb-4">{{ $quiz->description ?? 'Multi-stage assessment.' }}</p>
+
+                                <div class="grid grid-cols-2 gap-4 mt-6">
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <div class="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1">Starts</div>
+                                        <div class="text-xs font-black text-indigo-600">{{ $quiz->start_time ? $quiz->start_time->format('d M Y, h:i A') : 'Immediate' }}</div>
+                                    </div>
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <div class="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1">Ends</div>
+                                        <div class="text-xs font-black text-rose-600">{{ $quiz->end_time ? $quiz->end_time->format('d M Y, h:i A') : 'No Expiry' }}</div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div class="p-8 grid grid-cols-2 gap-6 bg-white border-b border-slate-50">
@@ -116,7 +127,18 @@
                         <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-xl transition-all h-full">
                             <div class="p-8 border-b border-slate-100 bg-white">
                                 <h3 class="font-black text-slate-900 text-lg mb-1 tracking-tighter">{{ $quiz->title }}</h3>
-                                <p class="text-[10px] text-slate-400 font-bold italic line-clamp-1">{{ $quiz->description ?? 'Regular examination.' }}</p>
+                                <p class="text-[10px] text-slate-400 font-bold italic line-clamp-1 mb-4">{{ $quiz->description ?? 'Regular examination.' }}</p>
+
+                                <div class="grid grid-cols-2 gap-4 mt-6">
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <div class="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1">Starts</div>
+                                        <div class="text-xs font-black text-indigo-600">{{ $quiz->start_time ? $quiz->start_time->format('d M Y, h:i A') : 'Immediate' }}</div>
+                                    </div>
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <div class="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1">Ends</div>
+                                        <div class="text-xs font-black text-rose-600">{{ $quiz->end_time ? $quiz->end_time->format('d M Y, h:i A') : 'No Expiry' }}</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="p-6 bg-slate-50 mt-auto flex flex-wrap gap-2">
                                 <a href="{{ route('admin.quizzes.edit', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">Edit</a>
