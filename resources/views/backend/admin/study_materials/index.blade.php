@@ -21,6 +21,7 @@
                         <tr class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic">
                             <th class="px-6 pb-4">Resource</th>
                             <th class="px-6 pb-4">Category</th>
+                            <th class="px-6 pb-4">Class</th>
                             <th class="px-6 pb-4">Status</th>
                             <th class="px-6 pb-4">Uploaded At</th>
                             <th class="px-6 pb-4 text-right">Actions</th>
@@ -43,6 +44,11 @@
                             <td class="px-6 py-4 bg-slate-50/50 border-y border-slate-100">
                                 <span class="px-4 py-1.5 rounded-full bg-white border border-slate-200 text-[10px] font-black uppercase tracking-widest text-slate-600 shadow-sm">
                                     {{ $material->category }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 bg-slate-50/50 border-y border-slate-100">
+                                <span class="text-[10px] font-black uppercase tracking-widest {{ $material->class_id ? 'text-indigo-600' : 'text-slate-400' }}">
+                                    {{ $material->class_id ? $material->studentClass->name : 'ALL CLASSES (GLOBAL)' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 bg-slate-50/50 border-y border-slate-100 font-bold">
@@ -73,7 +79,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="py-20 text-center">
+                            <td colspan="6" class="py-20 text-center">
                                 <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-300">
                                     <i class="fas fa-folder-open text-3xl"></i>
                                 </div>

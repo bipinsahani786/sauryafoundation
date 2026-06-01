@@ -172,6 +172,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::middleware('permission:view_users')->group(function () {
         Route::get('users', [UserController::class, 'index'])->name('users.index');
+        Route::get('users/export/csv', [UserController::class, 'exportCsv'])->name('users.export.csv');
+        Route::get('users/export/pdf', [UserController::class, 'exportPdf'])->name('users.export.pdf');
         
         Route::get('users/create', [UserController::class, 'create'])->name('users.create')->middleware('permission:create_users');
         Route::post('users', [UserController::class, 'store'])->name('users.store')->middleware('permission:create_users');

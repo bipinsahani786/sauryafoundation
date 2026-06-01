@@ -9,10 +9,27 @@ use Illuminate\Support\Facades\Storage;
 
 class StudyMaterialController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $materials = StudyMaterial::forStudent(auth()->user())->latest()->paginate(15);
-        return view('backend.student.study_materials.index', compact('materials'));
+        $user = auth()->user();
+        $query = StudyMaterial::forStudent($user);
+
+        if ($request->has('category') && in_array($request->category, ['note', 'pdf', 'book', 'video', 'other'])) {
+            $query->where('category', $request->category);
+        }
+
+        $materials = $query->latest()->paginate(15);
+        
+        // Fetch Academy LMS Files (Content with attachments)
+        $lmsFiles = \App\Models\Content::whereNotNull('attachment_path')
+            ->whereHas('topic.subject.course', function($q) use ($user) {
+                $q->where('status', 'published')
+                  ->where('class_id', $user->class_id);
+            })
+            ->latest()
+            ->get();
+
+        return view('backend.student.study_materials.index', compact('materials', 'lmsFiles'));
     }
 
     public function download(StudyMaterial $studyMaterial)

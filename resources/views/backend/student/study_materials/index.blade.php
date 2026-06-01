@@ -77,6 +77,44 @@
             @endforelse
         </div>
 
+        @if(isset($lmsFiles) && $lmsFiles->count() > 0)
+        <div class="mt-16">
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight uppercase italic mb-6">Academy (LMS) Resources</h2>
+            <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
+                @foreach($lmsFiles as $lmsMaterial)
+                <div class="bg-indigo-50 rounded-[2.5rem] border border-indigo-100 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-2 transition-all p-8 group relative overflow-hidden flex flex-col h-full border-b-4 border-b-indigo-600">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-white rounded-full group-hover:scale-110 transition-all opacity-50"></div>
+                    
+                    <div class="relative z-10 space-y-6 flex-grow">
+                        <div class="flex items-center justify-between">
+                            <div class="w-14 h-14 rounded-2xl bg-white border border-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all shadow-sm">
+                                <i class="fas fa-file-pdf text-xl"></i>
+                            </div>
+                            <span class="text-[9px] font-black uppercase tracking-[0.2em] text-indigo-600 italic bg-white px-3 py-1.5 rounded-full border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
+                                ACADEMY LMS
+                            </span>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-black text-slate-900 tracking-tight uppercase leading-tight mb-2 group-hover:text-indigo-600 transition-colors italic">{{ $lmsMaterial->title }}</h3>
+                            <p class="text-xs text-slate-500 font-bold leading-relaxed line-clamp-2 italic">
+                                Course: {{ $lmsMaterial->topic->subject->course->title ?? 'Unknown' }}<br>
+                                Topic: {{ $lmsMaterial->topic->title ?? 'Unknown' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 pt-8 mt-auto">
+                        <a href="{{ asset('storage/' . $lmsMaterial->attachment_path) }}" target="_blank" class="w-full inline-flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[10px] uppercase tracking-[0.3em] py-5 rounded-2xl transition-all shadow-xl shadow-indigo-600/20 italic group/btn active:scale-95">
+                            Download Document <i class="fas fa-download text-[8px] group-hover/btn:translate-y-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         @if($materials->hasPages())
         <div class="mt-12 bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm italic">
             {{ $materials->links() }}

@@ -34,7 +34,8 @@ class UserController extends Controller
     public function create()
     {
         $permissions = Permission::all();
-        return view('backend.admin.users.create', compact('permissions'));
+        $classes = \App\Models\StudentClass::where('status', 'active')->get();
+        return view('backend.admin.users.create', compact('permissions', 'classes'));
     }
 
     public function show(User $user)
@@ -49,16 +50,57 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
             'role' => ['required', 'in:admin,syndicate,sales_agent,teacher,student'],
+            'class_id' => ['nullable', 'required_if:role,student', 'exists:student_classes,id'],
             'commission_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'dob' => ['nullable', 'date'],
+            'gender' => ['nullable', 'string', 'in:male,female,other'],
+            'blood_group' => ['nullable', 'string', 'max:10'],
+            'aadhaar_number' => ['nullable', 'string', 'max:20'],
+            'category' => ['nullable', 'string', 'max:50'],
+            'mobile_number' => ['nullable', 'string', 'max:20', 'required_if:role,teacher,sales_agent,syndicate'],
+            'father_name' => ['nullable', 'string', 'max:255'],
+            'mother_name' => ['nullable', 'string', 'max:255'],
+            'guardian_name' => ['nullable', 'string', 'max:255'],
+            'alternate_contact' => ['nullable', 'string', 'max:20'],
+            'address' => ['nullable', 'string', 'required_if:role,teacher,sales_agent,syndicate'],
+            'block' => ['nullable', 'string', 'max:255', 'required_if:role,teacher,sales_agent,syndicate'],
+            'district' => ['nullable', 'string', 'max:255', 'required_if:role,teacher,sales_agent,syndicate'],
+            'state' => ['nullable', 'string', 'max:255', 'required_if:role,teacher,sales_agent,syndicate'],
+            'pin_code' => ['nullable', 'string', 'max:20'],
+            'coaching_or_school' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $user = User::create([
+        $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'class_id' => $request->role === 'student' ? $request->class_id : null,
             'commission_percent' => $request->commission_percent ?? 0,
-        ]);
+            'mobile_number' => $request->mobile_number,
+            'address' => $request->address,
+            'block' => $request->block,
+            'district' => $request->district,
+            'state' => $request->state,
+            'coaching_or_school' => $request->coaching_or_school,
+        ];
+
+        if ($request->role === 'student') {
+            $userData = array_merge($userData, [
+                'dob' => $request->dob,
+                'gender' => $request->gender,
+                'blood_group' => $request->blood_group,
+                'aadhaar_number' => $request->aadhaar_number,
+                'category' => $request->category,
+                'father_name' => $request->father_name,
+                'mother_name' => $request->mother_name,
+                'guardian_name' => $request->guardian_name,
+                'alternate_contact' => $request->alternate_contact,
+                'pin_code' => $request->pin_code,
+            ]);
+        }
+
+        $user = User::create($userData);
 
         if ($request->role === 'admin' && $request->has('permissions')) {
             $user->permissions()->sync($request->permissions);
@@ -70,7 +112,8 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $permissions = Permission::all();
-        return view('backend.admin.users.create', compact('user', 'permissions'));
+        $classes = \App\Models\StudentClass::where('status', 'active')->get();
+        return view('backend.admin.users.create', compact('user', 'permissions', 'classes'));
     }
 
     public function update(Request $request, User $user)
@@ -79,15 +122,56 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'role' => ['required', 'in:admin,syndicate,sales_agent,teacher,student'],
+            'class_id' => ['nullable', 'required_if:role,student', 'exists:student_classes,id'],
             'commission_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'dob' => ['nullable', 'date'],
+            'gender' => ['nullable', 'string', 'in:male,female,other'],
+            'blood_group' => ['nullable', 'string', 'max:10'],
+            'aadhaar_number' => ['nullable', 'string', 'max:20'],
+            'category' => ['nullable', 'string', 'max:50'],
+            'mobile_number' => ['nullable', 'string', 'max:20', 'required_if:role,teacher,sales_agent,syndicate'],
+            'father_name' => ['nullable', 'string', 'max:255'],
+            'mother_name' => ['nullable', 'string', 'max:255'],
+            'guardian_name' => ['nullable', 'string', 'max:255'],
+            'alternate_contact' => ['nullable', 'string', 'max:20'],
+            'address' => ['nullable', 'string', 'required_if:role,teacher,sales_agent,syndicate'],
+            'block' => ['nullable', 'string', 'max:255', 'required_if:role,teacher,sales_agent,syndicate'],
+            'district' => ['nullable', 'string', 'max:255', 'required_if:role,teacher,sales_agent,syndicate'],
+            'state' => ['nullable', 'string', 'max:255', 'required_if:role,teacher,sales_agent,syndicate'],
+            'pin_code' => ['nullable', 'string', 'max:20'],
+            'coaching_or_school' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $user->update([
+        $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
+            'class_id' => $request->role === 'student' ? $request->class_id : null,
             'commission_percent' => $request->commission_percent ?? 0,
-        ]);
+            'mobile_number' => $request->mobile_number,
+            'address' => $request->address,
+            'block' => $request->block,
+            'district' => $request->district,
+            'state' => $request->state,
+            'coaching_or_school' => $request->coaching_or_school,
+        ];
+
+        if ($request->role === 'student') {
+            $userData = array_merge($userData, [
+                'dob' => $request->dob,
+                'gender' => $request->gender,
+                'blood_group' => $request->blood_group,
+                'aadhaar_number' => $request->aadhaar_number,
+                'category' => $request->category,
+                'father_name' => $request->father_name,
+                'mother_name' => $request->mother_name,
+                'guardian_name' => $request->guardian_name,
+                'alternate_contact' => $request->alternate_contact,
+                'pin_code' => $request->pin_code,
+            ]);
+        }
+
+        $user->update($userData);
 
         if ($request->filled('password')) {
             $request->validate([
@@ -159,5 +243,66 @@ class UserController extends Controller
     {
         session()->forget(['impersonate_id', 'admin_id']);
         return redirect()->route('admin.users.index')->with('success', 'Returned to Admin session.');
+    }
+
+    public function exportCsv(Request $request)
+    {
+        $role = $request->query('role');
+        $query = User::query();
+        
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        $users = $query->get();
+
+        $filename = "users_export_" . ($role ?? 'all') . "_" . date('Ymd_His') . ".csv";
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['ID', 'Name', 'Email', 'Mobile', 'Role', 'Status', 'Joined Date', 'Assigned Class / Org'];
+
+        $callback = function() use($users, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($users as $user) {
+                $classOrOrg = $user->role === 'student' ? ($user->studentClass?->name ?? 'N/A') : ($user->coaching_or_school ?? 'N/A');
+                fputcsv($file, [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    $user->mobile_number ?? '-',
+                    ucwords(str_replace('_', ' ', $user->role)),
+                    ucfirst($user->status),
+                    $user->created_at->format('Y-m-d H:i:s'),
+                    $classOrOrg
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $role = $request->query('role');
+        $query = User::query();
+        
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        $users = $query->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('backend.admin.users.pdf', compact('users', 'role'));
+        
+        return $pdf->download("users_export_" . ($role ?? 'all') . "_" . date('Ymd_His') . ".pdf");
     }
 }

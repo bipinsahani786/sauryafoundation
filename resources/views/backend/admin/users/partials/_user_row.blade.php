@@ -6,6 +6,7 @@
         </div>
     </td>
     <td class="px-4 py-2 text-slate-700 font-bold">{{ $user->email }}</td>
+    <td class="px-4 py-2 text-slate-700 font-bold">{{ $user->mobile_number ?? '-' }}</td>
     <td class="px-4 py-2 text-center">
         <span class="px-2 py-0.5 rounded text-[8px] font-bold uppercase border
             {{ $user->role == 'admin' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-slate-50 text-slate-600 border-slate-100' }}">

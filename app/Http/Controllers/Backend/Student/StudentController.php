@@ -331,13 +331,17 @@ class StudentController extends Controller
         $user = auth()->user();
         $courses = \App\Models\Course::where('status', 'published')
             ->where(function($q) use ($user) {
-                $q->where(function($classQuery) use ($user) {
-                    $classQuery->where('class_id', $user->class_id)
-                               ->orWhereNull('class_id');
-                })->where(function($teacherQuery) use ($user) {
-                    $teacherQuery->where('is_global', true)
-                                 ->orWhere('teacher_id', $user->teacher_id);
-                });
+                // Must be for the student's class (or global)
+                $q->where('class_id', $user->class_id)
+                  ->orWhereNull('class_id'); // Just in case there are truly global courses
+            })
+            ->where(function($q) use ($user) {
+                // Must be from their teacher, OR global, OR from an Admin/Superadmin
+                $q->where('teacher_id', $user->teacher_id)
+                  ->orWhere('is_global', true)
+                  ->orWhereHas('teacher', function($t) {
+                      $t->whereIn('role', ['admin', 'superadmin']);
+                  });
             })
             ->withCount('students')
             ->get();
@@ -349,7 +353,8 @@ class StudentController extends Controller
     {
         $user = auth()->user();
         $hasClass = $course->class_id == $user->class_id || is_null($course->class_id);
-        $hasTeacherOrGlobal = $course->is_global || $course->teacher_id === $user->teacher_id;
+        $isAdmin = $course->teacher && in_array($course->teacher->role, ['admin', 'superadmin']);
+        $hasTeacherOrGlobal = $course->is_global || $course->teacher_id === $user->teacher_id || $isAdmin;
         
         if (!$hasClass || !$hasTeacherOrGlobal) {
              abort(403);
@@ -370,7 +375,8 @@ class StudentController extends Controller
         $user = auth()->user();
         
         $hasClass = $course->class_id == $user->class_id || is_null($course->class_id);
-        $hasTeacherOrGlobal = $course->is_global || $course->teacher_id === $user->teacher_id;
+        $isAdmin = $course->teacher && in_array($course->teacher->role, ['admin', 'superadmin']);
+        $hasTeacherOrGlobal = $course->is_global || $course->teacher_id === $user->teacher_id || $isAdmin;
         
         if (!$hasClass || !$hasTeacherOrGlobal) {
              abort(403);

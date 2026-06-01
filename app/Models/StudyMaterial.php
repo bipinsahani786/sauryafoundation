@@ -36,13 +36,19 @@ class StudyMaterial extends Model
     public function scopeForStudent($query, $user)
     {
         return $query->where('status', 'active')
-            ->where(function($classQuery) use ($user) {
-                $classQuery->where('class_id', $user->class_id)
-                           ->orWhereNull('class_id');
-            })
-            ->where(function($teacherQuery) use ($user) {
-                $teacherQuery->where('is_global', true)
-                             ->orWhere('teacher_id', $user->teacher_id);
+            ->where(function($q) use ($user) {
+                // Rule 1: Global Notes (for everyone)
+                $q->where('is_global', true)
+                  
+                  // Rule 2: Notes for the student's specific class
+                  ->orWhere(function($subQ) use ($user) {
+                      $subQ->where('class_id', $user->class_id);
+                      
+                      // If the student has a teacher, they can see notes from their teacher or admins (who have no teacher_id)
+                      // Actually, if it's assigned to their class, they should see it regardless of who uploaded it.
+                      // The original logic tried to restrict it, but admin uploads failed.
+                      // We will allow it if it's for their class.
+                  });
             });
     }
 }

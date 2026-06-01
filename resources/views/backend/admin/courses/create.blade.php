@@ -35,31 +35,16 @@
                         
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Class Target</label>
-                            <select name="class_id" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all appearance-none italic" id="class_id_select">
-                                <option value="" selected>None (Global Mode Only)</option>
+                            <select name="class_id" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold focus:border-indigo-600 focus:bg-white outline-none transition-all appearance-none italic" id="class_id_select" required>
+                                <option value="" disabled selected>-- Select a Class --</option>
                                 @foreach($classes as $class)
                                     <option value="{{ $class->id }}" {{ old('class_id') == $class->id ? 'selected' : '' }}>{{ $class->name }}</option>
                                 @endforeach
                             </select>
-                            <p class="text-[8px] text-slate-400 font-bold ml-2">Ignored if "Universal Global" is active.</p>
                         </div>
                     </div>
 
-                    <div class="p-6 bg-indigo-50 border border-indigo-100 rounded-3xl flex items-center justify-between">
-                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg">
-                                <i class="fas fa-globe"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-[10px] font-black uppercase text-indigo-600 tracking-widest italic">Universal Global Access</h4>
-                                <p class="text-[9px] text-slate-400 font-bold italic leading-none">Show this course to ALL students regardless of teacher or class.</p>
-                            </div>
-                         </div>
-                         <div class="relative inline-flex items-center cursor-pointer" x-data="{ active: true }">
-                             <input type="checkbox" name="is_global" value="1" class="sr-only peer" checked id="is_global_checkbox" @change="active = !active">
-                             <div @click="$refs.check.click()" class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                         </div>
-                    </div>
+
 
                     <div class="pt-6 flex justify-end">
                         <button type="submit" class="bg-indigo-600 text-white font-black py-4 px-12 rounded-2xl text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100 italic group active:scale-95">

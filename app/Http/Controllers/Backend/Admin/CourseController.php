@@ -30,20 +30,15 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'class_id' => 'required_without:is_global|exists:student_classes,id',
+            'class_id' => 'required|exists:student_classes,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'is_global' => 'nullable|boolean',
         ]);
 
         $validated['teacher_id'] = Auth::id(); // Admin is the creator
         $validated['status'] = 'draft';
-        $validated['is_global'] = $request->has('is_global');
-
-        if ($validated['is_global']) {
-            $validated['class_id'] = null;
-        }
+        $validated['is_global'] = false; // Always false for admin courses now
 
         $course = Course::create($validated);
 
@@ -67,17 +62,13 @@ class CourseController extends Controller
     public function update(Request $request, Course $course)
     {
         $validated = $request->validate([
-            'class_id' => 'required_without:is_global|exists:student_classes,id',
+            'class_id' => 'required|exists:student_classes,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'is_global' => 'nullable|boolean',
         ]);
 
-        $validated['is_global'] = $request->has('is_global');
-        if ($validated['is_global']) {
-            $validated['class_id'] = null;
-        }
+        $validated['is_global'] = false;
 
         $course->update($validated);
 

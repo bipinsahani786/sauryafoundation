@@ -1,31 +1,41 @@
 <x-dashboard.layout>
     <x-slot name="title">Manage Users</x-slot>
 
-    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <h2 class="text-lg font-bold text-slate-900 tracking-tight">User Management</h2>
-            <p class="text-[10px] text-slate-400 font-medium italic">Manage Admins, Teachers, Students, Sales Agents and Syndicate Members.</p>
-        </div>
-        <div class="flex flex-col md:flex-row items-center gap-3">
-            <!-- Search Form -->
-            <form action="{{ route('admin.users.index') }}" method="GET" class="relative w-full md:w-auto">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or email..." class="w-full md:w-64 pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm transition-all">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                @if(request('search'))
-                    <a href="{{ route('admin.users.index') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500" title="Clear Search"><i class="fas fa-times"></i></a>
+    <!-- Alpine Wrapper -->
+    <div x-data="{ activeTab: 'students', roleMap: { 'students': 'student', 'teachers': 'teacher', 'sales': 'sales_agent', 'syndicates': 'syndicate', 'admins': 'admin' } }" class="space-y-6">
+    
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-lg font-bold text-slate-900 tracking-tight">User Management</h2>
+                <p class="text-[10px] text-slate-400 font-medium italic">Manage Admins, Teachers, Students, Sales Agents and Syndicate Members.</p>
+            </div>
+            <div class="flex flex-col md:flex-row items-center gap-2">
+                <!-- Search Form -->
+                <form action="{{ route('admin.users.index') }}" method="GET" class="relative w-full md:w-auto mr-2">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or email..." class="w-full md:w-56 pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm transition-all">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    @if(request('search'))
+                        <a href="{{ route('admin.users.index') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500" title="Clear Search"><i class="fas fa-times"></i></a>
+                    @endif
+                </form>
+
+                <a :href="'{{ route('admin.users.export.pdf') }}?role=' + roleMap[activeTab]" target="_blank" class="px-3 py-2 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm border border-slate-200 hover:bg-slate-200 transition-all whitespace-nowrap">
+                    <i class="fas fa-print mr-1 text-slate-500"></i> Print
+                </a>
+
+                <a :href="'{{ route('admin.users.export.csv') }}?role=' + roleMap[activeTab]" class="px-3 py-2 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm border border-emerald-200 hover:bg-emerald-600 hover:text-white transition-all whitespace-nowrap">
+                    <i class="fas fa-download mr-1"></i> Download
+                </a>
+
+                @if(Auth::user()->hasPermission('create_users'))
+                <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-indigo-700 transition-all whitespace-nowrap ml-2">
+                    <i class="fas fa-user-plus mr-1"></i> Add User
+                </a>
                 @endif
-            </form>
-
-            @if(Auth::user()->hasPermission('create_users'))
-            <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-indigo-700 transition-all whitespace-nowrap">
-                <i class="fas fa-user-plus mr-1"></i> Add New User
-            </a>
-            @endif
+            </div>
         </div>
-    </div>
 
-    <!-- Alpine Tabs Wrapper -->
-    <div x-data="{ activeTab: 'students' }" class="space-y-4">
+        <div class="space-y-4">
         
         <!-- Tab Navigation -->
         <div class="flex space-x-1 bg-slate-100 p-1.5 rounded-xl w-full md:w-max border border-slate-200 overflow-x-auto custom-scrollbar">
@@ -54,6 +64,7 @@
                         <tr>
                             <th class="px-4 py-2 bg-slate-50 border-b">User</th>
                             <th class="px-4 py-2 bg-slate-50 border-b">Email</th>
+                            <th class="px-4 py-2 bg-slate-50 border-b">Mobile</th>
                             <th class="px-4 py-2 bg-slate-50 border-b text-center">Role</th>
                             <th class="px-4 py-2 bg-slate-50 border-b text-center">Joined</th>
                             <th class="px-4 py-2 bg-slate-50 border-b text-center">Status</th>
