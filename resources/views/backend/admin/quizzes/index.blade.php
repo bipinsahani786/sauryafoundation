@@ -103,6 +103,13 @@
                                 <a href="{{ route('admin.quizzes.show', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 text-slate-700 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">
                                     Ques ({{ $quiz->questions_count ?? $quiz->questions()->count() }})
                                 </a>
+                                <form action="{{ route('admin.quizzes.destroy', $quiz->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this exam?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full text-center bg-rose-50 text-rose-600 border border-rose-100 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all shadow-sm">
+                                        Delete
+                                    </button>
+                                </form>
                                 <a href="{{ route('admin.quizzes.results', $quiz->id) }}" class="w-full text-center bg-indigo-600 text-white px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-indigo-100">
                                     Manage Results & Promotion
                                 </a>
@@ -158,6 +165,13 @@
                                     </form>
                                 @endif
                                 <a href="{{ route('admin.quizzes.show', $quiz->id) }}" class="flex-1 text-center bg-white border border-slate-200 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">Setup</a>
+                                <form action="{{ route('admin.quizzes.destroy', $quiz->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this exam?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full text-center bg-rose-50 text-rose-600 border border-rose-100 px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all shadow-sm">
+                                        Delete
+                                    </button>
+                                </form>
                                 <a href="{{ route('admin.quizzes.results', $quiz->id) }}" class="w-full text-center bg-indigo-600 text-white px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-indigo-100">Results</a>
                             </div>
                         </div>
