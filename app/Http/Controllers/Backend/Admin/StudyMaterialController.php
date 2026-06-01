@@ -40,7 +40,7 @@ class StudyMaterialController extends Controller
             $validated['file_path'] = $path;
         }
 
-        $validated['is_global'] = true;
+        $validated['is_global'] = empty($validated['class_id']);
         $validated['teacher_id'] = null; // System/Admin material
 
         StudyMaterial::create($validated);
@@ -75,6 +75,7 @@ class StudyMaterialController extends Controller
             $validated['file_path'] = $path;
         }
 
+        $validated['is_global'] = empty($validated['class_id']);
         $studyMaterial->update($validated);
 
         return redirect()->route('admin.study-materials.index')->with('success', 'Study material updated.');

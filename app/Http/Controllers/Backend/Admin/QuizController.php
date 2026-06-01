@@ -44,7 +44,7 @@ class QuizController extends Controller
             'is_contest' => 'nullable|boolean',
             'parent_id' => 'nullable|exists:quizzes,id',
             'level_number' => 'nullable|integer|min:1',
-            'promotion_percentage' => 'nullable|integer|min:1|max:100',
+            'promotion_percentage' => 'nullable|integer|min:0|max:100',
             'winner_count' => 'nullable|integer|min:1',
             'is_practice_set' => 'nullable|boolean',
         ]);
@@ -206,7 +206,7 @@ class QuizController extends Controller
             'is_contest' => 'nullable|boolean',
             'parent_id' => 'nullable|exists:quizzes,id',
             'level_number' => 'nullable|integer|min:1',
-            'promotion_percentage' => 'nullable|integer|min:1|max:100',
+            'promotion_percentage' => 'nullable|integer|min:0|max:100',
             'winner_count' => 'nullable|integer|min:1',
             'is_practice_set' => 'nullable|boolean',
         ]);
@@ -253,11 +253,18 @@ class QuizController extends Controller
         $addedCount = 0;
 
         if ($request->upload_type === 'csv') {
-            $request->validate(['csv_file' => 'required|mimes:csv,txt|max:2048']);
+            $request->validate(['csv_file' => 'required|file|max:5120']);
             $file = $request->file('csv_file');
             
-            $handle = fopen($file->getRealPath(), "r");
-            $header = fgetcsv($handle, 1000, ",");
+            // Allow basic parsing even if mime type is weird
+            $extension = strtolower($file->getClientOriginalExtension());
+            if (!in_array($extension, ['csv', 'txt'])) {
+                return back()->with('error', 'Please upload a valid .csv or .txt file for CSV import.');
+            }
+
+            try {
+                $handle = fopen($file->getRealPath(), "r");
+                $header = fgetcsv($handle, 1000, ",");
             
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                 if (count($data) >= 6) { // Minimum Q, Opt1, Opt2, Opt3, Opt4, CorrectAns required
@@ -271,6 +278,9 @@ class QuizController extends Controller
                 }
             }
             fclose($handle);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error reading CSV file. Ensure it follows the correct format.');
+        }
             
         } elseif ($request->upload_type === 'text') {
             $request->validate(['bulk_text' => 'required|string']);

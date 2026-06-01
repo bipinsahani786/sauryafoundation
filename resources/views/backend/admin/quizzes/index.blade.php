@@ -14,7 +14,7 @@
     <div class="space-y-12">
         @php
             $rootQuizzes = $quizzes->where('parent_id', null);
-            $standaloneQuizzes = $quizzes->where('parent_id', null)->where('is_contest', false)->where('level_number', '!=', 1);
+            $standaloneQuizzes = $quizzes->where('parent_id', null)->filter(function($q) { return !$q->is_contest; });
             $contestRoots = $rootQuizzes->where('is_contest', true);
         @endphp
 

@@ -13,12 +13,12 @@
                 <div class="space-y-4">
                     <div class="space-y-1.5">
                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Examination Title</label>
-                        <input type="text" name="title" placeholder="e.g. Advanced Mathematics Quiz" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 placeholder:text-slate-300 focus:border-indigo-600 outline-none transition-all font-bold" required>
+                        <input type="text" name="title" value="{{ old('title') }}" placeholder="e.g. Advanced Mathematics Quiz" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 placeholder:text-slate-300 focus:border-indigo-600 outline-none transition-all font-bold" required>
                     </div>
                     
                     <div class="space-y-1.5">
                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Description</label>
-                        <textarea name="description" rows="4" placeholder="Brief overview of the exam..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 placeholder:text-slate-300 focus:border-indigo-600 outline-none transition-all font-bold"></textarea>
+                        <textarea name="description" rows="4" placeholder="Brief overview of the exam..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 placeholder:text-slate-300 focus:border-indigo-600 outline-none transition-all font-bold">{{ old('description') }}</textarea>
                     </div>
                 </div>
 
@@ -26,35 +26,35 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Pricing (INR)</label>
-                            <input type="number" name="price" value="0" step="0.01" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold" required>
+                            <input type="number" name="price" value="{{ old('price', 0) }}" step="0.01" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold" required>
                             <p class="text-[8px] text-amber-600 font-bold italic mt-1">* Non-zero prices require Admin approval.</p>
                         </div>
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Duration (Mins)</label>
-                            <input type="number" name="duration_minutes" value="60" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold" required>
+                            <input type="number" name="duration_minutes" value="{{ old('duration_minutes', 60) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold" required>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Start Window</label>
-                            <input type="datetime-local" name="start_time" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold">
+                            <input type="datetime-local" name="start_time" value="{{ old('start_time') }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold">
                         </div>
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">End Window</label>
-                            <input type="datetime-local" name="end_time" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold">
+                            <input type="datetime-local" name="end_time" value="{{ old('end_time') }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold">
                         </div>
                     </div>
 
                     <div class="space-y-1.5">
                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Attempts Limit</label>
-                        <input type="number" name="attempts_limit" value="1" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold" required>
+                        <input type="number" name="attempts_limit" value="{{ old('attempts_limit', 1) }}" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3 text-xs text-slate-900 focus:border-indigo-600 outline-none transition-all font-bold" required>
                         <p class="text-[8px] text-slate-400 font-bold italic mt-1">* 0 means unlimited attempts.</p>
                     </div>
                 </div>
             </div>
 
-            <div x-data="{ isGlobal: false, isContest: false }" class="mb-8 p-6 bg-slate-50 rounded-2xl border border-slate-100">
+            <div x-data="{ isGlobal: {{ old('is_global') ? 'true' : 'false' }}, isContest: {{ old('is_contest') ? 'true' : 'false' }} }" class="mb-8 p-6 bg-slate-50 rounded-2xl border border-slate-100">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <!-- Global Checkbox -->
                     <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group">
@@ -65,16 +65,8 @@
                         </div>
                     </label>
                     
-                    <!-- Contest Checkbox -->
-                    <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-purple-600 transition-all group">
-                        <input type="checkbox" name="is_contest" value="1" x-model="isContest" class="w-5 h-5 rounded border-slate-300 text-purple-600 focus:ring-purple-600">
-                        <div>
-                            <span class="block text-xs font-black uppercase text-slate-900 leading-none">Multi-Level Contest Parent</span>
-                            <span class="text-[9px] text-slate-500 font-bold italic">This exam manages levels and promotions.</span>
-                        </div>
-                    </label>
                     <label class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-emerald-600 transition-all group shadow-sm">
-                        <input type="checkbox" name="is_practice_set" value="1" class="w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600">
+                        <input type="checkbox" name="is_practice_set" value="1" {{ old('is_practice_set') ? 'checked' : '' }} class="w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600">
                         <div>
                             <span class="block text-xs font-black uppercase text-slate-900 leading-none">Practice Set Mode</span>
                             <span class="text-[9px] text-slate-500 font-bold italic">Shuffled questions, grows daily, unlimited attempts.</span>
@@ -87,7 +79,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
                         @foreach($classes as $class)
                             <label class="relative flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-indigo-600 transition-all group">
-                                <input type="checkbox" name="class_ids[]" value="{{ $class->id }}" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600">
+                                <input type="checkbox" name="class_ids[]" value="{{ $class->id }}" {{ in_array($class->id, old('class_ids', [])) ? 'checked' : '' }} class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600">
                                 <span class="text-[10px] font-black uppercase text-slate-600 group-hover:text-indigo-600 transition-colors">{{ $class->name }}</span>
                             </label>
                         @endforeach
@@ -124,18 +116,18 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Current Level Number</label>
-                            <input type="number" name="level_number" min="1" max="10" placeholder="e.g. 1" class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-xs font-bold text-slate-900 focus:border-indigo-600 outline-none transition-all" value="1">
+                            <input type="number" name="level_number" min="1" max="10" placeholder="e.g. 1" class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-xs font-bold text-slate-900 focus:border-indigo-600 outline-none transition-all" value="{{ old('level_number', 1) }}">
                         </div>
 
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Promotion % to Next Level</label>
-                            <input type="number" name="promotion_percentage" min="0" max="100" placeholder="e.g. 50" class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-xs font-bold text-slate-900 focus:border-indigo-600 outline-none transition-all">
+                            <input type="number" name="promotion_percentage" min="0" max="100" placeholder="e.g. 50" value="{{ old('promotion_percentage') }}" class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-xs font-bold text-slate-900 focus:border-indigo-600 outline-none transition-all">
                             <span class="text-[8px] text-slate-400 font-bold italic">Set 0 for the final level (Level 4).</span>
                         </div>
 
                         <div x-show="isContest" class="space-y-1.5">
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Total Winners to Select</label>
-                            <input type="number" name="winner_count" min="1" placeholder="e.g. 3" class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-xs font-bold text-slate-900 focus:border-indigo-600 outline-none transition-all">
+                            <input type="number" name="winner_count" min="1" placeholder="e.g. 3" value="{{ old('winner_count') }}" class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-xs font-bold text-slate-900 focus:border-indigo-600 outline-none transition-all">
                         </div>
                     </div>
                 </div>

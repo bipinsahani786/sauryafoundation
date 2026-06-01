@@ -23,7 +23,10 @@ class StudentController extends Controller
                         })->orWhereDoesntHave('studentClasses');
                     })->where(function($teacherQuery) use ($user) {
                         $teacherQuery->where('is_global', true)
-                                     ->orWhere('teacher_id', $user->teacher_id);
+                                     ->orWhere('teacher_id', $user->teacher_id)
+                                     ->orWhereHas('teacher', function($t) {
+                                         $t->whereIn('role', ['admin', 'superadmin']);
+                                     });
                     });
                 })
                 ->count(),
@@ -41,7 +44,10 @@ class StudentController extends Controller
                     })->orWhereDoesntHave('studentClasses');
                 })->where(function($teacherQuery) use ($user) {
                     $teacherQuery->where('is_global', true)
-                                 ->orWhere('teacher_id', $user->teacher_id);
+                                 ->orWhere('teacher_id', $user->teacher_id)
+                                 ->orWhereHas('teacher', function($t) {
+                                     $t->whereIn('role', ['admin', 'superadmin']);
+                                 });
                 });
             })
             ->where('expires_at', '>', now())
@@ -76,7 +82,10 @@ class StudentController extends Controller
                     })->orWhereDoesntHave('studentClasses');
                 })->where(function($teacherQuery) use ($user) {
                     $teacherQuery->where('is_global', true)
-                                 ->orWhere('teacher_id', $user->teacher_id);
+                                 ->orWhere('teacher_id', $user->teacher_id)
+                                 ->orWhereHas('teacher', function($t) {
+                                     $t->whereIn('role', ['admin', 'superadmin']);
+                                 });
                 });
             })
             ->withCount(['attempts as quiz_attempts_count' => function($query) {
@@ -102,7 +111,8 @@ class StudentController extends Controller
         // Check if student has access
         $user = auth()->user();
         $hasClass = $quiz->studentClasses()->where('student_class_id', $user->class_id)->exists() || $quiz->studentClasses()->count() === 0;
-        $hasTeacherOrGlobal = $quiz->is_global || $quiz->teacher_id === $user->teacher_id;
+        $isAdmin = $quiz->teacher && in_array($quiz->teacher->role, ['admin', 'superadmin']);
+        $hasTeacherOrGlobal = $quiz->is_global || $quiz->teacher_id === $user->teacher_id || $isAdmin;
         
         if (!$hasClass || !$hasTeacherOrGlobal) {
              abort(403);
@@ -117,7 +127,8 @@ class StudentController extends Controller
         $user = auth()->user();
         
         $hasClass = $quiz->studentClasses()->where('student_class_id', $user->class_id)->exists() || $quiz->studentClasses()->count() === 0;
-        $hasTeacherOrGlobal = $quiz->is_global || $quiz->teacher_id === $user->teacher_id;
+        $isAdmin = $quiz->teacher && in_array($quiz->teacher->role, ['admin', 'superadmin']);
+        $hasTeacherOrGlobal = $quiz->is_global || $quiz->teacher_id === $user->teacher_id || $isAdmin;
         
         if (!$hasClass || !$hasTeacherOrGlobal) {
              abort(403);
