@@ -58,6 +58,19 @@
                                 <h3 class="font-black text-slate-900 text-lg mb-1 pr-20 tracking-tighter">{{ $quiz->title }}</h3>
                                 <p class="text-[10px] text-slate-400 font-bold italic line-clamp-1 mb-4">{{ $quiz->description ?? 'Multi-stage assessment.' }}</p>
 
+                                @if($quiz->is_global)
+                                    <span class="inline-block px-2 py-1 bg-purple-50 text-purple-600 rounded text-[8px] font-black uppercase tracking-widest mb-2 border border-purple-100">Global Exam</span>
+                                @elseif($quiz->studentClasses && $quiz->studentClasses->count() > 0)
+                                    <div class="mb-3">
+                                        <span class="text-[8px] text-slate-400 font-black uppercase tracking-widest block mb-1">Target Classes ({{ $quiz->studentClasses->count() }})</span>
+                                        <div class="flex flex-wrap gap-1">
+                                            @foreach($quiz->studentClasses as $sClass)
+                                                <span class="px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-[8px] font-black uppercase tracking-widest border border-indigo-100">{{ $sClass->name }}</span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <div class="grid grid-cols-2 gap-4 mt-6">
                                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
                                         <div class="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1">Starts</div>
@@ -135,6 +148,19 @@
                             <div class="p-8 border-b border-slate-100 bg-white">
                                 <h3 class="font-black text-slate-900 text-lg mb-1 tracking-tighter">{{ $quiz->title }}</h3>
                                 <p class="text-[10px] text-slate-400 font-bold italic line-clamp-1 mb-4">{{ $quiz->description ?? 'Regular examination.' }}</p>
+
+                                @if($quiz->is_global)
+                                    <span class="inline-block px-2 py-1 bg-purple-50 text-purple-600 rounded text-[8px] font-black uppercase tracking-widest mb-2 border border-purple-100">Global Exam</span>
+                                @elseif($quiz->studentClasses && $quiz->studentClasses->count() > 0)
+                                    <div class="mb-3">
+                                        <span class="text-[8px] text-slate-400 font-black uppercase tracking-widest block mb-1">Target Classes ({{ $quiz->studentClasses->count() }})</span>
+                                        <div class="flex flex-wrap gap-1">
+                                            @foreach($quiz->studentClasses as $sClass)
+                                                <span class="px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-[8px] font-black uppercase tracking-widest border border-indigo-100">{{ $sClass->name }}</span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
 
                                 <div class="grid grid-cols-2 gap-4 mt-6">
                                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">

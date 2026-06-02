@@ -15,29 +15,31 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-5">
             @foreach($courses as $course)
-                <div class="bg-white rounded-[2.5rem] border border-slate-100 p-6 shadow-sm hover:shadow-xl transition-all group overflow-hidden">
-                    <div class="aspect-video bg-slate-100 rounded-2xl mb-4 relative overflow-hidden">
+                <div class="bg-white rounded-[2rem] border border-slate-100 p-5 shadow-sm hover:shadow-xl transition-all group overflow-hidden flex flex-col h-full">
+                    <div class="h-32 bg-slate-50 rounded-[1.5rem] mb-4 relative overflow-hidden shrink-0 border border-slate-100">
                         @if($course->thumbnail)
                             <img src="{{ $course->thumbnail }}" class="w-full h-full object-cover">
                         @else
-                            <div class="w-full h-full flex items-center justify-center text-slate-300">
-                                <i class="fas fa-graduation-cap text-4xl"></i>
+                            <div class="w-full h-full flex items-center justify-center text-indigo-100">
+                                <i class="fas fa-graduation-cap text-4xl group-hover:scale-110 transition-transform"></i>
                             </div>
                         @endif
                         <div class="absolute top-3 left-3">
-                            <span class="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[9px] font-black uppercase tracking-widest text-indigo-600">
+                            <span class="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[8px] font-black uppercase tracking-widest text-indigo-600 shadow-sm border border-white/20">
                                 {{ $course->teacher->name }}
                             </span>
                         </div>
                     </div>
 
-                    <h3 class="text-lg font-black text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">{{ $course->title }}</h3>
-                    <p class="text-slate-500 text-xs font-medium line-clamp-2 mb-6">{{ $course->description }}</p>
+                    <div class="flex-grow">
+                        <h3 class="text-sm font-black text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors line-clamp-1">{{ $course->title }}</h3>
+                        <p class="text-slate-500 text-[10px] font-medium line-clamp-2 mb-4">{{ $course->description }}</p>
+                    </div>
 
-                    <div class="flex items-center justify-between pt-4 border-t border-slate-50">
-                        <span class="text-lg font-black text-slate-900">
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-50 mt-auto">
+                        <span class="text-sm font-black text-slate-900">
                             @if($course->price > 0)
                                 ₹{{ $course->price }}
                             @else
@@ -46,11 +48,11 @@
                         </span>
                         
                         @if(in_array($course->id, $enrolledIds))
-                            <a href="{{ route('student.courses.show', $course) }}" class="inline-flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-all">
-                                Open Course <i class="fas fa-arrow-right text-[10px]"></i>
+                            <a href="{{ route('student.courses.show', $course) }}" class="inline-flex items-center justify-center gap-1.5 bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-[9px] uppercase tracking-widest hover:bg-slate-800 transition-all">
+                                Open <i class="fas fa-arrow-right text-[8px]"></i>
                             </a>
                         @else
-                            <a href="{{ route('student.courses.show', $course) }}" class="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+                            <a href="{{ route('student.courses.show', $course) }}" class="inline-flex items-center justify-center gap-1.5 bg-indigo-600 text-white px-4 py-2.5 rounded-xl font-bold text-[9px] uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100">
                                 View Details
                             </a>
                         @endif

@@ -53,25 +53,25 @@
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm group hover:shadow-md transition-all">
-            <h3 class="text-3xl font-black text-slate-900 group-hover:scale-105 transition-transform origin-left">{{ $stats['total_exams'] }}</h3>
-            <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1 italic">Available Tests</p>
-        </div>
+        <a href="{{ route('student.exams') }}" class="block bg-white p-8 rounded-3xl border border-slate-200 shadow-sm group hover:shadow-md hover:-translate-y-1 hover:border-indigo-200 transition-all">
+            <h3 class="text-3xl font-black text-slate-900 group-hover:text-indigo-600 group-hover:scale-105 transition-transform origin-left">{{ $stats['total_exams'] }}</h3>
+            <p class="text-[9px] text-slate-400 group-hover:text-indigo-400 font-black uppercase tracking-[0.2em] mt-1 italic transition-colors">Available Tests</p>
+        </a>
         
-        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm group hover:shadow-md transition-all">
-            <h3 class="text-3xl font-black text-slate-900 group-hover:scale-105 transition-transform origin-left">{{ $stats['attempted_exams'] }}</h3>
-            <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1 italic">Exams Taken</p>
-        </div>
+        <a href="{{ route('student.exams') }}" class="block bg-white p-8 rounded-3xl border border-slate-200 shadow-sm group hover:shadow-md hover:-translate-y-1 hover:border-indigo-200 transition-all">
+            <h3 class="text-3xl font-black text-slate-900 group-hover:text-indigo-600 group-hover:scale-105 transition-transform origin-left">{{ $stats['attempted_exams'] }}</h3>
+            <p class="text-[9px] text-slate-400 group-hover:text-indigo-400 font-black uppercase tracking-[0.2em] mt-1 italic transition-colors">Exams Taken</p>
+        </a>
 
-        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm group hover:shadow-md transition-all">
-            <h3 class="text-3xl font-black text-slate-900 group-hover:scale-105 transition-transform origin-left">{{ $stats['courses_enrolled'] }}</h3>
-            <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1 italic">Academy Courses</p>
-        </div>
+        <a href="{{ route('student.courses.index') }}" class="block bg-white p-8 rounded-3xl border border-slate-200 shadow-sm group hover:shadow-md hover:-translate-y-1 hover:border-indigo-200 transition-all">
+            <h3 class="text-3xl font-black text-slate-900 group-hover:text-indigo-600 group-hover:scale-105 transition-transform origin-left">{{ $stats['courses_enrolled'] }}</h3>
+            <p class="text-[9px] text-slate-400 group-hover:text-indigo-400 font-black uppercase tracking-[0.2em] mt-1 italic transition-colors">Academy Courses</p>
+        </a>
 
-        <div class="bg-white p-8 rounded-3xl border border-emerald-500/20 shadow-sm group hover:shadow-md transition-all">
+        <a href="{{ route('student.courses.index') }}" class="block bg-white p-8 rounded-3xl border border-emerald-500/20 shadow-sm group hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 transition-all">
             <h3 class="text-3xl font-black text-emerald-600 group-hover:scale-105 transition-transform origin-left">{{ $stats['lessons_completed'] }}</h3>
-            <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1 italic">Lessons Finished</p>
-        </div>
+            <p class="text-[9px] text-slate-400 group-hover:text-emerald-500 font-black uppercase tracking-[0.2em] mt-1 italic transition-colors">Lessons Finished</p>
+        </a>
     </div>
 
     <!-- Resource Vault Folders -->

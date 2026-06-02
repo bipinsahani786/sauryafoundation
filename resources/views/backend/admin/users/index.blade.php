@@ -13,7 +13,7 @@
                 <!-- Search Form -->
                 <form action="{{ route('admin.users.index') }}" method="GET" class="relative w-full md:w-auto mr-2">
                     <input type="hidden" name="tab" x-bind:value="activeTab">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, email, district or block..." class="w-full md:w-56 pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm transition-all">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, email, class, district or block..." class="w-full md:w-56 pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm transition-all">
                     <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                     @if(request('search'))
                         <a href="{{ route('admin.users.index') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500" title="Clear Search"><i class="fas fa-times"></i></a>

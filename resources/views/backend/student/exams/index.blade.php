@@ -26,7 +26,7 @@
             <h3 class="text-[12px] font-black uppercase tracking-[0.3em] text-slate-400 italic">Live Assessments & Events</h3>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-6">
             @forelse($liveExams as $quiz)
                 @php
                     $attemptsUsed = $quiz->quiz_attempts_count ?? 0;
@@ -37,7 +37,7 @@
                     $isEnrolled = auth()->user()->quizEnrollments()->where('quiz_id', $quiz->id)->exists();
                 @endphp
                 
-                <div class="bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-sm transition-all group relative overflow-hidden {{ $isExpired ? 'opacity-60 grayscale' : 'hover:shadow-xl hover:-translate-y-1' }}">
+                <div class="bg-white rounded-[2rem] p-6 border border-slate-200 shadow-sm transition-all group relative overflow-hidden flex flex-col h-full {{ $isExpired ? 'opacity-60 grayscale' : 'hover:shadow-xl hover:-translate-y-1' }}">
                     <!-- Status Badge -->
                     @if($isExpired)
                         <div class="absolute -right-8 top-6 bg-slate-500 text-white px-10 py-1 rotate-45 text-[8px] font-black uppercase tracking-widest shadow-lg">EXPIRED</div>
@@ -49,17 +49,17 @@
                         <div class="absolute -right-8 top-6 bg-emerald-500 text-white px-10 py-1 rotate-45 text-[8px] font-black uppercase tracking-widest shadow-lg">LIVE NOW</div>
                     @endif
 
-                    <div class="mb-6">
+                    <div class="flex-grow mb-6">
                         <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-indigo-600 border border-slate-100 shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                                <i class="fas fa-broadcast-tower text-lg"></i>
+                            <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-indigo-600 border border-slate-100 shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                <i class="fas fa-broadcast-tower text-base"></i>
                             </div>
                         </div>
-                        <h3 class="text-lg font-black text-slate-900 tracking-tighter leading-tight mb-2">{{ $quiz->title }}</h3>
+                        <h3 class="text-sm font-black text-slate-900 tracking-tighter leading-tight mb-1 line-clamp-1">{{ $quiz->title }}</h3>
                         <p class="text-[9px] text-slate-400 font-bold italic line-clamp-2">{{ $quiz->description ?? 'Scheduled contest assessment.' }}</p>
                     </div>
 
-                    <div class="space-y-3 mb-8">
+                    <div class="space-y-2 mb-6 mt-auto border-t border-slate-50 pt-4">
                         <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
                             <span class="text-[8px] text-slate-400 font-black uppercase tracking-widest">Starts</span>
                             <span class="text-[10px] font-black text-slate-900">{{ $quiz->start_time->format('d M, H:i') }}</span>
@@ -71,19 +71,19 @@
                     </div>
 
                     @if($isExpired)
-                        <button disabled class="w-full text-center bg-slate-100 text-slate-400 py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest border border-slate-200 cursor-not-allowed">
+                        <button disabled class="w-full text-center bg-slate-100 text-slate-400 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border border-slate-200 cursor-not-allowed">
                             Time Expired
                         </button>
                     @elseif($isUpcoming && !$isEnrolled)
-                        <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center bg-emerald-600 text-white py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl">
+                        <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center bg-emerald-600 text-white py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-md">
                             Enroll Now <i class="fas fa-shopping-cart ml-1"></i>
                         </a>
                     @elseif($isUpcoming && $isEnrolled)
-                        <button disabled class="w-full text-center bg-amber-50 text-amber-600 py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest border border-amber-100 cursor-not-allowed">
+                        <button disabled class="w-full text-center bg-amber-50 text-amber-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border border-amber-100 cursor-not-allowed">
                             Awaiting Launch <i class="fas fa-clock ml-1"></i>
                         </button>
                     @else
-                        <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center {{ $isEnrolled ? 'bg-slate-900' : 'bg-emerald-600' }} text-white py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl">
+                        <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center {{ $isEnrolled ? 'bg-slate-900' : 'bg-emerald-600' }} text-white py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-md">
                             {{ $isEnrolled ? 'Enter Terminal' : 'Enroll Now' }} <i class="fas {{ $isEnrolled ? 'fa-bolt' : 'fa-shopping-cart' }} ml-1"></i>
                         </a>
                     @endif
@@ -103,7 +103,7 @@
             <h3 class="text-[12px] font-black uppercase tracking-[0.3em] text-slate-400 italic">Practice Terminals / Normal Quizzes</h3>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-6">
             @forelse($practiceQuizzes as $quiz)
                 @php
                     $attemptsUsed = $quiz->quiz_attempts_count ?? 0;
@@ -111,12 +111,12 @@
                     $isEnrolled = auth()->user()->quizEnrollments()->where('quiz_id', $quiz->id)->exists();
                 @endphp
                 
-                <div class="bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group overflow-hidden relative">
-                    <div class="mb-6">
-                        <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-inner border border-slate-100">
-                            <i class="fas fa-graduation-cap text-lg"></i>
+                <div class="bg-white rounded-[2rem] p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group overflow-hidden relative flex flex-col h-full">
+                    <div class="flex-grow mb-6">
+                        <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-emerald-600 mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-inner border border-slate-100">
+                            <i class="fas fa-graduation-cap text-base"></i>
                         </div>
-                        <h3 class="text-lg font-black text-slate-900 tracking-tighter leading-tight mb-2">{{ $quiz->title }}</h3>
+                        <h3 class="text-sm font-black text-slate-900 tracking-tighter leading-tight mb-2 line-clamp-1">{{ $quiz->title }}</h3>
                         <div class="flex flex-wrap items-center gap-2 mb-2">
                             <span class="px-2 py-0.5 {{ $quiz->is_practice_set ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500' }} text-[8px] font-black uppercase tracking-widest rounded-md">
                                 {{ $quiz->is_practice_set ? 'Practice Set' : 'Normal Quiz' }}
@@ -131,27 +131,27 @@
                         <p class="text-[10px] text-slate-400 font-bold italic line-clamp-2">{{ $quiz->description ?? 'Open skill assessment.' }}</p>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="grid grid-cols-2 gap-2 mb-6 mt-auto border-t border-slate-50 pt-4">
+                        <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
                             <p class="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1 leading-none">Limit</p>
-                            <p class="text-xs font-black text-slate-900">{{ $quiz->duration_minutes }} Min</p>
+                            <p class="text-[10px] font-black text-slate-900">{{ $quiz->duration_minutes }} Min</p>
                         </div>
-                        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
                             <p class="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1 leading-none">Price</p>
-                            <p class="text-xs font-black text-emerald-600">₹{{ number_format($quiz->price) }}</p>
+                            <p class="text-[10px] font-black text-emerald-600">₹{{ number_format($quiz->price) }}</p>
                         </div>
                     </div>
 
                     @if($isBlocked)
-                        <div class="w-full text-center bg-slate-100 text-slate-400 py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest cursor-not-allowed border border-slate-200">
+                        <div class="w-full text-center bg-slate-100 text-slate-400 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest cursor-not-allowed border border-slate-200">
                             Security Block <i class="fas fa-lock ml-1 text-red-500"></i>
                         </div>
                     @elseif($attemptsUsed >= $quiz->attempts_limit && $quiz->attempts_limit > 0)
-                        <a href="{{ route('student.results.show', $quiz->attempts()->where('student_id', auth()->id())->latest()->first()->id) }}" class="block w-full text-center bg-indigo-50 text-indigo-600 py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm">
+                        <a href="{{ route('student.results.show', $quiz->attempts()->where('student_id', auth()->id())->latest()->first()->id) }}" class="block w-full text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm">
                             View Result <i class="fas fa-poll ml-1"></i>
                         </a>
                     @else
-                        <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center {{ $isEnrolled ? 'bg-slate-900 text-white' : 'bg-emerald-50 text-emerald-700' }} py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm border border-emerald-100">
+                        <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center {{ $isEnrolled ? 'bg-slate-900 text-white' : 'bg-emerald-50 text-emerald-700' }} py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm border border-emerald-100">
                             {{ $isEnrolled ? 'Enter Terminal' : 'Enroll Now' }} <i class="fas {{ $isEnrolled ? 'fa-bolt' : 'fa-shopping-cart' }} ml-1"></i>
                         </a>
                     @endif

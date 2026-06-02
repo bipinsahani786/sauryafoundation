@@ -20,14 +20,23 @@ class StudyMaterialController extends Controller
 
         $materials = $query->latest()->paginate(15);
         
-        // Fetch Academy LMS Files (Content with attachments)
-        $lmsFiles = \App\Models\Content::whereNotNull('attachment_path')
-            ->whereHas('topic.subject.course', function($q) use ($user) {
+        // Fetch Academy LMS Files based on category
+        $lmsQuery = \App\Models\Content::whereHas('topic.subject.course', function($q) use ($user) {
                 $q->where('status', 'published')
                   ->where('class_id', $user->class_id);
-            })
-            ->latest()
-            ->get();
+            });
+
+        if ($request->category === 'pdf' || $request->category === 'note') {
+            $lmsQuery->whereNotNull('attachment_path');
+        } elseif ($request->category === 'video') {
+            $lmsQuery->where('type', 'video');
+        } else {
+            $lmsQuery->where(function($q) {
+                $q->whereNotNull('attachment_path')->orWhere('type', 'video');
+            });
+        }
+
+        $lmsFiles = $lmsQuery->latest()->get();
 
         return view('backend.student.study_materials.index', compact('materials', 'lmsFiles'));
     }

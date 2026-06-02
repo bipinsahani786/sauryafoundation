@@ -8,35 +8,35 @@
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <a href="{{ route('teacher.students') }}" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-indigo-200 transition-all group">
             <div class="flex items-center justify-between mb-4">
-                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                     <i class="fas fa-user-graduate"></i>
                 </div>
             </div>
-            <h3 class="text-2xl font-black text-slate-900">{{ $stats['total_students'] }}</h3>
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Active Students</p>
-        </div>
+            <h3 class="text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{{ $stats['total_students'] }}</h3>
+            <p class="text-[10px] text-slate-400 group-hover:text-indigo-400 font-bold uppercase tracking-widest transition-colors">Active Students</p>
+        </a>
         
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <a href="{{ route('teacher.quizzes.index') }}" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-purple-200 transition-all group">
             <div class="flex items-center justify-between mb-4">
-                <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+                <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors">
                     <i class="fas fa-file-alt"></i>
                 </div>
             </div>
-            <h3 class="text-2xl font-black text-slate-900">{{ $stats['total_quizzes'] }}</h3>
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Total Exams</p>
-        </div>
+            <h3 class="text-2xl font-black text-slate-900 group-hover:text-purple-600 transition-colors">{{ $stats['total_quizzes'] }}</h3>
+            <p class="text-[10px] text-slate-400 group-hover:text-purple-400 font-bold uppercase tracking-widest transition-colors">Total Exams</p>
+        </a>
 
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <a href="{{ route('teacher.kyc') }}" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-amber-200 transition-all group">
             <div class="flex items-center justify-between mb-4">
-                <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
+                <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
                     <i class="fas fa-clock"></i>
                 </div>
             </div>
-            <h3 class="text-2xl font-black text-slate-900">{{ $stats['pending_approvals'] }}</h3>
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Pending Verification</p>
-        </div>
+            <h3 class="text-2xl font-black text-slate-900 group-hover:text-amber-600 transition-colors">{{ $stats['pending_approvals'] }}</h3>
+            <p class="text-[10px] text-slate-400 group-hover:text-amber-500 font-bold uppercase tracking-widest transition-colors">Pending Verification</p>
+        </a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">

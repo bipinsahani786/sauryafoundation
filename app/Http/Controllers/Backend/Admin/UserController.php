@@ -22,7 +22,10 @@ class UserController extends Controller
                       ->orWhere('district', 'like', "%{$search}%")
                       ->orWhere('block', 'like', "%{$search}%")
                       ->orWhereRaw("CONCAT(district, ' ', block) LIKE ?", ["%{$search}%"])
-                      ->orWhereRaw("CONCAT(block, ' ', district) LIKE ?", ["%{$search}%"]);
+                      ->orWhereRaw("CONCAT(block, ' ', district) LIKE ?", ["%{$search}%"])
+                      ->orWhereHas('studentClass', function($classQuery) use ($search) {
+                          $classQuery->where('name', 'like', "%{$search}%");
+                      });
             });
         })->latest();
 

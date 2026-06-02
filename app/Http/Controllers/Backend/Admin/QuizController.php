@@ -14,6 +14,7 @@ class QuizController extends Controller
     public function index()
     {
         $quizzes = Quiz::where('teacher_id', auth()->id())
+            ->with('studentClasses')
             ->withCount('enrollments')
             ->latest()
             ->paginate(15);

@@ -178,53 +178,52 @@
                     </div>
                     <div class="h-px flex-1 bg-slate-200"></div>
                 </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 pb-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-10">
                     @foreach($standaloneQuizzes as $quiz)
-                        <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-xl hover:shadow-indigo-50/50 transition-all group overflow-hidden flex flex-col">
-                            <div class="p-8 flex-1">
-                                <div class="flex items-center justify-between mb-6">
-                                    <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-indigo-600 border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                                        <i class="fas fa-vial text-lg"></i>
+                        <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-xl hover:shadow-indigo-50/50 transition-all group overflow-hidden flex flex-col">
+                            <div class="p-6 flex-1 flex flex-col">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-indigo-600 border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-inner">
+                                        <i class="fas fa-vial text-base"></i>
                                     </div>
-                                    <span class="px-4 py-1.5 rounded-full text-[8px] font-black uppercase border {{ $quiz->status == 'published' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100' }}">
+                                    <span class="px-3 py-1 rounded-full text-[8px] font-black uppercase border {{ $quiz->status == 'published' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100' }}">
                                         {{ $quiz->status }}
                                     </span>
                                 </div>
-                                <h3 class="text-lg font-black text-slate-900 tracking-widest uppercase italic mb-2 line-clamp-1 group-hover:text-indigo-600 transition-colors">{{ $quiz->title }}</h3>
-                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest line-clamp-2 italic mb-6 leading-relaxed opacity-70">
+                                <h3 class="text-sm font-black text-slate-900 tracking-widest uppercase italic mb-1 line-clamp-1 group-hover:text-indigo-600 transition-colors">{{ $quiz->title }}</h3>
+                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest line-clamp-2 italic mb-4 leading-relaxed opacity-70">
                                     {{ $quiz->description ?? 'No resource abstract available for this terminal asset.' }}
                                 </p>
                                 
-                                <div class="grid grid-cols-3 gap-4 border-t border-slate-50 pt-6">
+                                <div class="grid grid-cols-3 gap-2 border-t border-slate-50 pt-4 mt-auto">
                                     <div class="text-center">
-                                        <p class="text-sm font-black text-slate-900 tracking-tighter italic">₹{{ number_format($quiz->price) }}</p>
+                                        <p class="text-xs font-black text-slate-900 tracking-tighter italic">₹{{ number_format($quiz->price) }}</p>
                                         <p class="text-[7px] text-slate-400 font-black uppercase tracking-widest">Entry</p>
                                     </div>
                                     <div class="text-center border-x border-slate-100">
-                                        <p class="text-sm font-black text-slate-900 tracking-tighter italic">{{ $quiz->duration_minutes }}m</p>
+                                        <p class="text-xs font-black text-slate-900 tracking-tighter italic">{{ $quiz->duration_minutes }}m</p>
                                         <p class="text-[7px] text-slate-400 font-black uppercase tracking-widest">Window</p>
                                     </div>
                                     <div class="text-center">
-                                        <p class="text-sm font-black text-slate-900 tracking-tighter italic">{{ $quiz->questions_count ?? $quiz->questions->count() }}</p>
+                                        <p class="text-xs font-black text-slate-900 tracking-tighter italic">{{ $quiz->questions_count ?? $quiz->questions->count() }}</p>
                                         <p class="text-[7px] text-slate-400 font-black uppercase tracking-widest">Questions</p>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="bg-slate-50 p-6 border-t border-slate-100 space-y-4">
+                            <div class="bg-slate-50 p-5 border-t border-slate-100 space-y-4">
                                 <div class="flex items-center justify-between">
-                                    <div class="flex gap-2">
-                                        <a href="{{ route('teacher.quizzes.results', $quiz->id) }}" class="w-10 h-10 bg-white border border-slate-200 text-slate-400 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-sm" title="Results">
-                                            <i class="fas fa-chart-line text-xs"></i>
+                                    <div class="flex gap-1.5">
+                                        <a href="{{ route('teacher.quizzes.results', $quiz->id) }}" class="w-8 h-8 bg-white border border-slate-200 text-slate-400 rounded-[0.5rem] flex items-center justify-center hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-sm" title="Results">
+                                            <i class="fas fa-chart-line text-[10px]"></i>
                                         </a>
-                                        <a href="{{ route('teacher.quizzes.edit', $quiz->id) }}" class="w-10 h-10 bg-white border border-slate-200 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm" title="Settings">
-                                            <i class="fas fa-cog text-xs"></i>
+                                        <a href="{{ route('teacher.quizzes.edit', $quiz->id) }}" class="w-8 h-8 bg-white border border-slate-200 text-slate-400 rounded-[0.5rem] flex items-center justify-center hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm" title="Settings">
+                                            <i class="fas fa-cog text-[10px]"></i>
                                         </a>
                                         <form action="{{ route('teacher.quizzes.destroy', $quiz->id) }}" method="POST" onsubmit="return confirm('Permanently archival?')">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="w-10 h-10 bg-white border border-slate-200 text-rose-400 rounded-xl flex items-center justify-center hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all shadow-sm" title="Delete">
-                                                <i class="fas fa-trash-alt text-xs"></i>
+                                            <button type="submit" class="w-8 h-8 bg-white border border-slate-200 text-rose-400 rounded-[0.5rem] flex items-center justify-center hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all shadow-sm" title="Delete">
+                                                <i class="fas fa-trash-alt text-[10px]"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -232,21 +231,21 @@
                                     @if($quiz->status !== 'published')
                                         <form action="{{ route('teacher.quizzes.publish', $quiz->id) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center hover:bg-slate-900 transition-all shadow-lg shadow-emerald-50" title="Publish Now">
-                                                <i class="fas fa-paper-plane text-xs"></i>
+                                            <button type="submit" class="w-8 h-8 bg-emerald-600 text-white rounded-[0.5rem] flex items-center justify-center hover:bg-slate-900 transition-all shadow-lg shadow-emerald-50" title="Publish Now">
+                                                <i class="fas fa-paper-plane text-[10px]"></i>
                                             </button>
                                         </form>
                                     @else
                                         <form action="{{ route('teacher.quizzes.unpublish', $quiz->id) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="w-10 h-10 bg-amber-500 text-white rounded-xl flex items-center justify-center hover:bg-slate-900 transition-all shadow-lg shadow-amber-50" title="Unpublish">
-                                                <i class="fas fa-eye-slash text-xs"></i>
+                                            <button type="submit" class="w-8 h-8 bg-amber-500 text-white rounded-[0.5rem] flex items-center justify-center hover:bg-slate-900 transition-all shadow-lg shadow-amber-50" title="Unpublish">
+                                                <i class="fas fa-eye-slash text-[10px]"></i>
                                             </button>
                                         </form>
                                     @endif
                                 </div>
                                 
-                                <a href="{{ route('teacher.quizzes.show', $quiz->id) }}" class="w-full bg-slate-900 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg flex items-center justify-center gap-2 group">
+                                <a href="{{ route('teacher.quizzes.show', $quiz->id) }}" class="w-full bg-slate-900 text-white py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-md flex items-center justify-center gap-2 group">
                                     Terminal Management <i class="fas fa-list-check group-hover:rotate-12 transition-transform"></i>
                                 </a>
                             </div>
