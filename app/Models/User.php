@@ -53,6 +53,7 @@ class User extends Authenticatable
         'block',
         'pin_code',
         'coaching_or_school',
+        'agent_permissions',
     ];
 
     public function commissions()
@@ -223,6 +224,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'agent_permissions' => 'array',
         ];
     }
 }

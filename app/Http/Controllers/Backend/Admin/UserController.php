@@ -47,6 +47,12 @@ class UserController extends Controller
 
     public function show(User $user)
     {
+        if ($user->role === 'sales_agent') {
+            $user->load(['referrals' => function($q) {
+                $q->where('role', 'teacher')->with('students');
+            }]);
+            return view('backend.admin.users.show', compact('user'));
+        }
         return redirect()->route('admin.users.edit', $user);
     }
 
@@ -196,6 +202,16 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
+    public function updatePermissions(Request $request, User $user)
+    {
+        if ($user->role === 'sales_agent') {
+            $agentPermissions = $request->input('agent_permissions', []);
+            $user->update(['agent_permissions' => $agentPermissions]);
+        }
+        
+        return back()->with('success', 'Agent permissions updated successfully.');
+    }
+
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {
@@ -255,10 +271,28 @@ class UserController extends Controller
     public function exportCsv(Request $request)
     {
         $role = $request->query('role');
+        $referred_by = $request->query('referred_by');
+        $teacher_id = $request->query('teacher_id');
+        $sales_agent_id = $request->query('sales_agent_id');
+        
         $query = User::query();
         
         if ($role) {
             $query->where('role', $role);
+        }
+        
+        if ($referred_by) {
+            $query->where('referred_by', $referred_by);
+        }
+        
+        if ($teacher_id) {
+            $query->where('teacher_id', $teacher_id);
+        }
+        
+        if ($sales_agent_id) {
+            $query->whereHas('teacher', function($q) use ($sales_agent_id) {
+                $q->where('referred_by', $sales_agent_id);
+            });
         }
 
         $users = $query->get();
@@ -311,5 +345,49 @@ class UserController extends Controller
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('backend.admin.users.pdf', compact('users', 'role'));
         
         return $pdf->download("users_export_" . ($role ?? 'all') . "_" . date('Ymd_His') . ".pdf");
+    }
+
+    public function export(Request $request)
+    {
+        $role = $request->get('role');
+        $query = User::when($role, function($q) use ($role) {
+            $q->where('role', $role);
+        })->latest();
+
+        $users = $query->get();
+
+        $filename = ($role ?? 'all') . '_users_' . date('Ymd_His') . '.csv';
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['ID', 'Name', 'Email', 'Role', 'Status', 'Mobile', 'State', 'District', 'Block', 'Created At'];
+
+        $callback = function() use($users, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($users as $user) {
+                fputcsv($file, [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    $user->role,
+                    $user->status,
+                    $user->mobile_number,
+                    $user->state,
+                    $user->district,
+                    $user->block,
+                    $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : ''
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

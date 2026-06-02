@@ -182,6 +182,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         
         Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit')->middleware('permission:edit_users');
         Route::put('users/{user}', [UserController::class, 'update'])->name('users.update')->middleware('permission:edit_users');
+        Route::put('users/{user}/permissions', [UserController::class, 'updatePermissions'])->name('users.update-permissions')->middleware('permission:edit_users');
         Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status')->middleware('permission:edit_users');
         Route::post('/users/{user}/impersonate', [UserController::class, 'impersonate'])->name('users.impersonate')->middleware('permission:impersonate_users');
         

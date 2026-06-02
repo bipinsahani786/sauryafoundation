@@ -76,44 +76,72 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs table-standard">
-                <thead>
-                    <tr>
-                        <th class="px-6 py-4 uppercase font-bold text-slate-500 tracking-wider">Coaching Center Name</th>
-                        <th class="px-6 py-4 uppercase font-bold text-slate-500 tracking-wider">Email</th>
-                        <th class="px-6 py-4 uppercase font-bold text-slate-500 tracking-wider text-center">Status</th>
-                        <th class="px-6 py-4 uppercase font-bold text-slate-500 tracking-wider text-right">Registered On</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 italic font-medium">
-                    @forelse($merchants as $merchant)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-black">
-                                        {{ substr($merchant->name, 0, 1) }}
-                                    </div>
-                                    <p class="text-slate-900 font-bold text-sm">{{ $merchant->name }}</p>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">{{ $merchant->email }}</td>
-                            <td class="px-6 py-4 text-center">
-                                <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full font-bold text-[10px] uppercase tracking-wider">Active</span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                {{ $merchant->created_at->format('M d, Y') }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="px-6 py-12 text-center text-slate-400 font-medium italic">No coaching centers enrolled yet.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <h3 class="font-black text-slate-900 uppercase tracking-widest text-sm">Enrolled Coachings</h3>
+            <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-bold uppercase">{{ $merchants->total() }} Total</span>
         </div>
+        
+        <div class="divide-y divide-slate-100">
+            @forelse($merchants as $merchant)
+                <div x-data="{ open: false }" class="p-0">
+                    <div @click="open = !open" class="p-4 flex items-center justify-between hover:bg-slate-50 cursor-pointer transition-all">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-black">
+                                {{ substr($merchant->name, 0, 1) }}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">{{ $merchant->name }}</h4>
+                                <p class="text-[10px] text-slate-500">{{ $merchant->coaching_or_school ?? 'N/A' }} &bull; {{ $merchant->email }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            @if(auth()->user()->agent_permissions === null || !empty($permissions['view_students']))
+                                <span class="text-xs font-bold text-slate-600"><i class="fas fa-user-graduate text-emerald-500 mr-1"></i> {{ $merchant->students->count() }} Students</span>
+                            @endif
+                            <i class="fas fa-chevron-down text-slate-400 transition-transform duration-200" :class="{'rotate-180': open}"></i>
+                        </div>
+                    </div>
+                    
+                    <div x-show="open" x-collapse class="bg-slate-50 border-t border-slate-100 p-4">
+                        @if(auth()->user()->agent_permissions === null || !empty($permissions['view_students']))
+                            @if($merchant->students->count() > 0)
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    @foreach($merchant->students as $student)
+                                        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3 hover:shadow-md transition-all cursor-default">
+                                            <div class="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="font-bold text-slate-800 text-xs truncate">{{ $student->name }}</p>
+                                                <p class="text-[10px] text-slate-500 truncate">{{ $student->studentClass->name ?? 'No Class' }}</p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-xs text-slate-400 italic text-center py-4">No students enrolled under this coaching yet.</p>
+                            @endif
+                        @else
+                            <div class="p-6 text-center">
+                                <i class="fas fa-lock text-slate-300 text-3xl mb-3"></i>
+                                <h3 class="text-slate-500 font-bold text-sm">Students Hidden</h3>
+                                <p class="text-xs text-slate-400 mt-1">You do not have permission to view the students for this coaching center.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div class="p-10 text-center">
+                    <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fas fa-school"></i>
+                    </div>
+                    <h3 class="text-slate-500 font-bold">No Coachings Enrolled</h3>
+                    <p class="text-xs text-slate-400 mt-1">You have not enrolled any coachings yet.</p>
+                </div>
+            @endforelse
+        </div>
+        
         @if($merchants->hasPages())
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 italic font-medium">
                 {{ $merchants->links() }}

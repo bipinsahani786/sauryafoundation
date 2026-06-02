@@ -7,41 +7,41 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <a href="{{ route('sales-agent.merchants') }}" class="block bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-indigo-200 transition-all group">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                     <i class="fas fa-school text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Enrolled Coaching</p>
-                    <h3 class="text-2xl font-black text-slate-900">{{ $stats['total_merchants'] }}</h3>
+                    <p class="text-sm font-bold text-slate-400 group-hover:text-indigo-400 uppercase tracking-widest transition-colors">Enrolled Coaching</p>
+                    <h3 class="text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{{ $stats['total_merchants'] }}</h3>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <a href="{{ route('sales-agent.wallet') }}" class="block bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-emerald-200 transition-all group">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                     <i class="fas fa-wallet text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Wallet Balance</p>
-                    <h3 class="text-2xl font-black text-slate-900">₹{{ number_format($stats['wallet_balance'], 2) }}</h3>
+                    <p class="text-sm font-bold text-slate-400 group-hover:text-emerald-500 uppercase tracking-widest transition-colors">Wallet Balance</p>
+                    <h3 class="text-2xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors">₹{{ number_format($stats['wallet_balance'], 2) }}</h3>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <a href="{{ route('sales-agent.merchants') }}" class="block bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-amber-200 transition-all group">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center">
+                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
                     <i class="fas fa-chart-line text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Growth Rate</p>
-                    <h3 class="text-2xl font-black text-slate-900">+{{ $stats['total_merchants'] > 0 ? '10' : '0' }}%</h3>
+                    <p class="text-sm font-bold text-slate-400 group-hover:text-amber-500 uppercase tracking-widest transition-colors">Growth Rate</p>
+                    <h3 class="text-2xl font-black text-slate-900 group-hover:text-amber-600 transition-colors">+{{ $stats['total_merchants'] > 0 ? '10' : '0' }}%</h3>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-8">

@@ -24,8 +24,23 @@ class SalesAgentController extends Controller
 
     public function merchants()
     {
-        $merchants = auth()->user()->referrals()->where('role', 'teacher')->latest()->paginate(15);
-        return view('backend.sales_agent.merchants.index', compact('merchants'));
+        $user = auth()->user();
+        $permissions = is_string($user->agent_permissions) ? json_decode($user->agent_permissions, true) : ($user->agent_permissions ?? []);
+        
+        // If agent_permissions is not null and view_teachers is missing/false, deny access.
+        if ($user->agent_permissions !== null && empty($permissions['view_teachers'])) {
+            return redirect()->route('sales-agent.dashboard')->withErrors(['error' => 'You do not have permission to view enrolled coachings. Please contact the administrator.']);
+        }
+
+        $query = $user->referrals()->where('role', 'teacher')->latest();
+        
+        // Eager load students if allowed
+        if ($user->agent_permissions === null || !empty($permissions['view_students'])) {
+            $query->with('students.studentClass');
+        }
+
+        $merchants = $query->paginate(15);
+        return view('backend.sales_agent.merchants.index', compact('merchants', 'permissions'));
     }
 
     public function storeMerchant(Request $request)

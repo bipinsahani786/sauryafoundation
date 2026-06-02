@@ -42,7 +42,12 @@
             </a>
             @endif
             @if(Auth::user()->hasPermission('edit_users'))
-            <a href="{{ route('admin.users.edit', $user->id) }}" class="p-1.5 border border-slate-100 rounded hover:bg-white text-slate-400 hover:text-indigo-600 transition-all"><i class="fas fa-edit text-[10px]"></i></a>
+                @if($user->role === 'sales_agent')
+                <a href="{{ route('admin.users.show', $user->id) }}" class="p-1.5 border border-indigo-100 rounded bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center" title="View Profile">
+                    <i class="fas fa-id-card text-[10px]"></i>
+                </a>
+                @endif
+                <a href="{{ route('admin.users.edit', $user->id) }}" class="p-1.5 border border-slate-100 rounded hover:bg-white text-slate-400 hover:text-indigo-600 transition-all" title="Edit User"><i class="fas fa-edit text-[10px]"></i></a>
             @endif
             @if($user->id !== auth()->id())
                 @if(Auth::user()->hasPermission('edit_users'))
