@@ -18,7 +18,11 @@ class UserController extends Controller
         $query = User::when($search, function($q) use ($search) {
             $q->where(function($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%");
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('district', 'like', "%{$search}%")
+                      ->orWhere('block', 'like', "%{$search}%")
+                      ->orWhereRaw("CONCAT(district, ' ', block) LIKE ?", ["%{$search}%"])
+                      ->orWhereRaw("CONCAT(block, ' ', district) LIKE ?", ["%{$search}%"]);
             });
         })->latest();
 

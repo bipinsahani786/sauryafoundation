@@ -89,6 +89,32 @@ class CourseController extends Controller
         return back()->with('success', 'Topic added.');
     }
 
+    public function updateSubject(Request $request, Subject $subject)
+    {
+        $request->validate(['title' => 'required|string|max:255']);
+        $subject->update(['title' => $request->title]);
+        return back()->with('success', 'Subject updated.');
+    }
+
+    public function deleteSubject(Subject $subject)
+    {
+        $subject->delete();
+        return back()->with('success', 'Subject deleted.');
+    }
+
+    public function updateTopic(Request $request, Topic $topic)
+    {
+        $request->validate(['title' => 'required|string|max:255']);
+        $topic->update(['title' => $request->title]);
+        return back()->with('success', 'Topic updated.');
+    }
+
+    public function deleteTopic(Topic $topic)
+    {
+        $topic->delete();
+        return back()->with('success', 'Topic deleted.');
+    }
+
     public function addContent(Request $request, Topic $topic)
     {
         $validated = $request->validate([

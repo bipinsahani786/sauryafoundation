@@ -228,8 +228,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::resource('courses', \App\Http\Controllers\Backend\Admin\CourseController::class);
         Route::post('courses/{course}/publish', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'publish'])->name('courses.publish');
         Route::post('courses/{course}/subjects', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'addSubject'])->name('courses.add-subject');
+        
+        Route::put('subjects/{subject}', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'updateSubject'])->name('subjects.update');
+        Route::delete('subjects/{subject}', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'deleteSubject'])->name('subjects.destroy');
         Route::post('subjects/{subject}/topics', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'addTopic'])->name('subjects.add-topic');
+        
+        Route::put('topics/{topic}', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'updateTopic'])->name('topics.update');
+        Route::delete('topics/{topic}', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'deleteTopic'])->name('topics.destroy');
         Route::post('topics/{topic}/contents', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'addContent'])->name('topics.add-content');
+        
         Route::put('contents/{content}', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'updateContent'])->name('contents.update');
         Route::delete('contents/{content}', [\App\Http\Controllers\Backend\Admin\CourseController::class, 'deleteContent'])->name('contents.destroy');
     });

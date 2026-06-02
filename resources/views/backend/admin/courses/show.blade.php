@@ -1,6 +1,12 @@
 <x-dashboard.layout>
     <x-slot name="title">{{ $course->title }} | Global Course Builder</x-slot>
 
+    @if(!$course->is_global && $course->studentClass)
+        <div class="mb-4 pl-4">
+            <h2 class="text-sm font-black text-indigo-600 uppercase tracking-[0.2em] italic drop-shadow-sm">TARGET: {{ $course->studentClass->name }}</h2>
+        </div>
+    @endif
+
     <div class="space-y-8" x-data="{ showSubjectModal: false }">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden italic">
@@ -22,14 +28,20 @@
                         <span class="{{ $course->status == 'published' ? 'text-emerald-600' : 'text-amber-600' }}">{{ $course->status }}</span>
                         <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
                         <span class="text-indigo-600">₹{{ number_format($course->price) }}</span>
-                        @if(!$course->is_global && $course->studentClass)
-                            <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
-                            <span>Target: {{ $course->studentClass->name }}</span>
-                        @endif
                     </div>
                 </div>
             </div>
             <div class="flex items-center gap-3">
+                <a href="{{ route('admin.courses.edit', $course) }}" class="bg-slate-100 text-slate-600 px-6 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm italic flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </a>
+                <form action="{{ route('admin.courses.destroy', $course) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this completely? This action cannot be undone.');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-rose-50 text-rose-600 px-6 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all shadow-sm italic flex items-center">
+                        <i class="fas fa-trash-alt mr-2"></i> Delete
+                    </button>
+                </form>
                 @if($course->status === 'draft')
                     <form action="{{ route('admin.courses.publish', $course) }}" method="POST">
                         @csrf
@@ -54,10 +66,34 @@
                         <div class="bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm italic">
                             <div class="p-5 bg-slate-50/50 flex items-center justify-between border-b border-slate-50">
                                 <span class="text-[10px] font-black text-slate-800 uppercase tracking-wider">{{ $subject->title }}</span>
-                                <div x-data="{ showTopicModal: false }">
-                                    <button @click="showTopicModal = true" class="w-6 h-6 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                                <div x-data="{ showTopicModal: false, showEditSubjectModal: false }" class="flex items-center gap-1">
+                                    <button @click="showEditSubjectModal = true" class="w-6 h-6 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-amber-500 hover:bg-amber-500 hover:text-white transition-all shadow-sm" title="Edit Subject">
+                                        <i class="fas fa-edit text-[8px]"></i>
+                                    </button>
+                                    <form action="{{ route('admin.subjects.destroy', $subject) }}" method="POST" onsubmit="return confirm('Delete this subject and ALL its topics?');" class="inline">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="w-6 h-6 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm" title="Delete Subject">
+                                            <i class="fas fa-trash-alt text-[8px]"></i>
+                                        </button>
+                                    </form>
+                                    <button @click="showTopicModal = true" class="w-6 h-6 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm" title="Add Topic">
                                         <i class="fas fa-plus text-[8px]"></i>
                                     </button>
+                                    
+                                    <!-- Edit Subject Modal -->
+                                    <div x-show="showEditSubjectModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4" x-cloak>
+                                        <div @click.away="showEditSubjectModal = false" class="bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl italic">
+                                            <h3 class="text-xl font-black text-slate-900 mb-2 italic">Edit Domain</h3>
+                                            <form action="{{ route('admin.subjects.update', $subject) }}" method="POST">
+                                                @csrf @method('PUT')
+                                                <input type="text" name="title" value="{{ $subject->title }}" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold mb-6 outline-none focus:border-indigo-600 italic uppercase" required>
+                                                <div class="flex gap-4">
+                                                    <button type="button" @click="showEditSubjectModal = false" class="flex-1 py-4 font-black text-slate-400 text-[9px] uppercase tracking-widest">Abort</button>
+                                                    <button type="submit" class="flex-[2] bg-indigo-600 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest italic shadow-xl shadow-indigo-100">Update Domain</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                     
                                     <!-- Topic Modal -->
                                     <div x-show="showTopicModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4" x-cloak>
@@ -107,10 +143,37 @@
                                         <span class="text-[9px] font-black text-indigo-600 uppercase tracking-[0.2em] italic mb-1 block">{{ $subject->title }} Terminal</span>
                                         <h2 class="text-2xl font-black text-slate-900 tracking-tight italic">{{ $topic->title }}</h2>
                                     </div>
-                                    <div x-data="{ showContentModal: false }">
-                                        <button @click="showContentModal = true" class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-slate-900 hover:text-white transition-all shadow-inner flex items-center justify-center">
+                                    <div x-data="{ showContentModal: false, showEditTopicModal: false }" class="flex items-center gap-2">
+                                        <button @click="showEditTopicModal = true" class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl hover:bg-amber-600 hover:text-white transition-all shadow-sm flex items-center justify-center" title="Edit Topic">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </button>
+                                        
+                                        <form action="{{ route('admin.topics.destroy', $topic) }}" method="POST" onsubmit="return confirm('Delete this entire topic and all its content?');" class="inline">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-600 hover:text-white transition-all shadow-sm flex items-center justify-center" title="Delete Topic">
+                                                <i class="fas fa-trash-alt text-xs"></i>
+                                            </button>
+                                        </form>
+
+                                        <button @click="showContentModal = true" class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-slate-900 hover:text-white transition-all shadow-inner flex items-center justify-center ml-2" title="Add Content">
                                             <i class="fas fa-plus"></i>
                                         </button>
+
+                                        <!-- Edit Topic Modal -->
+                                        <div x-show="showEditTopicModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4" x-cloak>
+                                            <div @click.away="showEditTopicModal = false" class="bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl italic text-left">
+                                                <h3 class="text-xl font-black text-slate-900 mb-2 italic">Edit Topic Terminal</h3>
+                                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-6">Parent Subject: {{ $subject->title }}</p>
+                                                <form action="{{ route('admin.topics.update', $topic) }}" method="POST">
+                                                    @csrf @method('PUT')
+                                                    <input type="text" name="title" value="{{ $topic->title }}" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold mb-6 outline-none focus:border-indigo-600 italic" required>
+                                                    <div class="flex gap-4">
+                                                        <button type="button" @click="showEditTopicModal = false" class="flex-1 py-4 font-black text-slate-400 text-[9px] uppercase tracking-widest text-center">Abort</button>
+                                                        <button type="submit" class="flex-[2] bg-indigo-600 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest italic shadow-xl shadow-indigo-100">Update Topic</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
 
                                         <!-- Content Modal -->
                                         <div x-show="showContentModal" class="fixed inset-0 z-50 flex items-start justify-center bg-slate-900/40 backdrop-blur-sm p-4 overflow-y-auto pt-10" x-cloak>

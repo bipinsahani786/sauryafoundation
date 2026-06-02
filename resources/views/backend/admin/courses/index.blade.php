@@ -17,9 +17,14 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($courses as $course)
                 <div class="bg-white rounded-[2.5rem] border border-slate-200 p-8 shadow-sm hover:shadow-2xl transition-all group flex flex-col h-full relative overflow-hidden">
-                    @if($course->is_global)
-                        <div class="absolute -top-1 -right-1">
-                            <span class="bg-indigo-600 text-white text-[8px] font-black uppercase tracking-widest px-4 py-2 rounded-bl-2xl shadow-lg">GLOBAL</span>
+                    @if($course->is_global || $course->studentClass)
+                        <div class="absolute top-0 right-0 flex gap-1">
+                            @if($course->is_global)
+                                <span class="bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest pl-5 pr-8 py-2 rounded-bl-2xl shadow-lg">GLOBAL</span>
+                            @endif
+                            @if($course->studentClass)
+                                <span class="bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest pl-5 pr-8 py-2 rounded-bl-2xl shadow-lg">{{ $course->studentClass->name }}</span>
+                            @endif
                         </div>
                     @endif
 

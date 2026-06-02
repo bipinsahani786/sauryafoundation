@@ -14,7 +14,11 @@
         </span>
     </td>
     <td class="px-4 py-2 text-center text-slate-500 font-bold uppercase">
-        {{ $user->created_at->format('d M y') }}
+        @if($user->role === 'student')
+            {{ $user->studentClass->name ?? '-' }}
+        @else
+            {{ $user->created_at->format('d M y') }}
+        @endif
     </td>
     <td class="px-4 py-2 text-center">
         <span class="px-2 py-0.5 rounded text-[8px] font-bold uppercase border
