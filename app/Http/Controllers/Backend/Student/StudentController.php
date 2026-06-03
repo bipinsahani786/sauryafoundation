@@ -125,12 +125,17 @@ class StudentController extends Controller
         }
         
         $isEnrolled = $user->quizEnrollments()->where('quiz_id', $quiz->id)->exists();
+        $enrollmentCount = $user->quizEnrollments()->where('quiz_id', $quiz->id)->count();
+        $attemptsUsed = $user->quizAttempts()->where('quiz_id', $quiz->id)->count();
+        $totalAllowedAttempts = $quiz->attempts_limit > 0 ? $quiz->attempts_limit * $enrollmentCount : 0;
+        $attemptsExhausted = ($isEnrolled && $quiz->attempts_limit > 0 && $attemptsUsed >= $totalAllowedAttempts);
+        $canTakeExam = $isEnrolled && !$attemptsExhausted;
         
         $lastAttempt = $user->quizAttempts()->where('quiz_id', $quiz->id)->latest()->first();
         $hasCompleted = $lastAttempt && $lastAttempt->status === 'completed';
         $isBlocked = $lastAttempt && $lastAttempt->is_blocked;
 
-        return view('backend.student.exams.show', compact('quiz', 'isEnrolled', 'lastAttempt', 'hasCompleted', 'isBlocked'));
+        return view('backend.student.exams.show', compact('quiz', 'isEnrolled', 'enrollmentCount', 'attemptsUsed', 'totalAllowedAttempts', 'attemptsExhausted', 'canTakeExam', 'lastAttempt', 'hasCompleted', 'isBlocked'));
     }
 
     public function enrollExam(Quiz $quiz)
@@ -150,8 +155,15 @@ class StudentController extends Controller
             return back()->with('error', 'This exam has expired and is no longer available for enrollment.');
         }
 
-        if ($user->quizEnrollments()->where('quiz_id', $quiz->id)->exists()) {
-            return back()->with('info', 'You are already enrolled.');
+        $enrollmentCount = $user->quizEnrollments()->where('quiz_id', $quiz->id)->count();
+        $attemptsUsed = $user->quizAttempts()->where('quiz_id', $quiz->id)->count();
+        $totalAllowedAttempts = $quiz->attempts_limit > 0 ? $quiz->attempts_limit * $enrollmentCount : 0;
+        
+        if ($enrollmentCount > 0) {
+            // Allow repurchase only if attempts are exhausted
+            if ($quiz->attempts_limit == 0 || $attemptsUsed < $totalAllowedAttempts) {
+                return back()->with('info', 'You are already enrolled and still have attempts remaining.');
+            }
         }
 
         if ($quiz->parent_id && $quiz->level_number > 1) {
@@ -201,19 +213,17 @@ class StudentController extends Controller
             }
         }
 
-        // Ensure enrolled
-        if (!$user->quizEnrollments()->where('quiz_id', $quiz->id)->exists()) {
+        $enrollmentCount = $user->quizEnrollments()->where('quiz_id', $quiz->id)->count();
+        if ($enrollmentCount == 0) {
             return back()->with('error', 'You must enroll first.');
         }
 
         // Check attempt limit
-        $completedCount = auth()->user()->quizAttempts()
-            ->where('quiz_id', $quiz->id)
-            ->where('status', 'completed')
-            ->count();
+        $attemptsUsed = auth()->user()->quizAttempts()->where('quiz_id', $quiz->id)->count();
+        $totalAllowedAttempts = $quiz->attempts_limit > 0 ? $quiz->attempts_limit * $enrollmentCount : 0;
         
-        if (!$quiz->is_practice_set && $quiz->attempts_limit > 0 && $completedCount >= $quiz->attempts_limit) {
-            return back()->with('error', 'You have reached the maximum number of attempts for this exam.');
+        if ($quiz->attempts_limit > 0 && $attemptsUsed >= $totalAllowedAttempts) {
+            return back()->with('error', 'You have reached the maximum number of attempts. Please repurchase to try again.');
         }
 
         // Check if already blocked from this quiz

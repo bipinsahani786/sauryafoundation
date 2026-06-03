@@ -33,10 +33,16 @@
                     $lastAttempt = $quiz->attempts->first();
                     $isBlocked = $lastAttempt && $lastAttempt->is_blocked;
                     $hasCompleted = $lastAttempt && $lastAttempt->status === 'completed';
+                    
+                    $enrollmentCount = auth()->user()->quizEnrollments()->where('quiz_id', $quiz->id)->count();
+                    $isEnrolled = $enrollmentCount > 0;
+                    $totalAllowedAttempts = $quiz->attempts_limit > 0 ? $quiz->attempts_limit * $enrollmentCount : 0;
+                    $attemptsExhausted = ($isEnrolled && $quiz->attempts_limit > 0 && $attemptsUsed >= $totalAllowedAttempts);
+                    $canTakeExam = $isEnrolled && !$attemptsExhausted;
+                    
                     $isUpcoming = $quiz->start_time && $quiz->start_time->isFuture();
                     $isExpired = $quiz->end_time && $quiz->end_time->isPast();
                     $isLive = !$isUpcoming && !$isExpired;
-                    $isEnrolled = auth()->user()->quizEnrollments()->where('quiz_id', $quiz->id)->exists();
                 @endphp
                 
                 <div class="bg-white rounded-[2rem] p-6 border border-slate-200 shadow-sm transition-all group relative overflow-hidden flex flex-col h-full {{ $isExpired && !$hasCompleted ? 'opacity-60 grayscale' : 'hover:shadow-xl hover:-translate-y-1' }}">
@@ -60,6 +66,11 @@
                             </div>
                         </div>
                         <h3 class="text-sm font-black text-slate-900 tracking-tighter leading-tight mb-1 line-clamp-1">{{ $quiz->title }}</h3>
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="px-2 py-0.5 bg-slate-50 text-[8px] font-black uppercase tracking-widest text-slate-500 rounded-md border border-slate-100">
+                                Attempts: {{ $attemptsUsed }} / {{ ($quiz->attempts_limit == 0) ? '∞' : ($isEnrolled ? $totalAllowedAttempts : $quiz->attempts_limit) }}
+                            </span>
+                        </div>
                         <p class="text-[9px] text-slate-400 font-bold italic line-clamp-2">{{ $quiz->description ?? 'Scheduled contest assessment.' }}</p>
                     </div>
 
@@ -78,26 +89,42 @@
                         <div class="w-full text-center bg-slate-100 text-slate-400 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest cursor-not-allowed border border-slate-200">
                             Security Block <i class="fas fa-lock ml-1 text-red-500"></i>
                         </div>
-                    @elseif($hasCompleted || ($attemptsUsed >= $quiz->attempts_limit && $quiz->attempts_limit > 0 && !$quiz->is_practice_set))
-                        <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="block w-full text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm">
-                            View Result <i class="fas fa-poll ml-1"></i>
-                        </a>
+                    @elseif($attemptsExhausted)
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="block text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm flex items-center justify-center">
+                                View Result
+                            </a>
+                            <a href="{{ route('student.exams.show', $quiz->id) }}" class="block text-center bg-emerald-600 text-white py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-md flex items-center justify-center">
+                                Buy Again
+                            </a>
+                        </div>
                     @elseif($isExpired)
                         <button disabled class="w-full text-center bg-slate-100 text-slate-400 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border border-slate-200 cursor-not-allowed">
                             Time Expired
                         </button>
-                    @elseif($isUpcoming && !$isEnrolled)
+                    @elseif($isUpcoming && !$canTakeExam)
                         <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center bg-emerald-600 text-white py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-md">
                             Enroll Now <i class="fas fa-shopping-cart ml-1"></i>
                         </a>
-                    @elseif($isUpcoming && $isEnrolled)
+                    @elseif($isUpcoming && $canTakeExam)
                         <button disabled class="w-full text-center bg-amber-50 text-amber-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border border-amber-100 cursor-not-allowed">
                             Awaiting Launch <i class="fas fa-clock ml-1"></i>
                         </button>
                     @else
-                        <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center {{ $isEnrolled ? 'bg-slate-900' : 'bg-emerald-600' }} text-white py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-md">
-                            {{ $isEnrolled ? 'Enter Terminal' : 'Enroll Now' }} <i class="fas {{ $isEnrolled ? 'fa-bolt' : 'fa-shopping-cart' }} ml-1"></i>
-                        </a>
+                        @if($hasCompleted)
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="block text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm flex items-center justify-center">
+                                    Result
+                                </a>
+                                <a href="{{ route('student.exams.show', $quiz->id) }}" class="block text-center {{ $canTakeExam ? 'bg-slate-900' : 'bg-emerald-600' }} text-white py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-md flex items-center justify-center">
+                                    {{ $canTakeExam ? 'Retry' : 'Enroll' }}
+                                </a>
+                            </div>
+                        @else
+                            <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center {{ $canTakeExam ? 'bg-slate-900' : 'bg-emerald-600' }} text-white py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-md">
+                                {{ $canTakeExam ? 'Enter Terminal' : 'Enroll Now' }} <i class="fas {{ $canTakeExam ? 'fa-bolt' : 'fa-shopping-cart' }} ml-1"></i>
+                            </a>
+                        @endif
                     @endif
                 </div>
             @empty
@@ -122,7 +149,12 @@
                     $lastAttempt = $quiz->attempts->first();
                     $isBlocked = $lastAttempt && $lastAttempt->is_blocked;
                     $hasCompleted = $lastAttempt && $lastAttempt->status === 'completed';
-                    $isEnrolled = auth()->user()->quizEnrollments()->where('quiz_id', $quiz->id)->exists();
+                    
+                    $enrollmentCount = auth()->user()->quizEnrollments()->where('quiz_id', $quiz->id)->count();
+                    $isEnrolled = $enrollmentCount > 0;
+                    $totalAllowedAttempts = $quiz->attempts_limit > 0 ? $quiz->attempts_limit * $enrollmentCount : 0;
+                    $attemptsExhausted = ($isEnrolled && $quiz->attempts_limit > 0 && $attemptsUsed >= $totalAllowedAttempts);
+                    $canTakeExam = $isEnrolled && !$attemptsExhausted;
                 @endphp
                 
                 <div class="bg-white rounded-[2rem] p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group overflow-hidden relative flex flex-col h-full">
@@ -136,7 +168,7 @@
                                 {{ $quiz->is_practice_set ? 'Practice Set' : 'Normal Quiz' }}
                             </span>
                             <span class="px-2 py-0.5 bg-slate-100 text-[8px] font-black uppercase tracking-widest text-slate-500 rounded-md">
-                                Attempts: {{ $attemptsUsed }} / {{ ($quiz->is_practice_set || $quiz->attempts_limit == 0) ? '∞' : $quiz->attempts_limit }}
+                                Attempts: {{ $attemptsUsed }} / {{ ($quiz->is_practice_set || $quiz->attempts_limit == 0) ? '∞' : ($isEnrolled ? $totalAllowedAttempts : $quiz->attempts_limit) }}
                             </span>
                             <span class="px-2 py-0.5 bg-indigo-50 text-[8px] font-black uppercase tracking-widest text-indigo-600 rounded-md">
                                 Total Questions: {{ $quiz->questions()->count() }}
@@ -160,14 +192,30 @@
                         <div class="w-full text-center bg-slate-100 text-slate-400 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest cursor-not-allowed border border-slate-200">
                             Security Block <i class="fas fa-lock ml-1 text-red-500"></i>
                         </div>
-                    @elseif($hasCompleted || ($attemptsUsed >= $quiz->attempts_limit && $quiz->attempts_limit > 0))
-                        <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="block w-full text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm">
-                            View Result <i class="fas fa-poll ml-1"></i>
-                        </a>
+                    @elseif($attemptsExhausted)
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="block text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm flex items-center justify-center">
+                                View Result
+                            </a>
+                            <a href="{{ route('student.exams.show', $quiz->id) }}" class="block text-center bg-emerald-50 text-emerald-700 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm border border-emerald-100 flex items-center justify-center">
+                                Buy Again
+                            </a>
+                        </div>
                     @else
-                        <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center {{ $isEnrolled ? 'bg-slate-900 text-white' : 'bg-emerald-50 text-emerald-700' }} py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm border border-emerald-100">
-                            {{ $isEnrolled ? 'Enter Terminal' : 'Enroll Now' }} <i class="fas {{ $isEnrolled ? 'fa-bolt' : 'fa-shopping-cart' }} ml-1"></i>
-                        </a>
+                        @if($hasCompleted)
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="block text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm flex items-center justify-center">
+                                    Result
+                                </a>
+                                <a href="{{ route('student.exams.show', $quiz->id) }}" class="block text-center {{ $canTakeExam ? 'bg-slate-900 text-white' : 'bg-emerald-50 text-emerald-700' }} py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm border border-emerald-100 flex items-center justify-center">
+                                    {{ $canTakeExam ? 'Retry' : 'Enroll' }}
+                                </a>
+                            </div>
+                        @else
+                            <a href="{{ route('student.exams.show', $quiz->id) }}" class="block w-full text-center {{ $canTakeExam ? 'bg-slate-900 text-white' : 'bg-emerald-50 text-emerald-700' }} py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm border border-emerald-100">
+                                {{ $canTakeExam ? 'Enter Terminal' : 'Enroll Now' }} <i class="fas {{ $canTakeExam ? 'fa-bolt' : 'fa-shopping-cart' }} ml-1"></i>
+                            </a>
+                        @endif
                     @endif
                 </div>
             @empty

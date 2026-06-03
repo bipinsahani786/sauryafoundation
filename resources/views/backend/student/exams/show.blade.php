@@ -64,12 +64,25 @@
                         <button disabled class="bg-red-100 text-red-600 px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] cursor-not-allowed border border-red-200">
                             Security Block <i class="fas fa-lock ml-2"></i>
                         </button>
-                    @elseif($hasCompleted || (isset($lastAttempt) && auth()->user()->quizAttempts()->where('quiz_id', $quiz->id)->where('status', 'completed')->count() >= $quiz->attempts_limit && $quiz->attempts_limit > 0 && !$quiz->is_practice_set))
-                        <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="bg-indigo-600 text-white px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100 block text-center">
-                            View Result <i class="fas fa-poll ml-2"></i>
-                        </a>
+                    @elseif($attemptsExhausted)
+                        <div class="flex gap-4">
+                            <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="bg-indigo-600 text-white px-8 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100 block text-center flex-1">
+                                View Result <i class="fas fa-poll ml-2"></i>
+                            </a>
+                            <form action="{{ route('student.exams.enroll', $quiz->id) }}" method="POST" class="flex-1">
+                                @csrf
+                                <button type="submit" class="w-full bg-emerald-600 text-white px-8 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-emerald-100 flex flex-col items-center">
+                                    <span>Buy Again <i class="fas fa-sync ml-2"></i></span>
+                                    @if($quiz->price > 0)
+                                        <span class="text-[8px] opacity-80 mt-1 whitespace-nowrap">Amount: ₹{{ number_format($quiz->price) }}</span>
+                                    @else
+                                        <span class="text-[8px] opacity-80 mt-1 uppercase tracking-[0.2em]">Free</span>
+                                    @endif
+                                </button>
+                            </form>
+                        </div>
                     @elseif(!$isExpired)
-                        @if(!$isEnrolled)
+                        @if(!$canTakeExam)
                             <form action="{{ route('student.exams.enroll', $quiz->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="bg-emerald-600 text-white px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-emerald-100 flex flex-col items-center">
@@ -82,12 +95,19 @@
                                 </button>
                             </form>
                         @elseif($isLive || !$quiz->start_time)
-                            <form action="{{ route('student.exams.start', $quiz->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="bg-indigo-600 text-white px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100">
-                                    Initialize Engine <i class="fas fa-bolt ml-2"></i>
-                                </button>
-                            </form>
+                            <div class="flex gap-4">
+                                @if($hasCompleted)
+                                <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="bg-indigo-50 text-indigo-600 px-8 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-indigo-100 transition-all shadow-xl shadow-indigo-100 block text-center flex-1">
+                                    Result <i class="fas fa-poll ml-2"></i>
+                                </a>
+                                @endif
+                                <form action="{{ route('student.exams.start', $quiz->id) }}" method="POST" class="{{ $hasCompleted ? 'flex-1' : '' }}">
+                                    @csrf
+                                    <button type="submit" class="w-full bg-indigo-600 text-white px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100">
+                                        {{ $hasCompleted ? 'Retry Engine' : 'Initialize Engine' }} <i class="fas fa-bolt ml-2"></i>
+                                    </button>
+                                </form>
+                            </div>
                         @else
                             <button disabled class="bg-amber-100 text-amber-600 px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] cursor-not-allowed border border-amber-200">
                                 Awaiting Launch <i class="fas fa-clock ml-2"></i>
