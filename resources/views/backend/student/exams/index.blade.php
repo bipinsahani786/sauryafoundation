@@ -30,21 +30,25 @@
             @forelse($liveExams as $quiz)
                 @php
                     $attemptsUsed = $quiz->quiz_attempts_count ?? 0;
-                    $isBlocked = $quiz->attempts()->where('student_id', auth()->id())->where('is_blocked', true)->exists();
+                    $lastAttempt = $quiz->attempts->first();
+                    $isBlocked = $lastAttempt && $lastAttempt->is_blocked;
+                    $hasCompleted = $lastAttempt && $lastAttempt->status === 'completed';
                     $isUpcoming = $quiz->start_time && $quiz->start_time->isFuture();
                     $isExpired = $quiz->end_time && $quiz->end_time->isPast();
                     $isLive = !$isUpcoming && !$isExpired;
                     $isEnrolled = auth()->user()->quizEnrollments()->where('quiz_id', $quiz->id)->exists();
                 @endphp
                 
-                <div class="bg-white rounded-[2rem] p-6 border border-slate-200 shadow-sm transition-all group relative overflow-hidden flex flex-col h-full {{ $isExpired ? 'opacity-60 grayscale' : 'hover:shadow-xl hover:-translate-y-1' }}">
+                <div class="bg-white rounded-[2rem] p-6 border border-slate-200 shadow-sm transition-all group relative overflow-hidden flex flex-col h-full {{ $isExpired && !$hasCompleted ? 'opacity-60 grayscale' : 'hover:shadow-xl hover:-translate-y-1' }}">
                     <!-- Status Badge -->
-                    @if($isExpired)
+                    @if($hasCompleted)
+                        <div class="absolute -right-8 top-6 bg-indigo-500 text-white px-10 py-1 rotate-45 text-[8px] font-black uppercase tracking-widest shadow-lg">COMPLETED</div>
+                    @elseif($isExpired)
                         <div class="absolute -right-8 top-6 bg-slate-500 text-white px-10 py-1 rotate-45 text-[8px] font-black uppercase tracking-widest shadow-lg">EXPIRED</div>
                     @elseif($isUpcoming)
                         <div class="absolute -right-8 top-6 bg-amber-500 text-white px-10 py-1 rotate-45 text-[8px] font-black uppercase tracking-widest shadow-lg">UPCOMING</div>
                     @elseif($isLive && !$isEnrolled)
-                        <div class="absolute -right-8 top-6 bg-indigo-500 text-white px-10 py-1 rotate-45 text-[8px] font-black uppercase tracking-widest shadow-lg">ENROLL NOW</div>
+                        <div class="absolute -right-8 top-6 bg-emerald-500 text-white px-10 py-1 rotate-45 text-[8px] font-black uppercase tracking-widest shadow-lg">LIVE NOW</div>
                     @elseif($isLive && $isEnrolled)
                         <div class="absolute -right-8 top-6 bg-emerald-500 text-white px-10 py-1 rotate-45 text-[8px] font-black uppercase tracking-widest shadow-lg">LIVE NOW</div>
                     @endif
@@ -70,7 +74,15 @@
                         </div>
                     </div>
 
-                    @if($isExpired)
+                    @if($isBlocked)
+                        <div class="w-full text-center bg-slate-100 text-slate-400 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest cursor-not-allowed border border-slate-200">
+                            Security Block <i class="fas fa-lock ml-1 text-red-500"></i>
+                        </div>
+                    @elseif($hasCompleted || ($attemptsUsed >= $quiz->attempts_limit && $quiz->attempts_limit > 0 && !$quiz->is_practice_set))
+                        <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="block w-full text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm">
+                            View Result <i class="fas fa-poll ml-1"></i>
+                        </a>
+                    @elseif($isExpired)
                         <button disabled class="w-full text-center bg-slate-100 text-slate-400 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border border-slate-200 cursor-not-allowed">
                             Time Expired
                         </button>
@@ -107,7 +119,9 @@
             @forelse($practiceQuizzes as $quiz)
                 @php
                     $attemptsUsed = $quiz->quiz_attempts_count ?? 0;
-                    $isBlocked = $quiz->attempts()->where('student_id', auth()->id())->where('is_blocked', true)->exists();
+                    $lastAttempt = $quiz->attempts->first();
+                    $isBlocked = $lastAttempt && $lastAttempt->is_blocked;
+                    $hasCompleted = $lastAttempt && $lastAttempt->status === 'completed';
                     $isEnrolled = auth()->user()->quizEnrollments()->where('quiz_id', $quiz->id)->exists();
                 @endphp
                 
@@ -146,8 +160,8 @@
                         <div class="w-full text-center bg-slate-100 text-slate-400 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest cursor-not-allowed border border-slate-200">
                             Security Block <i class="fas fa-lock ml-1 text-red-500"></i>
                         </div>
-                    @elseif($attemptsUsed >= $quiz->attempts_limit && $quiz->attempts_limit > 0)
-                        <a href="{{ route('student.results.show', $quiz->attempts()->where('student_id', auth()->id())->latest()->first()->id) }}" class="block w-full text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm">
+                    @elseif($hasCompleted || ($attemptsUsed >= $quiz->attempts_limit && $quiz->attempts_limit > 0))
+                        <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="block w-full text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all border border-indigo-100 shadow-sm">
                             View Result <i class="fas fa-poll ml-1"></i>
                         </a>
                     @else

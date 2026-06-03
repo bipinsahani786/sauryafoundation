@@ -60,7 +60,15 @@
                         @endif
                     </div>
                     
-                    @if(!$isExpired)
+                    @if($isBlocked)
+                        <button disabled class="bg-red-100 text-red-600 px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] cursor-not-allowed border border-red-200">
+                            Security Block <i class="fas fa-lock ml-2"></i>
+                        </button>
+                    @elseif($hasCompleted || (isset($lastAttempt) && auth()->user()->quizAttempts()->where('quiz_id', $quiz->id)->where('status', 'completed')->count() >= $quiz->attempts_limit && $quiz->attempts_limit > 0 && !$quiz->is_practice_set))
+                        <a href="{{ route('student.results.show', $lastAttempt->id) }}" class="bg-indigo-600 text-white px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100 block text-center">
+                            View Result <i class="fas fa-poll ml-2"></i>
+                        </a>
+                    @elseif(!$isExpired)
                         @if(!$isEnrolled)
                             <form action="{{ route('student.exams.enroll', $quiz->id) }}" method="POST">
                                 @csrf

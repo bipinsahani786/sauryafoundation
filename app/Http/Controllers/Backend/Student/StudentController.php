@@ -91,6 +91,9 @@ class StudentController extends Controller
                                  });
                 });
             })
+            ->with(['attempts' => function($query) {
+                $query->where('student_id', auth()->id())->latest();
+            }])
             ->withCount(['attempts as quiz_attempts_count' => function($query) {
                 $query->where('student_id', auth()->id());
             }])
@@ -122,7 +125,12 @@ class StudentController extends Controller
         }
         
         $isEnrolled = $user->quizEnrollments()->where('quiz_id', $quiz->id)->exists();
-        return view('backend.student.exams.show', compact('quiz', 'isEnrolled'));
+        
+        $lastAttempt = $user->quizAttempts()->where('quiz_id', $quiz->id)->latest()->first();
+        $hasCompleted = $lastAttempt && $lastAttempt->status === 'completed';
+        $isBlocked = $lastAttempt && $lastAttempt->is_blocked;
+
+        return view('backend.student.exams.show', compact('quiz', 'isEnrolled', 'lastAttempt', 'hasCompleted', 'isBlocked'));
     }
 
     public function enrollExam(Quiz $quiz)
