@@ -1,13 +1,26 @@
 <x-dashboard.layout>
     <x-slot name="title">Student Terminal</x-slot>
 
-    <div class="mb-8">
-        <h2 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1 italic">Academic Dashboard</h2>
-        <p class="text-lg md:text-xl text-slate-900 font-black italic uppercase tracking-widest">
-            Welcome back, <span class="text-indigo-600">{{ ($studentUser ?? auth()->user())->name }}</span> 
-            <span class="text-slate-300 mx-2">|</span> 
-            <span class="text-emerald-600">{{ ($studentUser ?? auth()->user())->studentClass?->name ?? 'Global Scholar' }}</span>.
-        </p>
+    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <h2 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1 italic">Academic Dashboard</h2>
+            <p class="text-lg md:text-xl text-slate-900 font-black italic uppercase tracking-widest">
+                Welcome back, <span class="text-indigo-600">{{ ($studentUser ?? auth()->user())->name }}</span> 
+                <span class="text-slate-300 mx-2">|</span> 
+                <span class="text-emerald-600">{{ ($studentUser ?? auth()->user())->studentClass?->name ?? 'Global Scholar' }}</span>.
+            </p>
+        </div>
+        @if(isset($studentUser) && auth()->user()->id !== $studentUser->id)
+        <div class="bg-emerald-50 border border-emerald-100 rounded-2xl px-6 py-3 flex items-center gap-4 shadow-sm">
+            <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div>
+                <p class="text-[9px] text-emerald-600/70 font-black uppercase tracking-widest leading-none mb-1">Student Credit</p>
+                <p class="text-lg font-black text-emerald-700 leading-none">₹{{ number_format($studentUser->wallet_balance, 2) }}</p>
+            </div>
+        </div>
+        @endif
     </div>
 
     @if($banners->count() > 0)
