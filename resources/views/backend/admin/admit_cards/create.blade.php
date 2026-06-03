@@ -1,6 +1,14 @@
 <x-dashboard.layout>
     <x-slot name="title">Generate Admit Card</x-slot>
 
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <style>
+        .ts-control { border-color: #e2e8f0; border-radius: 0.5rem; padding: 0.5rem 1rem; background-color: #f8fafc; font-size: 0.875rem; font-weight: 500; min-height: 42px; display: flex; align-items: center; }
+        .ts-control.focus { border-color: #6366f1; box-shadow: 0 0 0 1px #6366f1; }
+        .ts-wrapper.single .ts-control { padding-left: 1rem; }
+    </style>
+
     <div class="mb-6">
         <a href="{{ route('admin.admit-cards.index') }}" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 uppercase tracking-widest transition-colors">
             <i class="fas fa-arrow-left mr-1"></i> Back to List
@@ -18,10 +26,10 @@
                 <!-- Student Selection -->
                 <div class="space-y-2 md:col-span-2">
                     <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Select Student <span class="text-red-500">*</span></label>
-                    <select name="user_id" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-medium" required>
-                        <option value="">-- Select a Student --</option>
+                    <select id="student_select" name="user_id" class="w-full" required>
+                        <option value="">-- Select or Search a Student --</option>
                         @foreach($students as $student)
-                            <option value="{{ $student->id }}" {{ old('user_id') == $student->id ? 'selected' : '' }}>
+                            <option value="{{ $student->id }}" data-name="{{ $student->name }}" data-email="{{ $student->email }}" {{ old('user_id') == $student->id ? 'selected' : '' }}>
                                 {{ $student->name }} ({{ $student->email }})
                             </option>
                         @endforeach
@@ -87,4 +95,31 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new TomSelect("#student_select", {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: "-- Select or Search a Student --",
+                render: {
+                    item: function(data, escape) {
+                        if (data.name) {
+                            return '<div>' + escape(data.name) + '</div>';
+                        }
+                        return '<div>' + escape(data.text) + '</div>';
+                    },
+                    option: function(data, escape) {
+                        if (data.name && data.email) {
+                            return '<div><span class="font-bold">' + escape(data.name) + '</span> <span class="text-slate-400 text-xs ml-1">(' + escape(data.email) + ')</span></div>';
+                        }
+                        return '<div>' + escape(data.text) + '</div>';
+                    }
+                }
+            });
+        });
+    </script>
 </x-dashboard.layout>

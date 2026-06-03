@@ -123,8 +123,8 @@
 <body>
     <div class="admit-card">
         <div class="header">
-            <!-- Note: For DOMPDF to load local images reliably, often absolute path or public_path() is needed. -->
-            <!-- If an image exists, we could use <img src="{{ public_path('storage/'.$siteSettings['site_logo']) }}"> -->
+            {{-- Note: For DOMPDF to load local images reliably, often absolute path or public_path() is needed. --}}
+            {{-- If an image exists, we could use <img src="{{ public_path('storage/'.($siteSettings['site_logo'] ?? '')) }}"> --}}
             <h1>{{ $siteSettings['site_name'] ?? 'Shaurya Narayan Foundation' }}</h1>
             <p>Official Examination Admit Card</p>
         </div>
