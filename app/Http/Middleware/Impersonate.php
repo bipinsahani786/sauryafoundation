@@ -18,14 +18,18 @@ class Impersonate
         if (session()->has('impersonate_id') && session()->has('admin_id')) {
             $admin = User::find(session('admin_id'));
             
-            // Allow impersonation only if the original user was a SuperAdmin
-            if ($admin && $admin->isSuperAdmin()) {
+            // Allow impersonation if the original user was a SuperAdmin or a Teacher
+            if ($admin && ($admin->isSuperAdmin() || $admin->role === 'admin' || $admin->role === 'teacher')) {
                 $user = User::find(session('impersonate_id'));
                 if ($user) {
-                    Auth::setUser($user);
+                    if ($admin->role === 'teacher' && $user->teacher_id !== $admin->id) {
+                        session()->forget(['impersonate_id', 'admin_id']);
+                    } else {
+                        Auth::setUser($user);
+                    }
                 }
             } else {
-                // If the session is compromised or the admin is no longer a superadmin
+                // If the session is compromised or the admin is no longer a superadmin/teacher
                 session()->forget(['impersonate_id', 'admin_id']);
             }
         }

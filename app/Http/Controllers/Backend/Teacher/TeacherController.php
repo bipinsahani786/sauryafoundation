@@ -325,6 +325,7 @@ class TeacherController extends Controller
         return redirect()->route('teacher.wallet')->with('success', 'Bank details submitted for verification.');
     }
 
+
     public function submitPayoutRequest(Request $request)
     {
         $user = auth()->user();
@@ -358,5 +359,18 @@ class TeacherController extends Controller
 
         return back()->with('success', 'Payout request submitted successfully.');
     }
+
+    public function impersonate(User $student)
+    {
+        if ($student->teacher_id !== auth()->id()) abort(403);
+
+        session([
+            'impersonate_id' => $student->id,
+            'admin_id' => auth()->id()
+        ]);
+        
+        return redirect()->route('student.dashboard')->with('success', "Now viewing as {$student->name}. You have full access to all resources.");
+    }
 }
+
 

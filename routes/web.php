@@ -391,6 +391,7 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
         Route::get('/students/{student}/progress', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'studentProgress'])->name('students.progress');
         Route::get('/students/{student}/dashboard', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'studentDashboardView'])->name('students.dashboard');
         Route::post('/students/{student}/add-money', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'addMoney'])->name('students.add-money');
+        Route::post('/students/{student}/impersonate', [App\Http\Controllers\Backend\Teacher\TeacherController::class, 'impersonate'])->name('students.impersonate');
 
         // Banners
         Route::resource('banners', App\Http\Controllers\Backend\Admin\BannerController::class);

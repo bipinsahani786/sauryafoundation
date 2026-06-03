@@ -69,9 +69,12 @@
                                     <a href="{{ route('teacher.students.progress', $student->id) }}" class="text-indigo-600 hover:bg-indigo-600 hover:text-white font-black uppercase tracking-widest text-[8px] border border-indigo-100 px-3 py-2 rounded-xl transition-all shadow-sm active:scale-95 bg-indigo-50 group">
                                         <i class="fas fa-chart-line mr-1 group-hover:scale-110 transition-transform"></i> Tracking
                                     </a>
-                                    <a href="{{ route('teacher.students.dashboard', $student->id) }}" target="_blank" class="text-sky-600 hover:bg-sky-600 hover:text-white font-black uppercase tracking-widest text-[8px] border border-sky-100 px-3 py-2 rounded-xl transition-all shadow-sm active:scale-95 bg-sky-50 group">
-                                        <i class="fas fa-desktop mr-1 group-hover:scale-110 transition-transform"></i> Dashboard
-                                    </a>
+                                    <form action="{{ route('teacher.students.impersonate', $student->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-sky-600 hover:bg-sky-600 hover:text-white font-black uppercase tracking-widest text-[8px] border border-sky-100 px-3 py-2 rounded-xl transition-all shadow-sm active:scale-95 bg-sky-50 group">
+                                            <i class="fas fa-user-secret mr-1 group-hover:scale-110 transition-transform"></i> Dashboard
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
