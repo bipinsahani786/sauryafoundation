@@ -77,6 +77,86 @@ class AdmitCardController extends Controller
         return $pdf->download('Admit_Card_' . $admitCard->roll_no . '.pdf');
     }
 
+    public function bulkCreate()
+    {
+        $quizzes = \App\Models\Quiz::where('status', 'published')
+            ->withCount(['enrollments as enrolled_count' => function ($query) {
+                $query->where('status', 'active');
+            }])
+            ->get();
+
+        return view('backend.admin.admit_cards.bulk_create', compact('quizzes'));
+    }
+
+    public function bulkStore(Request $request)
+    {
+        $validated = $request->validate([
+            'quiz_id' => 'required|exists:quizzes,id',
+            'exam_center' => 'required|string|max:255',
+            'exam_date' => 'required|date',
+            'instructions' => 'nullable|string'
+        ]);
+
+        $quiz = \App\Models\Quiz::findOrFail($validated['quiz_id']);
+        
+        $enrollments = \App\Models\QuizEnrollment::where('quiz_id', $quiz->id)
+            ->where('status', 'active')
+            ->with('student.studentClass')
+            ->get();
+
+        if ($enrollments->isEmpty()) {
+            return back()->with('error', 'No enrolled students found for the selected exam.');
+        }
+
+        $generatedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($enrollments as $enrollment) {
+            $student = $enrollment->student;
+            
+            if (!$student) {
+                continue;
+            }
+
+            $exists = AdmitCard::where('user_id', $student->id)
+                ->where('exam_name', $quiz->title)
+                ->exists();
+
+            if ($exists) {
+                $skippedCount++;
+                continue;
+            }
+
+            $year = date('Y');
+            $random = strtoupper(substr(md5(uniqid()), 0, 4));
+            $rollNo = 'R' . $year . $quiz->id . $student->id . $random;
+
+            while (AdmitCard::where('roll_no', $rollNo)->exists()) {
+                $random = strtoupper(substr(md5(uniqid()), 0, 4));
+                $rollNo = 'R' . $year . $quiz->id . $student->id . $random;
+            }
+
+            AdmitCard::create([
+                'user_id' => $student->id,
+                'student_class' => $student->studentClass ? $student->studentClass->name : null,
+                'exam_name' => $quiz->title,
+                'roll_no' => $rollNo,
+                'exam_center' => $validated['exam_center'],
+                'exam_date' => $validated['exam_date'],
+                'instructions' => $validated['instructions'] ?? "1. Please bring a valid photo ID.\n2. Do not bring any electronic devices into the examination hall.",
+            ]);
+
+            $generatedCount++;
+        }
+
+        $msg = "Successfully generated {$generatedCount} admit cards.";
+        if ($skippedCount > 0) {
+            $msg .= " Skipped {$skippedCount} students who already have admit cards for this exam.";
+        }
+
+        return redirect()->route('admin.admit-cards.index')->with('success', $msg);
+    }
+
     public function destroy(AdmitCard $admitCard)
     {
         $admitCard->delete();

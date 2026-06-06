@@ -513,4 +513,34 @@ class StudentController extends Controller
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('backend.admin.admit_cards.pdf', compact('admitCard', 'siteSettings'));
         return $pdf->download('Admit_Card_' . $admitCard->roll_no . '.pdf');
     }
+
+    public function downloadContentAttachment(\App\Models\Content $content)
+    {
+        $user = auth()->user();
+        $course = $content->topic->subject->course;
+        $authorized = false;
+        
+        if ($user->isAdmin()) {
+            $authorized = true;
+        } elseif ($user->isTeacher() && $course->teacher_id === $user->id) {
+            $authorized = true;
+        } elseif ($user->isStudent()) {
+            $authorized = $user->enrolledCourses()->where('course_id', $course->id)->exists();
+        }
+        
+        if (!$authorized) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if (!$content->attachment_path) {
+            abort(404, 'No resource attached to this content.');
+        }
+
+        if (!\Illuminate\Support\Facades\Storage::disk('public')->exists($content->attachment_path)) {
+            abort(404, 'Attached file not found.');
+        }
+
+        $filePath = \Illuminate\Support\Facades\Storage::disk('public')->path($content->attachment_path);
+        return response()->file($filePath);
+    }
 }

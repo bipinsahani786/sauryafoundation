@@ -298,6 +298,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::post('/quizzes/{quiz}/promote', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'calculateAndPromote'])->name('quizzes.promote')->middleware('permission:publish_exams');
         Route::delete('/questions/{question}', [\App\Http\Controllers\Backend\Admin\QuizController::class, 'deleteQuestion'])->name('questions.destroy')->middleware('permission:edit_exams');
         
+        // Admit Cards Bulk Generate
+        Route::get('admit-cards/bulk-generate', [\App\Http\Controllers\Backend\Admin\AdmitCardController::class, 'bulkCreate'])->name('admit-cards.bulk-create');
+        Route::post('admit-cards/bulk-generate', [\App\Http\Controllers\Backend\Admin\AdmitCardController::class, 'bulkStore'])->name('admit-cards.bulk-store');
+
         // Admit Cards
         Route::resource('admit-cards', \App\Http\Controllers\Backend\Admin\AdmitCardController::class);
         Route::get('admit-cards/{admit_card}/pdf', [\App\Http\Controllers\Backend\Admin\AdmitCardController::class, 'downloadPdf'])->name('admit-cards.pdf');
@@ -357,6 +361,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::get('/courses/contents/{content}/download', [\App\Http\Controllers\Backend\Student\StudentController::class, 'downloadContentAttachment'])->name('courses.download-attachment');
 });
 
 Route::middleware(['auth', 'syndicate'])->prefix('dashboard')->name('syndicate.')->group(function () {

@@ -140,20 +140,39 @@
                         @endif
 
                         @if($activeContent->attachment_path)
-                            <div class="mt-8 p-6 bg-indigo-50 border-2 border-dashed border-indigo-100 rounded-3xl flex items-center justify-between group hover:bg-indigo-100/50 transition-all">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-indigo-100">
-                                        <i class="fas fa-file-pdf"></i>
+                            @php
+                                $ext = strtolower(pathinfo($activeContent->attachment_path, PATHINFO_EXTENSION));
+                                $isImage = in_array($ext, ['png', 'jpg', 'jpeg', 'webp', 'gif']);
+                            @endphp
+
+                            @if($isImage)
+                                <div class="mt-8 space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] italic">Attached Image Note</h4>
+                                        <a href="{{ route('courses.download-attachment', $activeContent) }}" target="_blank" class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shadow-sm flex items-center gap-1.5">
+                                            <i class="fas fa-download"></i> Save Image
+                                        </a>
                                     </div>
-                                    <div>
-                                        <h4 class="text-sm font-black text-slate-900 uppercase tracking-widest">Download Resources</h4>
-                                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Official Study Material & Handouts</p>
+                                    <div class="rounded-3xl overflow-hidden border border-slate-200 bg-slate-50 p-3 shadow-lg flex justify-center">
+                                        <img src="{{ route('courses.download-attachment', $activeContent) }}" alt="Attached Image" class="w-full h-auto rounded-2xl max-h-[600px] object-contain">
                                     </div>
                                 </div>
-                                <a href="{{ asset('storage/' . $activeContent->attachment_path) }}" target="_blank" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-100">
-                                    <i class="fas fa-download mr-1"></i> Get PDF
-                                </a>
-                            </div>
+                            @else
+                                <div class="mt-8 p-6 bg-indigo-50 border-2 border-dashed border-indigo-100 rounded-3xl flex items-center justify-between group hover:bg-indigo-100/50 transition-all">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-indigo-100">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-black text-slate-900 uppercase tracking-widest">Download Resources</h4>
+                                            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Official Study Material & Handouts</p>
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('courses.download-attachment', $activeContent) }}" target="_blank" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-100">
+                                        <i class="fas fa-external-link-alt mr-1"></i> Open PDF
+                                    </a>
+                                </div>
+                            @endif
                         @endif
 
                         <!-- Completion Action -->

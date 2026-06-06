@@ -122,7 +122,7 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'body' => 'nullable|string',
             'quiz_id' => 'nullable|exists:quizzes,id',
-            'attachment' => 'nullable|file|mimes:pdf|max:10240',
+            'attachment' => 'nullable|file|mimes:pdf,png,jpg,jpeg,webp,gif|max:10240',
         ]);
 
         if ($request->hasFile('attachment')) {
@@ -142,7 +142,7 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'body' => 'nullable|string',
             'quiz_id' => 'nullable|exists:quizzes,id',
-            'attachment' => 'nullable|file|mimes:pdf|max:10240',
+            'attachment' => 'nullable|file|mimes:pdf,png,jpg,jpeg,webp,gif|max:10240',
         ]);
 
         if ($request->hasFile('attachment')) {

@@ -198,10 +198,10 @@
                                                             
                                                             <div class="p-10 border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50 text-center group/pdf hover:border-indigo-300 hover:bg-indigo-50/50 transition-all">
                                                                 <label class="cursor-pointer">
-                                                                    <i class="fas fa-file-pdf text-3xl text-slate-300 mb-3 group-hover/pdf:text-indigo-500 transition-colors"></i>
-                                                                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest group-hover/pdf:text-slate-900 transition-colors">Binary PDF Attachment</p>
-                                                                    <input type="file" name="attachment" class="hidden" accept="application/pdf" onchange="const name = this.files[0] ? this.files[0].name.substring(0, 20) + '...' : 'PDF Loaded'; this.nextElementSibling.innerText = name">
-                                                                    <span class="text-[8px] font-black text-indigo-600 uppercase tracking-widest mt-2 block italic">AES-256 (PDF) < 10MB</span>
+                                                                    <i class="fas fa-file-import text-3xl text-slate-300 mb-3 group-hover/pdf:text-indigo-500 transition-colors"></i>
+                                                                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest group-hover/pdf:text-slate-900 transition-colors">PDF / Image Attachment</p>
+                                                                    <input type="file" name="attachment" class="hidden" accept="application/pdf,image/*" onchange="const name = this.files[0] ? this.files[0].name.substring(0, 20) + '...' : 'Loaded'; this.nextElementSibling.innerText = name">
+                                                                    <span class="text-[8px] font-black text-indigo-600 uppercase tracking-widest mt-2 block italic">PDF, PNG, JPG, WEBP, GIF < 10MB</span>
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -243,14 +243,18 @@
                                                     <span class="text-[8px] text-slate-400 font-bold uppercase tracking-[0.2em] italic">{{ $content->type }} UNIT</span>
                                                     @if($content->attachment_path)
                                                         <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
-                                                        <i class="fas fa-file-pdf text-red-400 text-[8px]"></i>
+                                                        @php
+                                                            $ext = strtolower(pathinfo($content->attachment_path, PATHINFO_EXTENSION));
+                                                            $isImg = in_array($ext, ['png', 'jpg', 'jpeg', 'webp', 'gif']);
+                                                        @endphp
+                                                        <i class="fas {{ $isImg ? 'fa-file-image text-emerald-500' : 'fa-file-pdf text-red-400' }} text-[8px]"></i>
                                                     @endif
                                                 </div>
                                             </div>
                                             
                                             <div class="flex items-center gap-2 opacity-0 group-hover/card:opacity-100 transition-opacity">
                                                 @if($content->attachment_path)
-                                                    <a href="{{ asset('storage/' . $content->attachment_path) }}" target="_blank" class="w-9 h-9 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                                                    <a href="{{ route('courses.download-attachment', $content) }}" target="_blank" class="w-9 h-9 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
                                                         <i class="fas fa-eye text-xs"></i>
                                                     </a>
                                                 @endif
@@ -290,12 +294,12 @@
 
                                                                 <div class="p-8 border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50 text-center group/repdf hover:border-indigo-300 transition-all">
                                                                     <label class="cursor-pointer">
-                                                                        <i class="fas fa-file-pdf text-3xl text-slate-300 mb-2 opacity-50"></i>
+                                                                        <i class="fas fa-file-import text-3xl text-slate-300 mb-2 opacity-50"></i>
                                                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">
-                                                                            {{ $content->attachment_path ? 'Overwrite Document' : 'Supply Document' }}
+                                                                            {{ $content->attachment_path ? 'Overwrite Attachment' : 'Supply Attachment' }}
                                                                         </p>
-                                                                        <input type="file" name="attachment" class="hidden" accept="application/pdf">
-                                                                        <span class="text-[8px] font-black text-indigo-600 uppercase tracking-widest mt-2 block">BINARY PDF < 10MB</span>
+                                                                        <input type="file" name="attachment" class="hidden" accept="application/pdf,image/*" onchange="const name = this.files[0] ? this.files[0].name.substring(0, 20) + '...' : 'Loaded'; this.nextElementSibling.innerText = name">
+                                                                        <span class="text-[8px] font-black text-indigo-600 uppercase tracking-widest mt-2 block">PDF / IMAGE < 10MB</span>
                                                                     </label>
                                                                 </div>
                                                             @elseif($content->type === 'video')

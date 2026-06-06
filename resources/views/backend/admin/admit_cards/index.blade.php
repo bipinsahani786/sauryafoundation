@@ -15,6 +15,9 @@
                 @endif
             </form>
 
+            <a href="{{ route('admin.admit-cards.bulk-create') }}" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-slate-800 transition-all whitespace-nowrap">
+                <i class="fas fa-users mr-1"></i> Bulk Generate
+            </a>
             <a href="{{ route('admin.admit-cards.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-indigo-700 transition-all whitespace-nowrap">
                 <i class="fas fa-plus mr-1"></i> Generate Admit Card
             </a>

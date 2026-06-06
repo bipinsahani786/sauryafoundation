@@ -110,8 +110,8 @@
                                 Watch Video <i class="fas fa-play text-[7px] group-hover/btn:translate-x-1 transition-transform"></i>
                             </a>
                         @else
-                            <a href="{{ asset('storage/' . $lmsMaterial->attachment_path) }}" target="_blank" class="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[9px] uppercase tracking-[0.2em] py-3.5 rounded-xl transition-all shadow-md shadow-indigo-600/20 italic group/btn active:scale-95">
-                                Download Document <i class="fas fa-download text-[7px] group-hover/btn:translate-y-1 transition-transform"></i>
+                            <a href="{{ route('courses.download-attachment', $lmsMaterial) }}" target="_blank" class="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[9px] uppercase tracking-[0.2em] py-3.5 rounded-xl transition-all shadow-md shadow-indigo-600/20 italic group/btn active:scale-95">
+                                {{ in_array(strtolower(pathinfo($lmsMaterial->attachment_path, PATHINFO_EXTENSION)), ['png', 'jpg', 'jpeg', 'webp', 'gif']) ? 'Download Image' : 'Download Document' }} <i class="fas fa-download text-[7px] group-hover/btn:translate-y-1 transition-transform"></i>
                             </a>
                         @endif
                     </div>
