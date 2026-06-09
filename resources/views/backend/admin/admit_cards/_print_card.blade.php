@@ -149,7 +149,7 @@
                 </div>
                 <div class="flex flex-col min-w-0">
                     <span class="color-primary-green font-bold text-[0.65rem] leading-none mb-1 whitespace-nowrap">HELPLINE NUMBER</span>
-                    <span class="color-dark-blue font-black text-[0.95rem] tracking-wide leading-none mt-1 truncate">+91 ____________</span>
+                    <span class="color-dark-blue font-black text-[0.95rem] tracking-wide leading-none mt-1 truncate">+91 9570750232</span>
                 </div>
             </div>
         </div>
