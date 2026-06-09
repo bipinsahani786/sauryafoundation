@@ -7,7 +7,7 @@
         </div>
     @endif
 
-    <div class="space-y-8" x-data="{ showSubjectModal: false }">
+    <div class="space-y-8" x-data="{ showSubjectModal: false, activeSubject: {{ $course->subjects->first()->id ?? 'null' }} }">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden italic">
             @if($course->is_global)
@@ -63,10 +63,14 @@
                 <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] px-4 italic">Syllabus Architecture</h3>
                 <div class="space-y-3">
                     @foreach($course->subjects as $subject)
-                        <div class="bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm italic">
-                            <div class="p-5 bg-slate-50/50 flex items-center justify-between border-b border-slate-50">
-                                <span class="text-[10px] font-black text-slate-800 uppercase tracking-wider">{{ $subject->title }}</span>
-                                <div x-data="{ showTopicModal: false, showEditSubjectModal: false }" class="flex items-center gap-1">
+                        <div class="bg-white rounded-[2rem] border overflow-hidden shadow-sm italic cursor-pointer transition-all"
+                             :class="activeSubject === {{ $subject->id }} ? 'border-indigo-600 ring-4 ring-indigo-50 shadow-md' : 'border-slate-200 hover:border-indigo-300'"
+                             @click="activeSubject = {{ $subject->id }}; if(window.innerWidth < 768) { $nextTick(() => { document.getElementById('main-panel-content').scrollIntoView({behavior: 'smooth', block: 'start'}) }) }">
+                            <div class="p-5 flex items-center justify-between border-b transition-colors"
+                                 :class="activeSubject === {{ $subject->id }} ? 'bg-indigo-50/50 border-indigo-100' : 'bg-slate-50/50 border-slate-50'">
+                                <span class="text-[10px] font-black uppercase tracking-wider transition-colors"
+                                      :class="activeSubject === {{ $subject->id }} ? 'text-indigo-600' : 'text-slate-800'">{{ $subject->title }}</span>
+                                <div x-data="{ showTopicModal: false, showEditSubjectModal: false }" class="flex items-center gap-1" @click.stop>
                                     <button @click="showEditSubjectModal = true" class="w-6 h-6 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-amber-500 hover:bg-amber-500 hover:text-white transition-all shadow-sm" title="Edit Subject">
                                         <i class="fas fa-edit text-[8px]"></i>
                                     </button>
@@ -109,7 +113,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-3 space-y-1">
+                            <div class="p-3 space-y-1" x-show="activeSubject === {{ $subject->id }}">
                                 @foreach($subject->topics as $topic)
                                     <a href="#topic_{{ $topic->id }}" class="block w-full text-left px-4 py-3 rounded-xl text-[11px] font-black uppercase tracking-tight transition-all text-slate-500 hover:bg-slate-50 hover:text-indigo-600 italic">
                                         <i class="fas fa-caret-right mr-2 text-[8px] opacity-30"></i> {{ $topic->title }}
@@ -122,7 +126,7 @@
             </div>
 
             <!-- Main Panel: Content Management -->
-            <div class="md:col-span-3 space-y-8">
+            <div id="main-panel-content" class="md:col-span-3 space-y-8 scroll-mt-6">
                 @if($course->subjects->isEmpty())
                     <div class="bg-white rounded-[3rem] border-2 border-dashed border-slate-200 py-32 text-center shadow-sm">
                         <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-300">
@@ -136,8 +140,18 @@
                     </div>
                 @else
                     @foreach($course->subjects as $subject)
-                        @foreach($subject->topics as $topic)
-                            <div id="topic_{{ $topic->id }}" class="bg-white rounded-[3rem] border border-slate-200 p-10 shadow-sm scroll-mt-24 italic group">
+                        <div x-show="activeSubject === {{ $subject->id }}" class="space-y-8" style="display: none;" x-transition.opacity>
+                            @if($subject->topics->isEmpty())
+                                <div class="bg-white rounded-[3rem] border-2 border-dashed border-slate-200 py-20 text-center shadow-sm">
+                                    <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-300">
+                                         <i class="fas fa-folder-open text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-slate-900 font-black uppercase tracking-tight italic mb-2">No Topics Yet</h3>
+                                    <p class="text-slate-400 text-xs font-bold italic max-w-xs mx-auto leading-relaxed">This domain has no topics. Add a topic from the sidebar.</p>
+                                </div>
+                            @endif
+                            @foreach($subject->topics as $topic)
+                                <div id="topic_{{ $topic->id }}" class="bg-white rounded-[3rem] border border-slate-200 p-10 shadow-sm scroll-mt-24 italic group">
                                 <div class="flex items-center justify-between mb-10 pb-6 border-b border-slate-100">
                                     <div>
                                         <span class="text-[9px] font-black text-indigo-600 uppercase tracking-[0.2em] italic mb-1 block">{{ $subject->title }} Terminal</span>
@@ -332,7 +346,8 @@
                                     @endforeach
                                 </div>
                             </div>
-                        @endforeach
+                            @endforeach
+                        </div>
                     @endforeach
                 @endif
             </div>
