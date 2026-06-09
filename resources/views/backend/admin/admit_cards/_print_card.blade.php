@@ -115,41 +115,41 @@
         </div>
 
         <!-- INFO BAR -->
-        <div class="grid grid-cols-4 border-y-2 border-[#94a3b8] py-2 mb-4 bg-white relative z-20">
+        <div class="grid grid-cols-[1fr_1fr_1fr_1.2fr] border-y-2 border-[#94a3b8] py-2 mb-4 bg-white relative z-20">
             <!-- Item 1 -->
-            <div class="flex items-center justify-center gap-3 border-r border-[#94a3b8]">
-                <i class="fa-solid fa-calendar-days text-3xl color-primary-green"></i>
+            <div class="flex items-center justify-center gap-2 border-r border-[#94a3b8] px-1">
+                <i class="fa-solid fa-calendar-days text-3xl color-primary-green flex-shrink-0"></i>
                 <div class="flex flex-col">
-                    <span class="color-dark-blue font-bold text-xs">EXAM DATE</span>
-                    <span class="text-red-700 font-black text-sm">{{ strtoupper($admitCard->exam_date->format('d F Y')) }}</span>
-                    <span class="color-dark-blue font-bold text-xs">({{ strtoupper($admitCard->exam_date->format('l')) }})</span>
+                    <span class="color-dark-blue font-bold text-[0.7rem] leading-none mb-1">EXAM DATE</span>
+                    <span class="text-red-700 font-black text-[0.85rem] leading-none">{{ strtoupper($admitCard->exam_date->format('d F Y')) }}</span>
+                    <span class="color-dark-blue font-bold text-[0.65rem] leading-none mt-1">({{ strtoupper($admitCard->exam_date->format('l')) }})</span>
                 </div>
             </div>
             <!-- Item 2 -->
-            <div class="flex items-center justify-center gap-3 border-r border-[#94a3b8]">
-                <i class="fa-regular fa-clock text-4xl color-dark-blue"></i>
+            <div class="flex items-center justify-center gap-2 border-r border-[#94a3b8] px-1">
+                <i class="fa-regular fa-clock text-4xl color-dark-blue flex-shrink-0"></i>
                 <div class="flex flex-col">
-                    <span class="color-dark-blue font-bold text-xs">EXAM TIME</span>
-                    <span class="text-red-700 font-black text-[0.95rem]">STARTS AT</span>
-                    <span class="text-red-700 font-black text-[0.95rem]">{{ $admitCard->exam_date->format('h:i A') }}</span>
+                    <span class="color-dark-blue font-bold text-[0.7rem] leading-none mb-1">EXAM TIME</span>
+                    <span class="text-red-700 font-black text-[0.85rem] leading-none">STARTS AT</span>
+                    <span class="text-red-700 font-black text-[0.85rem] leading-none mt-1">{{ $admitCard->exam_date->format('h:i A') }}</span>
                 </div>
             </div>
             <!-- Item 3 -->
-            <div class="flex items-center justify-center gap-3 border-r border-[#94a3b8]">
-                <i class="fa-regular fa-alarm-clock text-4xl color-orange"></i>
+            <div class="flex items-center justify-center gap-2 border-r border-[#94a3b8] px-1">
+                <i class="fa-regular fa-alarm-clock text-4xl color-orange flex-shrink-0"></i>
                 <div class="flex flex-col">
-                    <span class="color-dark-blue font-bold text-xs">LAST ENTRY</span>
-                    <span class="text-red-700 font-black text-[1.1rem]">{{ $admitCard->exam_date->subMinutes(30)->format('h:i A') }}</span>
+                    <span class="color-dark-blue font-bold text-[0.7rem] leading-none mb-1">LAST ENTRY</span>
+                    <span class="text-red-700 font-black text-lg leading-none mt-1">{{ $admitCard->exam_date->subMinutes(30)->format('h:i A') }}</span>
                 </div>
             </div>
             <!-- Item 4 -->
-            <div class="flex items-center justify-center gap-3">
-                <div class="w-10 h-10 rounded-full border-2 border-primary-green flex items-center justify-center">
+            <div class="flex items-center justify-center gap-2 px-1 pl-2">
+                <div class="w-10 h-10 rounded-full border-2 border-primary-green flex items-center justify-center flex-shrink-0 bg-white">
                     <i class="fa-solid fa-phone color-primary-green text-xl transform -rotate-90"></i>
                 </div>
-                <div class="flex flex-col">
-                    <span class="color-primary-green font-bold text-[0.7rem]">HELPLINE NUMBER</span>
-                    <span class="color-dark-blue font-black text-lg tracking-wide">{{ $siteSettings['site_phone'] ?? 'N/A' }}</span>
+                <div class="flex flex-col min-w-0">
+                    <span class="color-primary-green font-bold text-[0.65rem] leading-none mb-1 whitespace-nowrap">HELPLINE NUMBER</span>
+                    <span class="color-dark-blue font-black text-[0.95rem] tracking-wide leading-none mt-1 truncate">{{ $siteSettings['site_phone'] ?? 'N/A' }}</span>
                 </div>
             </div>
         </div>
