@@ -19,7 +19,8 @@
 
                     <div class="space-y-6" x-data="{ 
                         logoPreview: '{{ isset($settings['site_logo']) ? asset('storage/' . $settings['site_logo']) : '' }}',
-                        faviconPreview: '{{ isset($settings['site_favicon']) ? asset('storage/' . $settings['site_favicon']) : '' }}'
+                        faviconPreview: '{{ isset($settings['site_favicon']) ? asset('storage/' . $settings['site_favicon']) : '' }}',
+                        admitCardHeaderPreview: '{{ isset($settings['admit_card_header']) ? asset('storage/' . $settings['admit_card_header']) : '' }}'
                     }">
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Site Name</label>
@@ -54,6 +55,23 @@
                                     </template>
                                 </div>
                                 <input type="file" name="site_favicon" @change="let reader = new FileReader(); reader.onload = (e) => { faviconPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="w-full text-[10px] font-black text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Admit Card Header Image</label>
+                            <p class="text-[9px] text-slate-400 italic ml-1 mb-2">Recommended: wide image for print layout (e.g., 1000x200px).</p>
+                            <div class="relative group">
+                                <input type="file" name="admit_card_header" @change="let reader = new FileReader(); reader.onload = (e) => { admitCardHeaderPreview = e.target.result }; reader.readAsDataURL($event.target.files[0])" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 text-center group-hover:border-indigo-600 transition-all">
+                                    <template x-if="admitCardHeaderPreview">
+                                        <img :src="admitCardHeaderPreview" class="h-16 w-full object-contain mx-auto mb-3">
+                                    </template>
+                                    <template x-if="!admitCardHeaderPreview">
+                                        <i class="fas fa-file-image text-3xl text-slate-300 mb-3"></i>
+                                    </template>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="admitCardHeaderPreview ? 'Change Admit Card Header' : 'Upload Header Image'"></p>
+                                </div>
                             </div>
                         </div>
                     </div>

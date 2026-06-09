@@ -14,6 +14,7 @@ class AdmitCard extends Model
         'exam_center',
         'exam_date',
         'instructions',
+        'header_image',
     ];
 
     protected $casts = [

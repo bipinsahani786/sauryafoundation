@@ -510,8 +510,7 @@ class StudentController extends Controller
         $admitCard->load('user');
         $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('backend.admin.admit_cards.pdf', compact('admitCard', 'siteSettings'));
-        return $pdf->download('Admit_Card_' . $admitCard->roll_no . '.pdf');
+        return view('backend.admin.admit_cards.print', compact('admitCard', 'siteSettings'));
     }
 
     public function downloadContentAttachment(\App\Models\Content $content)

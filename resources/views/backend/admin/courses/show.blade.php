@@ -233,26 +233,28 @@
                                         $contents = $topic->contents()->orderBy('order')->get();
                                     @endphp
                                     @foreach($contents as $content)
-                                        <div class="flex items-center gap-6 p-6 rounded-[2rem] bg-white border border-slate-200 shadow-sm hover:shadow-xl transition-all group/card relative" x-data="{ showEditModal: false }">
-                                            <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner transition-transform group-hover/card:scale-110 {{ $content->type === 'video' ? 'bg-rose-50 text-rose-600' : ($content->type === 'test' ? 'bg-amber-50 text-amber-600' : 'bg-indigo-50 text-indigo-600') }}">
-                                                <i class="fas {{ $content->type === 'video' ? 'fa-play-circle text-xl' : ($content->type === 'test' ? 'fa-vial text-xl' : 'fa-file-signature text-xl') }}"></i>
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <h4 class="text-sm font-black text-slate-900 truncate tracking-tight italic">{{ $content->title }}</h4>
-                                                <div class="flex items-center gap-2 mt-1">
-                                                    <span class="text-[8px] text-slate-400 font-bold uppercase tracking-[0.2em] italic">{{ $content->type }} UNIT</span>
-                                                    @if($content->attachment_path)
-                                                        <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
-                                                        @php
-                                                            $ext = strtolower(pathinfo($content->attachment_path, PATHINFO_EXTENSION));
-                                                            $isImg = in_array($ext, ['png', 'jpg', 'jpeg', 'webp', 'gif']);
-                                                        @endphp
-                                                        <i class="fas {{ $isImg ? 'fa-file-image text-emerald-500' : 'fa-file-pdf text-red-400' }} text-[8px]"></i>
-                                                    @endif
+                                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-[2rem] bg-white border border-slate-200 shadow-sm hover:shadow-xl transition-all group/card relative" x-data="{ showEditModal: false }">
+                                            <div class="flex items-center gap-4 md:gap-6 flex-1 min-w-0">
+                                                <div class="w-14 h-14 flex-shrink-0 rounded-2xl flex items-center justify-center shadow-inner transition-transform group-hover/card:scale-110 {{ $content->type === 'video' ? 'bg-rose-50 text-rose-600' : ($content->type === 'test' ? 'bg-amber-50 text-amber-600' : 'bg-indigo-50 text-indigo-600') }}">
+                                                    <i class="fas {{ $content->type === 'video' ? 'fa-play-circle text-xl' : ($content->type === 'test' ? 'fa-vial text-xl' : 'fa-file-signature text-xl') }}"></i>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <h4 class="text-sm font-black text-slate-900 truncate tracking-tight italic">{{ $content->title }}</h4>
+                                                    <div class="flex items-center gap-2 mt-1">
+                                                        <span class="text-[8px] text-slate-400 font-bold uppercase tracking-[0.2em] italic">{{ $content->type }} UNIT</span>
+                                                        @if($content->attachment_path)
+                                                            <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
+                                                            @php
+                                                                $ext = strtolower(pathinfo($content->attachment_path, PATHINFO_EXTENSION));
+                                                                $isImg = in_array($ext, ['png', 'jpg', 'jpeg', 'webp', 'gif']);
+                                                            @endphp
+                                                            <i class="fas {{ $isImg ? 'fa-file-image text-emerald-500' : 'fa-file-pdf text-red-400' }} text-[8px]"></i>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                             
-                                            <div class="flex items-center gap-2 opacity-0 group-hover/card:opacity-100 transition-opacity">
+                                            <div class="flex items-center gap-2 self-end md:self-auto opacity-100 lg:opacity-0 lg:group-hover/card:opacity-100 transition-opacity">
                                                 @if($content->attachment_path)
                                                     <a href="{{ route('courses.download-attachment', $content) }}" target="_blank" class="w-9 h-9 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
                                                         <i class="fas fa-eye text-xs"></i>

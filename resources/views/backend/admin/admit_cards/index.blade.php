@@ -15,6 +15,9 @@
                 @endif
             </form>
 
+            <a href="{{ route('admin.admit-cards.print-bulk', request()->all()) }}" target="_blank" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-emerald-700 transition-all whitespace-nowrap">
+                <i class="fas fa-print mr-1"></i> Print All
+            </a>
             <a href="{{ route('admin.admit-cards.bulk-create') }}" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-slate-800 transition-all whitespace-nowrap">
                 <i class="fas fa-users mr-1"></i> Bulk Generate
             </a>
@@ -59,11 +62,14 @@
                             <td class="px-4 py-3 text-slate-600">{{ $card->exam_date->format('d M, Y h:i A') }}</td>
                             <td class="px-4 py-3 text-right">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{{ route('admin.admit-cards.show', $card) }}" class="p-1.5 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-md transition-colors" title="View / Print">
-                                        <i class="fas fa-print"></i>
+                                    <a href="{{ route('admin.admit-cards.show', $card) }}" class="p-1.5 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-md transition-colors" title="View Details">
+                                        <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('admin.admit-cards.pdf', $card) }}" class="p-1.5 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-md transition-colors" title="Download PDF">
-                                        <i class="fas fa-file-pdf"></i>
+                                    <a href="{{ route('admin.admit-cards.edit', $card) }}" class="p-1.5 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-md transition-colors" title="Edit Admit Card">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ route('admin.admit-cards.pdf', $card) }}" target="_blank" class="p-1.5 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-md transition-colors" title="Print Admit Card">
+                                        <i class="fas fa-print"></i>
                                     </a>
                                     <form action="{{ route('admin.admit-cards.destroy', $card) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this admit card?');" class="inline">
                                         @csrf

@@ -26,6 +26,8 @@ class SettingController extends Controller
                     Storage::disk('public')->delete($oldValue);
                 }
                 $value = $request->file($key)->store('settings', 'public');
+            } elseif ($value === null && (str_contains($key, 'image') || str_contains($key, 'logo') || str_contains($key, 'favicon') || str_contains($key, 'header') || str_contains($key, 'qr'))) {
+                continue;
             }
 
             Setting::updateOrCreate(

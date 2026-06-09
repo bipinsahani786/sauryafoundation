@@ -301,6 +301,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         // Admit Cards Bulk Generate
         Route::get('admit-cards/bulk-generate', [\App\Http\Controllers\Backend\Admin\AdmitCardController::class, 'bulkCreate'])->name('admit-cards.bulk-create');
         Route::post('admit-cards/bulk-generate', [\App\Http\Controllers\Backend\Admin\AdmitCardController::class, 'bulkStore'])->name('admit-cards.bulk-store');
+        Route::get('admit-cards/get-enrolled-students', [\App\Http\Controllers\Backend\Admin\AdmitCardController::class, 'getEnrolledStudents'])->name('admit-cards.get-enrolled-students');
+        Route::get('admit-cards/print-bulk', [\App\Http\Controllers\Backend\Admin\AdmitCardController::class, 'printBulk'])->name('admit-cards.print-bulk');
 
         // Admit Cards
         Route::resource('admit-cards', \App\Http\Controllers\Backend\Admin\AdmitCardController::class);

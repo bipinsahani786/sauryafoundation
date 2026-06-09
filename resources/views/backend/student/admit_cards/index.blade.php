@@ -36,8 +36,8 @@
                 
                 <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-between items-center group-hover:bg-indigo-50 transition-colors">
                     <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Action</span>
-                    <a href="{{ route('student.admit-cards.pdf', $card) }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-indigo-700 transition-all flex items-center gap-2">
-                        <i class="fas fa-download"></i> Download PDF
+                    <a href="{{ route('student.admit-cards.pdf', $card) }}" target="_blank" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-indigo-700 transition-all flex items-center gap-2">
+                        <i class="fas fa-print"></i> Print Admit Card
                     </a>
                 </div>
             </div>
