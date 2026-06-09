@@ -199,14 +199,14 @@
                         <i class="fa-solid fa-school text-[#0f305c] text-lg text-center"></i>
                         <span class="color-dark-blue font-bold">School Name</span>
                         <span class="font-bold">:</span>
-                        <div class="border-b-[1.5px] border-gray-400 h-5 w-full text-black font-bold truncate" title="{{ strtoupper($admitCard->user->school_name ?? 'N/A') }}">{{ strtoupper($admitCard->user->school_name ?? 'N/A') }}</div>
+                        <div class="border-b-[1.5px] border-gray-400 h-5 w-full text-black font-bold truncate" title="{{ strtoupper($admitCard->user->coaching_or_school ?? 'N/A') }}">{{ strtoupper($admitCard->user->coaching_or_school ?? 'N/A') }}</div>
                     </div>
                     <!-- Row 6 -->
                     <div class="grid grid-cols-[30px_140px_10px_1fr] items-center text-[0.9rem]">
                         <i class="fa-solid fa-mobile-screen-button text-[#15793f] text-xl text-center"></i>
                         <span class="color-primary-green font-bold">Mobile Number</span>
                         <span class="font-bold">:</span>
-                        <div class="border-b-[1.5px] border-gray-400 h-5 w-full text-black font-bold">{{ $admitCard->user->phone ?? 'N/A' }}</div>
+                        <div class="border-b-[1.5px] border-gray-400 h-5 w-full text-black font-bold">{{ $admitCard->user->mobile_number ?? 'N/A' }}</div>
                     </div>
                 </div>
 
