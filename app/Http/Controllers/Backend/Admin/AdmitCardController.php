@@ -31,7 +31,14 @@ class AdmitCardController extends Controller
 
     public function create()
     {
-        $students = User::where('role', 'student')->select('id', 'name', 'email')->get();
+        $students = User::where('role', 'student')
+            ->where(function ($query) {
+                $query->whereHas('teacher', function($q) {
+                    $q->where('status', 'active');
+                })->orWhereNull('teacher_id');
+            })
+            ->select('id', 'name', 'email')
+            ->get();
         $classes = \App\Models\StudentClass::where('status', 'active')->get();
         
         // Generate a random roll number for suggestion
@@ -137,7 +144,7 @@ class AdmitCardController extends Controller
         
         $query = \App\Models\QuizEnrollment::where('quiz_id', $quiz->id)
             ->where('status', 'active')
-            ->with('student.studentClass');
+            ->with(['student.studentClass', 'student.teacher']);
 
         if (!empty($validated['class_ids'])) {
             $query->whereHas('student', function($q) use ($validated) {
@@ -162,6 +169,11 @@ class AdmitCardController extends Controller
             $student = $enrollment->student;
             
             if (!$student) {
+                continue;
+            }
+
+            // Skip students whose teacher (coaching) is inactive
+            if ($student->teacher && $student->teacher->status !== 'active') {
                 continue;
             }
 
@@ -207,7 +219,14 @@ class AdmitCardController extends Controller
 
     public function edit(AdmitCard $admitCard)
     {
-        $students = User::where('role', 'student')->select('id', 'name', 'email')->get();
+        $students = User::where('role', 'student')
+            ->where(function ($query) {
+                $query->whereHas('teacher', function($q) {
+                    $q->where('status', 'active');
+                })->orWhereNull('teacher_id');
+            })
+            ->select('id', 'name', 'email')
+            ->get();
         $classes = \App\Models\StudentClass::where('status', 'active')->get();
         return view('backend.admin.admit_cards.edit', compact('admitCard', 'students', 'classes'));
     }
@@ -256,7 +275,7 @@ class AdmitCardController extends Controller
 
         $enrollments = \App\Models\QuizEnrollment::where('quiz_id', $quizId)
             ->where('status', 'active')
-            ->with(['student.studentClass'])
+            ->with(['student.studentClass', 'student.teacher'])
             ->get();
 
         $students = collect();
@@ -265,6 +284,11 @@ class AdmitCardController extends Controller
         foreach ($enrollments as $enrollment) {
             $student = $enrollment->student;
             if ($student) {
+                // Skip students whose teacher (coaching) is inactive
+                if ($student->teacher && $student->teacher->status !== 'active') {
+                    continue;
+                }
+
                 // Collect class if exists
                 if ($student->studentClass) {
                     $classes->push([

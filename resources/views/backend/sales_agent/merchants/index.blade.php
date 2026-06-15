@@ -7,9 +7,20 @@
                 <h2 class="text-xl font-bold text-slate-900 tracking-tight text-[11px] uppercase tracking-[0.2em] mb-1">Enrolled coaching Centers</h2>
                 <p class="text-xs text-slate-400 font-medium italic">Manage the list of coaching centers you've enrolled.</p>
             </div>
-            <button @click="open = true" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-indigo-700 transition-all">
-                <i class="fas fa-plus mr-1"></i> Enroll New Coaching
-            </button>
+            <div class="flex items-center gap-3">
+                @if($status === 'inactive')
+                    <a href="{{ route('sales-agent.merchants', ['status' => 'active']) }}" class="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-emerald-200 transition-all">
+                        <i class="fas fa-check-circle mr-1"></i> View Active Coachings
+                    </a>
+                @else
+                    <a href="{{ route('sales-agent.merchants', ['status' => 'inactive']) }}" class="px-4 py-2 bg-rose-100 text-rose-700 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-rose-200 transition-all">
+                        <i class="fas fa-ban mr-1"></i> View Inactive Coachings
+                    </a>
+                @endif
+                <button @click="open = true" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-indigo-700 transition-all">
+                    <i class="fas fa-plus mr-1"></i> Enroll New Coaching
+                </button>
+            </div>
         </div>
 
         <!-- Enrollment Modal -->
@@ -77,8 +88,12 @@
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
-        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-            <h3 class="font-black text-slate-900 uppercase tracking-widest text-sm">Enrolled Coachings</h3>
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 flex-wrap gap-4">
+            <div class="flex items-center gap-4">
+                <h3 class="font-black text-slate-900 uppercase tracking-widest text-sm">
+                    {{ $status === 'inactive' ? 'Inactive Coachings' : 'Active Coachings' }}
+                </h3>
+            </div>
             <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-bold uppercase">{{ $merchants->total() }} Total</span>
         </div>
         
@@ -93,40 +108,72 @@
                             <div>
                                 <h4 class="font-bold text-slate-900 text-sm">{{ $merchant->name }}</h4>
                                 <p class="text-[10px] text-slate-500">{{ $merchant->coaching_or_school ?? 'N/A' }} &bull; {{ $merchant->email }}</p>
+                                @if(auth()->user()->agent_permissions === null || !empty($permissions['view_mobile']))
+                                <div x-show="open" x-collapse class="mt-1">
+                                    <p class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-indigo-50 text-[10px] font-bold text-indigo-700 border border-indigo-100">
+                                        <i class="fas fa-phone-alt"></i> {{ $merchant->mobile_number ?? 'N/A' }}
+                                    </p>
+                                </div>
+                                @endif
                             </div>
                         </div>
                         <div class="flex items-center gap-4">
                             @if(auth()->user()->agent_permissions === null || !empty($permissions['view_students']))
                                 <span class="text-xs font-bold text-slate-600"><i class="fas fa-user-graduate text-emerald-500 mr-1"></i> {{ $merchant->students->count() }} Students</span>
                             @endif
+                            
+                            @php
+                                $hasExamParticipated = \App\Models\QuizEnrollment::whereIn('student_id', $merchant->students->pluck('id'))->exists() || \App\Models\Quiz::where('teacher_id', $merchant->id)->exists();
+                            @endphp
+
+                            <form action="{{ route('sales-agent.merchants.toggle-status', $merchant) }}" method="POST" class="inline" @click.stop>
+                                @csrf
+                                <button type="submit" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all {{ $merchant->status === 'active' ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' }}">
+                                    {{ $merchant->status === 'active' ? 'Mark Inactive' : 'Mark Active' }}
+                                </button>
+                            </form>
+
+                            <span class="px-2 py-1 rounded text-[9px] font-black uppercase {{ $merchant->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                {{ $merchant->status }}
+                            </span>
+
                             <i class="fas fa-chevron-down text-slate-400 transition-transform duration-200" :class="{'rotate-180': open}"></i>
                         </div>
                     </div>
                     
                     <div x-show="open" x-collapse class="bg-slate-50 border-t border-slate-100 p-4">
-                        @if(auth()->user()->agent_permissions === null || !empty($permissions['view_students']))
-                            @if($merchant->students->count() > 0)
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    @foreach($merchant->students as $student)
-                                        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3 hover:shadow-md transition-all cursor-default">
-                                            <div class="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xs flex-shrink-0">
-                                                <i class="fas fa-user"></i>
+
+                        @if($merchant->status === 'active')
+                            @if(auth()->user()->agent_permissions === null || !empty($permissions['view_students']))
+                                @if($merchant->students->count() > 0)
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        @foreach($merchant->students as $student)
+                                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3 hover:shadow-md transition-all cursor-default">
+                                                <div class="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p class="font-bold text-slate-800 text-xs truncate">{{ $student->name }}</p>
+                                                    <p class="text-[10px] text-slate-500 truncate">{{ $student->studentClass->name ?? 'No Class' }}</p>
+                                                </div>
                                             </div>
-                                            <div class="min-w-0">
-                                                <p class="font-bold text-slate-800 text-xs truncate">{{ $student->name }}</p>
-                                                <p class="text-[10px] text-slate-500 truncate">{{ $student->studentClass->name ?? 'No Class' }}</p>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-xs text-slate-400 italic text-center py-4">No students enrolled under this coaching yet.</p>
+                                @endif
                             @else
-                                <p class="text-xs text-slate-400 italic text-center py-4">No students enrolled under this coaching yet.</p>
+                                <div class="p-6 text-center">
+                                    <i class="fas fa-lock text-slate-300 text-3xl mb-3"></i>
+                                    <h3 class="text-slate-500 font-bold text-sm">Students Hidden</h3>
+                                    <p class="text-xs text-slate-400 mt-1">You do not have permission to view the students for this coaching center.</p>
+                                </div>
                             @endif
                         @else
                             <div class="p-6 text-center">
-                                <i class="fas fa-lock text-slate-300 text-3xl mb-3"></i>
-                                <h3 class="text-slate-500 font-bold text-sm">Students Hidden</h3>
-                                <p class="text-xs text-slate-400 mt-1">You do not have permission to view the students for this coaching center.</p>
+                                <i class="fas fa-ban text-slate-300 text-3xl mb-3"></i>
+                                <h3 class="text-slate-500 font-bold text-sm">Coaching is Inactive</h3>
+                                <p class="text-xs text-slate-400 mt-1">Mark this coaching as active to view and manage its students.</p>
                             </div>
                         @endif
                     </div>

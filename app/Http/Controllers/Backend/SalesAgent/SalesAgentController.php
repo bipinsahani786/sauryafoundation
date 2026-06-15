@@ -34,13 +34,20 @@ class SalesAgentController extends Controller
 
         $query = $user->referrals()->where('role', 'teacher')->latest();
         
+        $status = request('status', 'active');
+        if ($status === 'active') {
+            $query->where('status', 'active');
+        } elseif ($status === 'inactive') {
+            $query->where('status', 'inactive');
+        }
+
         // Eager load students if allowed
         if ($user->agent_permissions === null || !empty($permissions['view_students'])) {
             $query->with('students.studentClass');
         }
 
-        $merchants = $query->paginate(15);
-        return view('backend.sales_agent.merchants.index', compact('merchants', 'permissions'));
+        $merchants = $query->paginate(15)->appends(['status' => $status]);
+        return view('backend.sales_agent.merchants.index', compact('merchants', 'permissions', 'status'));
     }
 
     public function storeMerchant(Request $request)
@@ -73,6 +80,22 @@ class SalesAgentController extends Controller
         ]);
 
         return back()->with('success', 'Coaching center enrolled successfully.');
+    }
+
+    public function toggleMerchantStatus(User $merchant)
+    {
+        $user = auth()->user();
+
+        // Ensure the merchant belongs to this agent
+        if ($merchant->referred_by !== $user->id || $merchant->role !== 'teacher') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $merchant->update([
+            'status' => $merchant->status === 'active' ? 'inactive' : 'active'
+        ]);
+
+        return back()->with('success', 'Coaching center status updated successfully.');
     }
 
     public function wallet()

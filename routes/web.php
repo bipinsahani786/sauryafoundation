@@ -380,6 +380,7 @@ Route::middleware(['auth', 'sales_agent'])->prefix('sales-agent')->name('sales-a
     Route::get('/dashboard', [SalesAgentController::class, 'index'])->name('dashboard');
     Route::get('/merchants', [SalesAgentController::class, 'merchants'])->name('merchants');
     Route::post('/merchants', [SalesAgentController::class, 'storeMerchant'])->name('merchants.store');
+    Route::post('/merchants/{merchant}/toggle-status', [SalesAgentController::class, 'toggleMerchantStatus'])->name('merchants.toggle-status');
     Route::get('/wallet', [SalesAgentController::class, 'wallet'])->name('wallet');
     Route::get('/wallet/topup', [SalesAgentController::class, 'topup'])->name('wallet.topup');
     Route::post('/wallet/topup', [SalesAgentController::class, 'submitTopup'])->name('wallet.topup.submit');

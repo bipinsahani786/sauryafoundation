@@ -60,6 +60,7 @@
                 @method('PUT')
                 
                 @php
+                    $isDefault = is_null($user->agent_permissions);
                     $permissions = $user->agent_permissions ?? [];
                 @endphp
                 
@@ -73,7 +74,7 @@
                             </div>
                         </div>
                         <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                            <input type="checkbox" name="agent_permissions[view_teachers]" value="1" id="toggle_teachers" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-300 checked:right-0 checked:border-indigo-600 transition-all" {{ isset($permissions['view_teachers']) && $permissions['view_teachers'] == '1' ? 'checked' : '' }}>
+                            <input type="checkbox" name="agent_permissions[view_teachers]" value="1" id="toggle_teachers" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-300 checked:right-0 checked:border-indigo-600 transition-all" {{ $isDefault || (isset($permissions['view_teachers']) && $permissions['view_teachers'] == '1') ? 'checked' : '' }}>
                             <label for="toggle_teachers" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer"></label>
                         </div>
                     </label>
@@ -87,8 +88,22 @@
                             </div>
                         </div>
                         <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                            <input type="checkbox" name="agent_permissions[view_students]" value="1" id="toggle_students" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-300 checked:right-0 checked:border-emerald-600 transition-all" {{ isset($permissions['view_students']) && $permissions['view_students'] == '1' ? 'checked' : '' }}>
+                            <input type="checkbox" name="agent_permissions[view_students]" value="1" id="toggle_students" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-300 checked:right-0 checked:border-emerald-600 transition-all" {{ $isDefault || (isset($permissions['view_students']) && $permissions['view_students'] == '1') ? 'checked' : '' }}>
                             <label for="toggle_students" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer"></label>
+                        </div>
+                    </label>
+
+                    <label class="flex items-center justify-between p-3 border border-slate-100 rounded-xl hover:bg-slate-50 cursor-pointer transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-phone-alt text-amber-500"></i>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800">View Mobile Numbers</h4>
+                                <p class="text-[10px] text-slate-400 italic">Allow agent to see the mobile number of their enrolled coachings.</p>
+                            </div>
+                        </div>
+                        <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="agent_permissions[view_mobile]" value="1" id="toggle_mobile" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-300 checked:right-0 checked:border-amber-600 transition-all" {{ $isDefault || (isset($permissions['view_mobile']) && $permissions['view_mobile'] == '1') ? 'checked' : '' }}>
+                            <label for="toggle_mobile" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer"></label>
                         </div>
                     </label>
                 </div>
@@ -174,5 +189,6 @@
         /* Color overrides for checked state are handled via border-color classes in HTML */
         #toggle_teachers:checked + .toggle-label { background-color: #4f46e5; }
         #toggle_students:checked + .toggle-label { background-color: #10b981; }
+        #toggle_mobile:checked + .toggle-label { background-color: #f59e0b; }
     </style>
 </x-dashboard.layout>
