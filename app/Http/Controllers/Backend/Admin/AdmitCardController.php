@@ -141,9 +141,9 @@ class AdmitCardController extends Controller
         }
 
         $quiz = \App\Models\Quiz::findOrFail($validated['quiz_id']);
-        
         $query = \App\Models\QuizEnrollment::where('quiz_id', $quiz->id)
             ->where('status', 'active')
+            ->where('paid_amount', '>', 0)
             ->with(['student.studentClass', 'student.teacher']);
 
         if (!empty($validated['class_ids'])) {
@@ -174,6 +174,16 @@ class AdmitCardController extends Controller
 
             // Skip students whose teacher (coaching) is inactive
             if ($student->teacher && $student->teacher->status !== 'active') {
+                continue;
+            }
+
+            // Check if PRO (sales agent) got commission for this enrollment
+            $hasProCommission = \App\Models\Commission::where('quiz_enrollment_id', $enrollment->id)
+                ->where('type', 'sales_agent')
+                ->exists();
+
+            if (!$hasProCommission) {
+                $skippedCount++;
                 continue;
             }
 

@@ -69,35 +69,44 @@ class CommissionService
 
                     $remainingAmount -= $teacherAmount;
                 }
+            }
 
-                // 2. Sales Agent Commission (Referrer of the Teacher)
+            // 2. Sales Agent Commission (PRO)
+            $salesAgent = null;
+            $agentDesc = "";
+            if ($teacher && $teacher->referrer && $teacher->referrer->isSalesAgent()) {
                 $salesAgent = $teacher->referrer;
-                if ($salesAgent && $salesAgent->isSalesAgent()) {
-                    $agentPercent = $salesAgent->commission_percent ?? 0;
-                    $agentAmount = ($paidAmount * $agentPercent) / 100;
+                $agentDesc = "Teacher Referral: {$teacher->name}";
+            } elseif ($student->referrer && $student->referrer->isSalesAgent()) {
+                $salesAgent = $student->referrer;
+                $agentDesc = "Direct Student Referral";
+            }
 
-                    if ($agentAmount > 0) {
-                        $salesAgent->deposit(
-                            $agentAmount, 
-                            $quizEnrollmentId ? QuizEnrollment::class : \App\Models\Course::class, 
-                            $quizEnrollmentId ?? $courseId, 
-                            "Sub-Commission | Teacher: {$teacher->name} | Student: {$student->name}"
-                        );
+            if ($salesAgent) {
+                $agentPercent = $salesAgent->commission_percent ?? 0;
+                $agentAmount = ($paidAmount * $agentPercent) / 100;
 
-                        Commission::create([
-                            'user_id' => $salesAgent->id,
-                            'student_id' => $student->id,
-                            'quiz_enrollment_id' => $quizEnrollmentId,
-                            'course_id' => $courseId,
-                            'total_amount' => $paidAmount,
-                            'commission_percent' => $agentPercent,
-                            'amount' => $agentAmount,
-                            'type' => 'sales_agent',
-                            'description' => "Agent Payout: {$agentPercent}% of ₹{$paidAmount} (Teacher Referral: {$teacher->name})"
-                        ]);
+                if ($agentAmount > 0) {
+                    $salesAgent->deposit(
+                        $agentAmount, 
+                        $quizEnrollmentId ? QuizEnrollment::class : \App\Models\Course::class, 
+                        $quizEnrollmentId ?? $courseId, 
+                        "Sub-Commission | Student: {$student->name} | {$assetTypeLabel}: {$assetTitle}"
+                    );
 
-                        $remainingAmount -= $agentAmount;
-                    }
+                    Commission::create([
+                        'user_id' => $salesAgent->id,
+                        'student_id' => $student->id,
+                        'quiz_enrollment_id' => $quizEnrollmentId,
+                        'course_id' => $courseId,
+                        'total_amount' => $paidAmount,
+                        'commission_percent' => $agentPercent,
+                        'amount' => $agentAmount,
+                        'type' => 'sales_agent',
+                        'description' => "Agent Payout: {$agentPercent}% of ₹{$paidAmount} ({$agentDesc})"
+                    ]);
+
+                    $remainingAmount -= $agentAmount;
                 }
             }
 
