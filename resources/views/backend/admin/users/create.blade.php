@@ -8,11 +8,11 @@
     </div>
 
     <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm w-full">
-        <form action="{{ isset($user) ? route('admin.users.update', $user->id) : route('admin.users.store') }}" method="POST" class="space-y-4">
+        <form action="{{ isset($user) ? route('admin.users.update', $user->id) : route('admin.users.store') }}" method="POST" class="space-y-4" x-data="{ role: '{{ $user->role ?? old('role', 'admin') }}' }">
             @csrf
             @if(isset($user)) @method('PUT') @endif
             
-            <div class="grid grid-cols-2 gap-4" x-data="{ role: '{{ $user->role ?? old('role', 'admin') }}' }">
+            <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1.5">
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block ml-1">Full Name</label>
                     <input type="text" name="name" value="{{ $user->name ?? old('name') }}" placeholder="John Doe" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-xs font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-all" required>
