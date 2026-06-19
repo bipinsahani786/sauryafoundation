@@ -185,7 +185,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
     </div>
 
     @foreach($admitCards as $admitCard)
-        <div class="page-break-wrapper @if(!$loop->last) page-break @endif w-full flex flex-col items-center">
+        <div class="page-break-wrapper @if(!$loop->last) page-break @endif min-w-[850px] w-full flex flex-col items-center print:h-[290mm] print:overflow-hidden print:justify-start">
             <!-- Student Copy -->
             <div class="text-center font-bold text-gray-500 uppercase tracking-widest text-xs mb-2 mt-4 print:mt-0">Student Copy</div>
             <div class="card-wrapper">

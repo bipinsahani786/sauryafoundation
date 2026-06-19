@@ -166,7 +166,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         </button>
     </div>
 
-    <div class="w-full flex flex-col items-center">
+    <div class="min-w-[850px] w-full flex flex-col items-center print:h-[290mm] print:overflow-hidden print:justify-start">
         <!-- Student Copy -->
         <div class="text-center font-bold text-gray-500 uppercase tracking-widest text-xs mb-2">Student Copy</div>
         <div class="card-wrapper">
