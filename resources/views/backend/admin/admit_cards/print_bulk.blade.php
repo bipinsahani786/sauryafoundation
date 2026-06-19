@@ -173,9 +173,11 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
             .card-wrapper {
                 display: block !important;
                 width: 850px !important;
+                height: 800px !important; /* Extremely safe height to prevent inner content from overflowing */
                 margin: 0 auto !important;
-                transform: scale(0.85) !important; /* Scale to fill A4 nicely */
+                transform: scale(0.75) !important; /* 75% scale ensures it fits ALL printer hardware margins perfectly */
                 transform-origin: top center !important;
+                margin-bottom: -200px !important; /* 800 - (800 * 0.75) = 800 - 600 = 200 */
                 page-break-inside: avoid !important;
             }
             .print-wrapper-reset {
