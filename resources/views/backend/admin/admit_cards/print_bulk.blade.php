@@ -155,7 +155,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 10mm; /* User requested 10mm margin to match physical reference */
+                margin: 2mm; /* Reduced to minimum possible margin */
             }
             body, html {
                 margin: 0 !important;
@@ -170,7 +170,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
             }
             /* USER'S REQUESTED EXACT LAYOUT */
             .a4-page {
-                width: 190mm !important;
+                width: 206mm !important; /* Increased to 206mm out of 210mm */
                 height: 277mm !important;
                 display: flex !important;
                 flex-direction: column !important;
@@ -189,7 +189,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
             }
             /* Bridge to prevent the fixed-pixel Tailwind card from overflowing the mm container */
             .card-scaler {
-                width: 980px !important; /* Stretched horizontally */
+                width: 1100px !important; /* Pushed to maximum possible width at 0.72 scale */
                 height: 720px !important;
                 transform: scale(0.72) !important; /* Reverted to 0.72 as per physical print reference */
                 transform-origin: top center !important;
@@ -203,9 +203,9 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
                 height: 10px !important;
             }
             .admit-card-container {
-                min-width: 980px !important;
-                width: 980px !important;
-                max-width: 980px !important;
+                min-width: 1100px !important;
+                width: 1100px !important;
+                max-width: 1100px !important;
             }
         }
     </style>
