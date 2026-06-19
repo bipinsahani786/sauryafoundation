@@ -3,13 +3,13 @@
     <!-- Print Button (Only show if not bulk printing) -->
     @if(!isset($isBulkPrint) || !$isBulkPrint)
     <div class="absolute top-4 right-4 z-50 no-print">
-        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow">
+        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 shadow">
             <i class="fas fa-print mr-2"></i> Print Admit Card
         </button>
     </div>
     @endif
 
-    <div class="inner-border">
+    <div class="inner-border border-2 border-green-700 p-2">
         
         <!-- HEADER SECTION -->
         <div class="flex items-center justify-between mb-4">
@@ -102,7 +102,7 @@
                     <div class="banner-top text-center w-[85%] mr-12">
                         <span class="text-white font-bold text-sm tracking-wider uppercase block leading-tight">Exam</span>
                         <span class="text-white font-black text-[0.9rem] tracking-wider uppercase block leading-tight truncate px-2" title="{{ $admitCard->exam_name }}">{{ Str::limit($admitCard->exam_name, 25) }}</span>
-                        <div class="bg-white text-dark-blue font-bold text-sm mx-auto mt-1 px-4 py-0.5 rounded-full inline-block border-2 border-[#0f305c]">
+                        <div class="bg-white text-dark-blue font-bold text-sm mx-auto mt-1 px-4 py-0.5 border-2 border-[#0f305c]">
                             <span class="color-dark-blue">— {{ $admitCard->exam_date->format('Y') }} —</span>
                         </div>
                     </div>
@@ -144,7 +144,7 @@
             </div>
             <!-- Item 4 -->
             <div class="flex items-center justify-center gap-2 px-1 pl-2">
-                <div class="w-10 h-10 rounded-full border-2 border-primary-green flex items-center justify-center flex-shrink-0 bg-white">
+                <div class="w-10 h-10 border-2 border-primary-green flex items-center justify-center flex-shrink-0 bg-white">
                     <i class="fa-solid fa-phone color-primary-green text-xl transform -rotate-90"></i>
                 </div>
                 <div class="flex flex-col min-w-0">
@@ -158,9 +158,9 @@
         <div class="grid grid-cols-[1.6fr_1fr] gap-4 items-stretch">
             
             <!-- LEFT COLUMN: STUDENT DETAILS -->
-            <div class="border-[1.5px] border-[#94a3b8] rounded-xl relative pt-6 pb-4 px-4 flex gap-4 h-full mt-3 min-w-0">
+            <div class="border-[1.5px] border-[#94a3b8] relative pt-6 pb-4 px-4 flex gap-4 h-full mt-3 min-w-0">
                 <!-- Title Badge -->
-                <div class="absolute -top-4 left-20 bg-primary-green text-white px-8 py-1 rounded-full border-2 border-white font-bold text-sm uppercase shadow-sm">
+                <div class="absolute -top-4 left-20 bg-primary-green text-white px-8 py-1 border-2 border-white font-bold text-sm uppercase shadow-sm">
                     Student Details
                 </div>
 
@@ -212,7 +212,7 @@
 
                 <!-- Photo Box -->
                 <div class="w-[140px] flex-shrink-0 flex flex-col justify-end mt-[-10px]">
-                    <div class="photo-box bg-white rounded flex flex-col items-center pt-2 relative overflow-hidden h-[180px]">
+                    <div class="photo-box bg-white border border-gray-300 flex flex-col items-center pt-2 relative overflow-hidden h-[180px]">
                         @if($admitCard->user && $admitCard->user->profile_photo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($admitCard->user->profile_photo_path))
                             <img src="{{ asset('storage/' . $admitCard->user->profile_photo_path) }}" class="w-full h-full object-cover pb-6">
                         @else
@@ -234,8 +234,8 @@
             <div class="flex flex-col gap-4 h-full mt-3 min-w-0">
                 
                 <!-- Examination Centre -->
-                <div class="border-[1.5px] border-[#94a3b8] rounded-xl relative pt-6 pb-2 px-3 flex-1 min-w-0">
-                     <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-primary-green text-white px-6 py-0.5 rounded-full border-2 border-white font-bold text-[0.7rem] uppercase shadow-sm whitespace-nowrap">
+                <div class="border-[1.5px] border-[#94a3b8] relative pt-6 pb-2 px-3 flex-1 min-w-0">
+                     <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-primary-green text-white px-6 py-0.5 border-2 border-white font-bold text-[0.7rem] uppercase shadow-sm whitespace-nowrap">
                         Examination Centre
                     </div>
                     
@@ -243,7 +243,7 @@
                         <!-- Icon -->
                         <div class="relative w-12 h-12 flex-shrink-0">
                             <i class="fa-solid fa-location-dot text-red-600 text-3xl absolute top-0 left-1/2 transform -translate-x-1/2 z-10 drop-shadow-md"></i>
-                            <div class="w-10 h-8 bg-blue-100 border border-blue-300 absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-end justify-center rounded-sm">
+                            <div class="w-10 h-8 bg-blue-100 border border-blue-300 absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-end justify-center">
                                 <div class="w-full flex justify-between px-1 mb-1">
                                     <div class="w-1.5 h-1.5 bg-blue-800"></div>
                                     <div class="w-1.5 h-1.5 bg-blue-800"></div>
@@ -262,8 +262,8 @@
                 </div>
 
                 <!-- Important Instructions -->
-                <div class="border-[1.5px] border-[#94a3b8] rounded-xl relative pt-6 pb-2 px-3 bg-[#f8fafc] flex-[2] min-w-0">
-                    <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-dark-blue text-white px-6 py-0.5 rounded-full border-2 border-white font-bold text-[0.7rem] uppercase shadow-sm whitespace-nowrap">
+                <div class="border-[1.5px] border-[#94a3b8] relative pt-6 pb-2 px-3 bg-[#f8fafc] flex-[2] min-w-0">
+                    <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-dark-blue text-white px-6 py-0.5 border-2 border-white font-bold text-[0.7rem] uppercase shadow-sm whitespace-nowrap">
                         Important Instructions
                     </div>
 
@@ -280,7 +280,7 @@
                         <!-- Requirement Icons Block -->
                         <div class="flex items-center justify-center gap-2 mt-1 mb-2 pl-6">
                             <!-- ID Box -->
-                            <div class="flex items-center gap-1 border border-gray-300 bg-white rounded px-1 py-1">
+                            <div class="flex items-center gap-1 border border-gray-300 bg-white px-1 py-1">
                                 <i class="fa-solid fa-address-card text-blue-500 text-xl"></i>
                                 <div class="flex flex-col text-[0.55rem] font-bold leading-tight">
                                     <span class="hindi-text">पहचान पत्र</span>
@@ -289,7 +289,7 @@
                             </div>
                             <span class="text-red-500 font-bold text-lg">+</span>
                             <!-- Photo Box -->
-                            <div class="flex items-center gap-1 border border-gray-300 bg-white rounded px-1 py-1">
+                            <div class="flex items-center gap-1 border border-gray-300 bg-white px-1 py-1">
                                 <i class="fa-solid fa-user text-green-600 text-xl"></i>
                                 <div class="flex flex-col text-[0.55rem] font-bold leading-tight hindi-text">
                                     <span>एक पासपोर्ट</span>
@@ -298,7 +298,7 @@
                             </div>
                             <span class="text-red-500 font-bold text-lg">+</span>
                             <!-- Admit Card Box -->
-                            <div class="flex items-center gap-1 border border-gray-300 bg-white rounded px-1 py-1">
+                            <div class="flex items-center gap-1 border border-gray-300 bg-white px-1 py-1">
                                 <i class="fa-regular fa-clipboard text-red-500 text-xl"></i>
                                 <div class="flex flex-col text-[0.55rem] font-bold leading-tight hindi-text">
                                     <span class="mt-1">यह एडमिट कार्ड</span>

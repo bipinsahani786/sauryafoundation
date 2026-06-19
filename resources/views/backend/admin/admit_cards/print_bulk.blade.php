@@ -155,7 +155,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 10mm; /* User requested 10mm margin */
+                margin: 10mm; /* User requested 10mm margin to match physical reference */
             }
             body, html {
                 margin: 0 !important;
@@ -186,13 +186,12 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
                 page-break-inside: avoid !important;
                 display: flex !important;
                 justify-content: center !important;
-                /* overflow: hidden removed to allow larger scaled cards to use the gap space safely */
             }
             /* Bridge to prevent the fixed-pixel Tailwind card from overflowing the mm container */
             .card-scaler {
-                width: 850px !important;
+                width: 980px !important; /* Stretched horizontally */
                 height: 720px !important;
-                transform: scale(0.72) !important; /* Increased scale by 20% for larger cards */
+                transform: scale(0.72) !important; /* Reverted to 0.72 as per physical print reference */
                 transform-origin: top center !important;
             }
             .cut-line-print {
@@ -204,9 +203,9 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
                 height: 10px !important;
             }
             .admit-card-container {
-                min-width: 850px !important;
-                width: 850px !important;
-                max-width: 850px !important;
+                min-width: 980px !important;
+                width: 980px !important;
+                max-width: 980px !important;
             }
         }
     </style>
