@@ -156,7 +156,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0.5cm;
+                margin: 0 !important; /* Force 0 margin to prevent browser scaling */
             }
             body {
                 padding: 0 !important;
@@ -164,23 +164,25 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
+            .a4-physical-page {
+                width: 210mm !important;
+                height: 296mm !important;
+                overflow: hidden !important; /* NEVER allow spillover to next page */
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                padding: 10mm !important;
+                box-sizing: border-box !important;
+                page-break-inside: avoid !important;
+                margin: 0 auto !important;
+            }
             .card-wrapper {
-                zoom: 0.6; /* Reduced slightly to ensure no spillover */
-                page-break-inside: avoid;
+                zoom: 0.58; /* Perfectly balanced for 2 cards */
+                margin: 0 auto !important;
             }
             .cut-line-print {
-                margin-top: 5px !important;
-                margin-bottom: 5px !important;
-            }
-            .bottom-card {
-                zoom: 0.6;
-            }
-            .page-break-wrapper {
-                page-break-inside: avoid;
-                margin-bottom: 0 !important;
-            }
-            .page-break {
-                page-break-after: always !important;
+                margin: 15px auto !important;
+                width: 90% !important;
             }
             /* Reset min-width for the main wrapper during print so mobile auto-scales */
             .print-wrapper-reset {
@@ -200,19 +202,20 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         </button>
     </div>
 
-    <div class="min-w-[850px] print-wrapper-reset w-full flex flex-col items-center print:overflow-hidden print:justify-start">
+    <div class="min-w-[850px] print-wrapper-reset w-full print:block">
         @php $chunks = $admitCards->chunk(2); @endphp
         
         @foreach($chunks as $chunk)
-            <div class="w-full @if(!$loop->last) page-break @endif flex flex-col items-center pt-2 print:pt-0">
+            <!-- 1 Physical A4 Page -->
+            <div class="a4-physical-page">
                 @foreach($chunk as $index => $admitCard)
-                    <div class="card-wrapper w-full mt-2 mb-2">
+                    <div class="card-wrapper w-full">
                         @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
                     </div>
                     
                     @if($loop->first && count($chunk) > 1)
                         <!-- Cut Line between the 2 students on this page -->
-                        <div class="w-full max-w-[1050px] flex items-center gap-2 px-4 cut-line-print my-6 print:my-2">
+                        <div class="w-full max-w-[1050px] flex items-center gap-2 px-4 cut-line-print">
                             <i class="fa-solid fa-scissors text-gray-700 text-lg"></i>
                             <div class="w-full border-t-[3px] border-dashed border-gray-500"></div>
                             <span class="text-xs text-gray-400 font-bold uppercase tracking-widest whitespace-nowrap">Cut Here</span>
@@ -220,6 +223,11 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
                     @endif
                 @endforeach
             </div>
+            
+            @if(!$loop->last)
+                <!-- Bulletproof Page Break -->
+                <div style="page-break-after: always; break-after: page; clear: both;"></div>
+            @endif
         @endforeach
     </div>
 
