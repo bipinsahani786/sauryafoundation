@@ -17,12 +17,15 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         body {
             background-color: #f0f2f5;
             font-family: 'Poppins', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             padding: 20px;
             overflow-x: auto;
+            text-align: center; /* Center the wrapper horizontally */
+        }
+        .main-wrapper {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100%;
         }
         .hindi-text {
             font-family: 'Noto Sans Devanagari', sans-serif;
@@ -131,7 +134,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
     </style>
 </head>
 <body>
-
+<div class="main-wrapper">
     <style>
         .card-wrapper {
             width: 100%;
@@ -181,5 +184,6 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         </div>
     </div>
 
+</div>
 </body>
 </html>

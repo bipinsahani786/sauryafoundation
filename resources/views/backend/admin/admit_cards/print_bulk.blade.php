@@ -17,12 +17,15 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         body {
             background-color: #f0f2f5;
             font-family: 'Poppins', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
             padding: 20px;
             overflow-x: auto;
+            text-align: center;
+        }
+        .main-wrapper {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100%;
         }
         .hindi-text {
             font-family: 'Noto Sans Devanagari', sans-serif;
@@ -185,7 +188,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
     </style>
 </head>
 <body>
-
+<div class="main-wrapper">
     <!-- Global Print Button -->
     <div class="fixed top-4 right-4 z-50 no-print">
         <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg flex items-center gap-2">
@@ -211,5 +214,6 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         </div>
     @endif
 
+</div>
 </body>
 </html>
