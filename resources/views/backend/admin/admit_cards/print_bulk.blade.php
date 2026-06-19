@@ -165,18 +165,22 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
                 print-color-adjust: exact !important;
             }
             .card-wrapper {
-                zoom: 0.65; /* Slightly smaller to ensure it fits mobile print margins */
+                zoom: 0.6; /* Reduced slightly to ensure no spillover */
+                page-break-inside: avoid;
             }
             .cut-line-print {
-                margin-top: 10px !important;
-                margin-bottom: 10px !important;
+                margin-top: 5px !important;
+                margin-bottom: 5px !important;
             }
             .bottom-card {
-                zoom: 0.65;
+                zoom: 0.6;
             }
             .page-break-wrapper {
                 page-break-inside: avoid;
                 margin-bottom: 0 !important;
+            }
+            .page-break {
+                page-break-after: always !important;
             }
             /* Reset min-width for the main wrapper during print so mobile auto-scales */
             .print-wrapper-reset {
@@ -200,7 +204,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         @php $chunks = $admitCards->chunk(2); @endphp
         
         @foreach($chunks as $chunk)
-            <div class="w-full @if(!$loop->last) page-break @endif flex flex-col items-center print:h-[290mm] print:overflow-hidden print:justify-start pt-4">
+            <div class="w-full @if(!$loop->last) page-break @endif flex flex-col items-center pt-2 print:pt-0">
                 @foreach($chunk as $index => $admitCard)
                     <div class="card-wrapper w-full mt-2 mb-2">
                         @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
