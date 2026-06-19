@@ -22,6 +22,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            overflow-x: auto;
         }
         .hindi-text {
             font-family: 'Noto Sans Devanagari', sans-serif;
@@ -93,9 +94,9 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
             background-color: #7e22ce; /* Purple for 3 */
         }
 
-        /* Container styling to look like a printed page */
         .admit-card-container {
             width: 100%;
+            min-width: 850px;
             max-width: 1050px;
             background-color: white;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -131,7 +132,60 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
 </head>
 <body>
 
-    @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard])
+    <style>
+        .card-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        @media print {
+            @page {
+                margin: 0.5cm; /* Small margins for print */
+            }
+            body {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .card-wrapper {
+                zoom: 0.7; /* Zoom affects document flow height, transform does not */
+            }
+            .cut-line-print {
+                margin-top: 15px !important;
+                margin-bottom: 15px !important;
+            }
+            .bottom-card {
+                zoom: 0.7;
+            }
+        }
+    </style>
+
+    <!-- Global Print Button -->
+    <div class="fixed top-4 right-4 z-50 no-print">
+        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg flex items-center gap-2">
+            <i class="fas fa-print"></i> Print Admit Card
+        </button>
+    </div>
+
+    <div class="w-full flex flex-col items-center">
+        <!-- Student Copy -->
+        <div class="text-center font-bold text-gray-500 uppercase tracking-widest text-xs mb-2">Student Copy</div>
+        <div class="card-wrapper">
+            @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
+        </div>
+
+        <!-- Cut Line -->
+        <div class="w-full max-w-[1050px] flex items-center gap-2 px-4 my-8 cut-line-print">
+            <i class="fa-solid fa-scissors text-gray-700 text-lg"></i>
+            <div class="w-full border-t-[3px] border-dashed border-gray-500"></div>
+            <span class="text-xs text-gray-400 font-bold uppercase tracking-widest whitespace-nowrap">Cut Here</span>
+        </div>
+
+        <!-- Office Copy -->
+        <div class="text-center font-bold text-gray-500 uppercase tracking-widest text-xs mb-2">Office Copy</div>
+        <div class="card-wrapper bottom-card">
+            @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
+        </div>
+    </div>
 
 </body>
 </html>

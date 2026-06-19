@@ -1,4 +1,4 @@
-<div class="admit-card-container relative pb-10">
+<div class="admit-card-container relative pb-4">
 
     <!-- Print Button (Only show if not bulk printing) -->
     @if(!isset($isBulkPrint) || !$isBulkPrint)
