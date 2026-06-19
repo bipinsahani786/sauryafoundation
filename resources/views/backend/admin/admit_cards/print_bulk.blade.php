@@ -155,32 +155,55 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 5mm; /* Use native safe margins */
+                margin: 10mm; /* User requested 10mm margin */
             }
-            body {
-                padding: 0 !important;
+            body, html {
                 margin: 0 !important;
+                padding: 0 !important;
+                display: block !important;
+                background-color: white !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            .page-container {
-                display: block !important;
-                width: 100% !important;
+            .main-wrapper {
+                display: block !important; /* Critical to allow page breaks */
             }
-            /* Fix WebKit Paginator Bug: scale() reserves original unscaled DOM height. 
-               We must explicitly collapse the unscaled space using negative margin 
-               so the browser doesn't think it crosses a page break! */
-            .card-wrapper {
-                display: block !important;
-                width: 850px !important;
-                height: 800px !important; /* Extremely safe height to prevent inner content from overflowing */
+            /* USER'S REQUESTED EXACT LAYOUT */
+            .a4-page {
+                width: 190mm !important;
+                height: 277mm !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
                 margin: 0 auto !important;
-                transform: scale(0.75) !important; /* 75% scale ensures it fits ALL printer hardware margins perfectly */
-                transform-origin: top center !important;
-                margin-bottom: -200px !important; /* 800 - (800 * 0.75) = 800 - 600 = 200 */
-                page-break-inside: avoid !important;
+                page-break-after: always !important;
+                position: relative !important;
             }
-            .print-wrapper-reset {
+            .card-wrapper {
+                width: 100% !important;
+                height: 48% !important;
+                box-sizing: border-box !important;
+                page-break-inside: avoid !important;
+                display: flex !important;
+                justify-content: center !important;
+                /* overflow: hidden removed to allow larger scaled cards to use the gap space safely */
+            }
+            /* Bridge to prevent the fixed-pixel Tailwind card from overflowing the mm container */
+            .card-scaler {
+                width: 850px !important;
+                height: 720px !important;
+                transform: scale(0.72) !important; /* Increased scale by 20% for larger cards */
+                transform-origin: top center !important;
+            }
+            .cut-line-print {
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 80% !important;
+                height: 10px !important;
+            }
+            .admit-card-container {
                 min-width: auto !important;
                 width: 100% !important;
             }
@@ -197,16 +220,31 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
     </div>
 
     <div class="min-w-[850px] print-wrapper-reset w-full print:block mt-8 print:mt-0">
-        @foreach($admitCards as $index => $admitCard)
-            <!-- 1 Physical A4 Page -->
-            <div class="page-container">
-                <div class="card-wrapper">
-                    @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
-                </div>
+        @php $chunks = $admitCards->chunk(2); @endphp
+        
+        @foreach($chunks as $chunk)
+            <!-- 1 Physical A4 Page (2 Cards) -->
+            <div class="a4-page">
+                @foreach($chunk as $admitCard)
+                    <div class="card-wrapper">
+                        <div class="card-scaler">
+                            @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
+                        </div>
+                    </div>
+                @endforeach
+                
+                @if(count($chunk) > 1)
+                    <!-- Cut Line between the 2 students on this page -->
+                    <div class="cut-line-print flex items-center gap-2">
+                        <i class="fa-solid fa-scissors text-gray-700 text-lg"></i>
+                        <div class="w-full border-t-[3px] border-dashed border-gray-500"></div>
+                        <span class="text-xs text-gray-400 font-bold uppercase tracking-widest whitespace-nowrap">Cut Here</span>
+                    </div>
+                @endif
             </div>
             
             @if(!$loop->last)
-                <!-- Bulletproof Page Break -->
+                <!-- 100% Bulletproof Hard Page Break -->
                 <div style="page-break-after: always; break-after: page; display: block; height: 0;"></div>
             @endif
         @endforeach
