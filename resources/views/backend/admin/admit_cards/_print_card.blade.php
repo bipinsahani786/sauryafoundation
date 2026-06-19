@@ -158,14 +158,14 @@
         <div class="grid grid-cols-[1.6fr_1fr] gap-4 items-stretch">
             
             <!-- LEFT COLUMN: STUDENT DETAILS -->
-            <div class="border-[1.5px] border-[#94a3b8] rounded-xl relative pt-6 pb-4 px-4 flex gap-4 h-full mt-3">
+            <div class="border-[1.5px] border-[#94a3b8] rounded-xl relative pt-6 pb-4 px-4 flex gap-4 h-full mt-3 min-w-0">
                 <!-- Title Badge -->
                 <div class="absolute -top-4 left-20 bg-primary-green text-white px-8 py-1 rounded-full border-2 border-white font-bold text-sm uppercase shadow-sm">
                     Student Details
                 </div>
 
                 <!-- Form Fields -->
-                <div class="flex-grow flex flex-col justify-between pt-2">
+                <div class="flex-grow flex flex-col justify-between pt-2 min-w-0">
                     <!-- Row 1 -->
                     <div class="grid grid-cols-[30px_140px_10px_1fr] items-center text-[0.9rem] mb-2">
                         <i class="fa-solid fa-user text-[#0f305c] text-lg text-center"></i>

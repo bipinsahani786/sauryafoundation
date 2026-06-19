@@ -204,8 +204,9 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
                 height: 10px !important;
             }
             .admit-card-container {
-                min-width: auto !important;
-                width: 100% !important;
+                min-width: 850px !important;
+                width: 850px !important;
+                max-width: 850px !important;
             }
         }
     </style>
