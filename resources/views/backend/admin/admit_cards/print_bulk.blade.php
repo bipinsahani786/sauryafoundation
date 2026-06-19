@@ -197,11 +197,24 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
     </div>
 
     <div class="min-w-[850px] print-wrapper-reset w-full flex flex-col items-center print:overflow-hidden print:justify-start">
-        @foreach($admitCards as $admitCard)
-            <div class="w-full @if(!$loop->last) page-break @endif flex flex-col items-center">
-                <div class="card-wrapper mt-4 print:mt-0">
-                    @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
-                </div>
+        @php $chunks = $admitCards->chunk(2); @endphp
+        
+        @foreach($chunks as $chunk)
+            <div class="w-full @if(!$loop->last) page-break @endif flex flex-col items-center print:h-[290mm] print:overflow-hidden print:justify-start pt-4">
+                @foreach($chunk as $index => $admitCard)
+                    <div class="card-wrapper w-full mt-2 mb-2">
+                        @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
+                    </div>
+                    
+                    @if($loop->first && count($chunk) > 1)
+                        <!-- Cut Line between the 2 students on this page -->
+                        <div class="w-full max-w-[1050px] flex items-center gap-2 px-4 cut-line-print my-6 print:my-2">
+                            <i class="fa-solid fa-scissors text-gray-700 text-lg"></i>
+                            <div class="w-full border-t-[3px] border-dashed border-gray-500"></div>
+                            <span class="text-xs text-gray-400 font-bold uppercase tracking-widest whitespace-nowrap">Cut Here</span>
+                        </div>
+                    @endif
+                @endforeach
             </div>
         @endforeach
     </div>
