@@ -167,46 +167,46 @@
                 <!-- Form Fields -->
                 <div class="flex-grow flex flex-col justify-between pt-2 min-w-0">
                     <!-- Row 1 -->
-                    <div class="grid grid-cols-[30px_140px_10px_1fr] items-center text-[0.9rem] mb-2">
+                    <div class="grid grid-cols-[30px_115px_10px_1fr] items-center text-[0.9rem] mb-2 min-w-0">
                         <i class="fa-solid fa-user text-[#0f305c] text-lg text-center"></i>
-                        <span class="color-dark-blue font-bold">Student Name</span>
+                        <span class="color-dark-blue font-bold whitespace-nowrap">Student Name</span>
                         <span class="font-bold">:</span>
-                        <div class="border-b-[1.5px] border-gray-400 h-5 w-full text-black font-bold">{{ strtoupper($admitCard->user->name) }}</div>
+                        <div class="border-b-[1.5px] border-gray-400 min-h-[1.25rem] w-full text-black font-bold break-words">{{ strtoupper($admitCard->user->name) }}</div>
                     </div>
                     <!-- Row 2 -->
-                    <div class="grid grid-cols-[30px_140px_10px_1fr] items-center text-[0.9rem] mb-2">
+                    <div class="grid grid-cols-[30px_115px_10px_1fr] items-center text-[0.9rem] mb-2 min-w-0">
                         <i class="fa-solid fa-graduation-cap text-[#15793f] text-lg text-center"></i>
-                        <span class="color-primary-green font-bold">Class</span>
+                        <span class="color-primary-green font-bold whitespace-nowrap">Class</span>
                         <span class="font-bold">:</span>
-                        <div class="border-b-[1.5px] border-gray-400 h-5 w-full text-black font-bold">{{ strtoupper($admitCard->student_class ?? 'N/A') }}</div>
+                        <div class="border-b-[1.5px] border-gray-400 min-h-[1.25rem] w-full text-black font-bold break-words">{{ strtoupper($admitCard->student_class ?? 'N/A') }}</div>
                     </div>
                     <!-- Row 3 -->
-                    <div class="grid grid-cols-[30px_140px_10px_1fr] items-center text-[0.9rem] mb-2">
+                    <div class="grid grid-cols-[30px_115px_10px_1fr] items-center text-[0.9rem] mb-2 min-w-0">
                         <i class="fa-regular fa-id-card text-[#6b21a8] text-lg text-center"></i>
-                        <span class="text-[#6b21a8] font-bold">Roll Number</span>
+                        <span class="text-[#6b21a8] font-bold whitespace-nowrap">Roll Number</span>
                         <span class="font-bold">:</span>
-                        <div class="border-b-[1.5px] border-gray-400 h-5 w-full text-black font-bold tracking-widest">{{ $admitCard->roll_no }}</div>
+                        <div class="border-b-[1.5px] border-gray-400 min-h-[1.25rem] w-full text-black font-bold tracking-wide break-words">{{ $admitCard->roll_no }}</div>
                     </div>
                     <!-- Row 4 -->
-                    <div class="grid grid-cols-[30px_140px_10px_1fr] items-center text-[0.9rem] mb-2">
+                    <div class="grid grid-cols-[30px_115px_10px_1fr] items-center text-[0.9rem] mb-2 min-w-0">
                         <i class="fa-solid fa-user-tie text-[#a16207] text-lg text-center"></i>
-                        <span class="text-[#a16207] font-bold">Father's Name</span>
+                        <span class="text-[#a16207] font-bold whitespace-nowrap">Father's Name</span>
                         <span class="font-bold">:</span>
-                        <div class="border-b-[1.5px] border-gray-400 h-5 w-full text-black font-bold">{{ strtoupper($admitCard->user->father_name ?? 'N/A') }}</div>
+                        <div class="border-b-[1.5px] border-gray-400 min-h-[1.25rem] w-full text-black font-bold break-words">{{ strtoupper($admitCard->user->father_name ?? 'N/A') }}</div>
                     </div>
                     <!-- Row 5 -->
-                    <div class="grid grid-cols-[30px_140px_10px_1fr] items-center text-[0.9rem] mb-2">
+                    <div class="grid grid-cols-[30px_115px_10px_1fr] items-center text-[0.9rem] mb-2 min-w-0">
                         <i class="fa-solid fa-school text-[#0f305c] text-lg text-center"></i>
-                        <span class="color-dark-blue font-bold">School Name</span>
+                        <span class="color-dark-blue font-bold whitespace-nowrap">School Name</span>
                         <span class="font-bold">:</span>
-                        <div class="border-b-[1.5px] border-gray-400 h-5 w-full text-black font-bold truncate" title="{{ strtoupper($admitCard->user->coaching_or_school ?? 'N/A') }}">{{ strtoupper($admitCard->user->coaching_or_school ?? 'N/A') }}</div>
+                        <div class="border-b-[1.5px] border-gray-400 min-h-[1.25rem] w-full text-black font-bold truncate" title="{{ strtoupper($admitCard->user->coaching_or_school ?? 'N/A') }}">{{ strtoupper($admitCard->user->coaching_or_school ?? 'N/A') }}</div>
                     </div>
                     <!-- Row 6 -->
-                    <div class="grid grid-cols-[30px_140px_10px_1fr] items-center text-[0.9rem]">
+                    <div class="grid grid-cols-[30px_115px_10px_1fr] items-center text-[0.9rem] min-w-0">
                         <i class="fa-solid fa-mobile-screen-button text-[#15793f] text-xl text-center"></i>
-                        <span class="color-primary-green font-bold">Mobile Number</span>
+                        <span class="color-primary-green font-bold whitespace-nowrap">Mobile Number</span>
                         <span class="font-bold">:</span>
-                        <div class="border-b-[1.5px] border-gray-400 h-5 w-full text-black font-bold">{{ $admitCard->user->mobile_number ?? 'N/A' }}</div>
+                        <div class="border-b-[1.5px] border-gray-400 min-h-[1.25rem] w-full text-black font-bold break-words">{{ $admitCard->user->mobile_number ?? 'N/A' }}</div>
                     </div>
                 </div>
 
