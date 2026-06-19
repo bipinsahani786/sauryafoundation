@@ -252,9 +252,9 @@
                             </div>
                         </div>
                         <!-- Text -->
-                        <div class="flex flex-col text-center w-full pr-4">
-                            <span class="color-dark-blue font-black text-sm uppercase tracking-wide truncate" title="{{ $admitCard->exam_center }}">{{ Str::limit($admitCard->exam_center, 30) }}</span>
-                            <span class="text-black font-bold text-[0.7rem] leading-tight mt-0.5" style="white-space: pre-line;">
+                        <div class="flex flex-col text-center w-full pr-2 min-w-0">
+                            <span class="color-dark-blue font-black text-sm uppercase tracking-wide truncate w-full block" title="{{ $admitCard->exam_center }}">{{ Str::limit($admitCard->exam_center, 30) }}</span>
+                            <span class="text-black font-bold text-[0.7rem] leading-tight mt-0.5 break-words whitespace-normal w-full overflow-hidden" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
                                 {{ $admitCard->exam_center }}
                             </span>
                         </div>
