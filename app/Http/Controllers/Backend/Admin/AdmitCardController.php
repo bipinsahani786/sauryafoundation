@@ -177,12 +177,12 @@ class AdmitCardController extends Controller
                 continue;
             }
 
-            // Check if PRO (sales agent) got commission for this enrollment
-            $hasProCommission = \App\Models\Commission::where('quiz_enrollment_id', $enrollment->id)
-                ->where('type', 'sales_agent')
+            // Check if commission was successfully processed for this enrollment
+            // We check for any commission (teacher, sales_agent, or admin)
+            $commissionProcessed = \App\Models\Commission::where('quiz_enrollment_id', $enrollment->id)
                 ->exists();
 
-            if (!$hasProCommission) {
+            if (!$commissionProcessed) {
                 $skippedCount++;
                 continue;
             }

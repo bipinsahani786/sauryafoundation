@@ -193,28 +193,15 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         </button>
     </div>
 
-    @foreach($admitCards as $admitCard)
-        <div class="page-break-wrapper @if(!$loop->last) page-break @endif min-w-[850px] print-wrapper-reset w-full flex flex-col items-center print:overflow-hidden print:justify-start">
-            <!-- Student Copy -->
-            <div class="text-center font-bold text-gray-500 uppercase tracking-widest text-xs mb-2 mt-4 print:mt-0">Student Copy</div>
-            <div class="card-wrapper">
-                @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
+    <div class="min-w-[850px] print-wrapper-reset w-full flex flex-col items-center print:overflow-hidden print:justify-start">
+        @foreach($admitCards as $admitCard)
+            <div class="w-full @if(!$loop->last) page-break @endif flex flex-col items-center">
+                <div class="card-wrapper mt-4 print:mt-0">
+                    @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
+                </div>
             </div>
-
-            <!-- Cut Line -->
-            <div class="w-full max-w-[1050px] flex items-center gap-2 px-4 my-8 cut-line-print">
-                <i class="fa-solid fa-scissors text-gray-700 text-lg"></i>
-                <div class="w-full border-t-[3px] border-dashed border-gray-500"></div>
-                <span class="text-xs text-gray-400 font-bold uppercase tracking-widest whitespace-nowrap">Cut Here</span>
-            </div>
-
-            <!-- Office Copy -->
-            <div class="text-center font-bold text-gray-500 uppercase tracking-widest text-xs mb-2">Office Copy</div>
-            <div class="card-wrapper bottom-card">
-                @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
-            </div>
-        </div>
-    @endforeach
+        @endforeach
+    </div>
 
     @if(count($admitCards) === 0)
         <div class="flex flex-col items-center justify-center h-[50vh] text-slate-500">
