@@ -123,11 +123,14 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         }
 
         @media print {
-            body {
+            body, html {
                 background-color: white;
                 padding: 0;
-                align-items: flex-start;
-                display: block;
+                margin: 0;
+                display: block !important;
+            }
+            .main-wrapper {
+                display: block !important; /* Critical: Flexbox breaks page-break-after completely */
             }
             .admit-card-container {
                 box-shadow: none;
@@ -138,14 +141,10 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
             }
             .page-break-wrapper {
                 margin-bottom: 0;
-                display: block;
+                display: block !important;
             }
             .no-print {
                 display: none !important;
-            }
-            /* Add page break between cards */
-            .page-break {
-                page-break-after: always;
             }
         }
         .card-wrapper {
@@ -156,7 +155,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0 !important;
+                margin: 5mm; /* Use native safe margins */
             }
             body {
                 padding: 0 !important;
@@ -166,33 +165,18 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
             }
             .page-container {
                 display: block !important;
-                width: 210mm !important;
-                height: 297mm !important;
-                page-break-after: always !important;
-                page-break-inside: avoid !important;
-                padding-top: 10mm !important;
-                box-sizing: border-box !important;
-                overflow: hidden !important;
-            }
-            .card-slot {
-                position: relative !important;
                 width: 100% !important;
-                height: 130mm !important; /* Fixed physical height, browser cannot shift this */
-                overflow: hidden !important;
             }
+            /* Fix WebKit Paginator Bug: scale() reserves original unscaled DOM height. 
+               We must explicitly collapse the unscaled space using negative margin 
+               so the browser doesn't think it crosses a page break! */
             .card-wrapper {
-                position: absolute !important;
-                top: 0 !important;
-                left: 50% !important;
+                display: block !important;
                 width: 850px !important;
-                margin-left: -425px !important; /* perfectly center 850px width */
-                transform: scale(0.65) !important; /* Scale visually, but flow ignores it */
-                transform-origin: top center !important;
-            }
-            .cut-line-print {
-                width: 90% !important;
                 margin: 0 auto !important;
-                height: 10mm !important;
+                transform: scale(0.85) !important; /* Scale to fill A4 nicely */
+                transform-origin: top center !important;
+                page-break-inside: avoid !important;
             }
             .print-wrapper-reset {
                 min-width: auto !important;
@@ -210,28 +194,13 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         </button>
     </div>
 
-    <div class="min-w-[850px] print-wrapper-reset w-full print:block">
-        @php $chunks = $admitCards->chunk(2); @endphp
-        
-        @foreach($chunks as $chunk)
+    <div class="min-w-[850px] print-wrapper-reset w-full print:block mt-8 print:mt-0">
+        @foreach($admitCards as $index => $admitCard)
             <!-- 1 Physical A4 Page -->
             <div class="page-container">
-                @foreach($chunk as $index => $admitCard)
-                    <div class="card-slot">
-                        <div class="card-wrapper">
-                            @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
-                        </div>
-                    </div>
-                    
-                    @if($loop->first && count($chunk) > 1)
-                        <!-- Cut Line between the 2 students on this page -->
-                        <div class="w-full flex items-center gap-2 cut-line-print">
-                            <i class="fa-solid fa-scissors text-gray-700 text-lg"></i>
-                            <div class="w-full border-t-[3px] border-dashed border-gray-500"></div>
-                            <span class="text-xs text-gray-400 font-bold uppercase tracking-widest whitespace-nowrap">Cut Here</span>
-                        </div>
-                    @endif
-                @endforeach
+                <div class="card-wrapper">
+                    @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
+                </div>
             </div>
             
             @if(!$loop->last)
