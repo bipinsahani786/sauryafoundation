@@ -231,10 +231,10 @@
             </div>
 
             <!-- RIGHT COLUMN: CENTRE & INSTRUCTIONS -->
-            <div class="flex flex-col gap-4 h-full mt-3">
+            <div class="flex flex-col gap-4 h-full mt-3 min-w-0">
                 
                 <!-- Examination Centre -->
-                <div class="border-[1.5px] border-[#94a3b8] rounded-xl relative pt-6 pb-2 px-3 flex-1">
+                <div class="border-[1.5px] border-[#94a3b8] rounded-xl relative pt-6 pb-2 px-3 flex-1 min-w-0">
                      <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-primary-green text-white px-6 py-0.5 rounded-full border-2 border-white font-bold text-[0.7rem] uppercase shadow-sm whitespace-nowrap">
                         Examination Centre
                     </div>
@@ -262,7 +262,7 @@
                 </div>
 
                 <!-- Important Instructions -->
-                <div class="border-[1.5px] border-[#94a3b8] rounded-xl relative pt-6 pb-2 px-3 bg-[#f8fafc] flex-[2]">
+                <div class="border-[1.5px] border-[#94a3b8] rounded-xl relative pt-6 pb-2 px-3 bg-[#f8fafc] flex-[2] min-w-0">
                     <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-dark-blue text-white px-6 py-0.5 rounded-full border-2 border-white font-bold text-[0.7rem] uppercase shadow-sm whitespace-nowrap">
                         Important Instructions
                     </div>
