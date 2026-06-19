@@ -156,7 +156,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0 !important; /* Force 0 margin to prevent browser scaling */
+                margin: 0 !important;
             }
             body {
                 padding: 0 !important;
@@ -164,31 +164,39 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            .a4-physical-page {
+            .page-container {
+                display: block !important;
                 width: 210mm !important;
-                height: 296mm !important;
-                overflow: hidden !important; /* NEVER allow spillover to next page */
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: center !important;
-                padding: 10mm !important;
-                box-sizing: border-box !important;
+                height: 297mm !important;
+                page-break-after: always !important;
                 page-break-inside: avoid !important;
-                margin: 0 auto !important;
+                padding-top: 10mm !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
+            }
+            .card-slot {
+                position: relative !important;
+                width: 100% !important;
+                height: 130mm !important; /* Fixed physical height, browser cannot shift this */
+                overflow: hidden !important;
             }
             .card-wrapper {
-                zoom: 0.58; /* Perfectly balanced for 2 cards */
-                margin: 0 auto !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 50% !important;
+                width: 850px !important;
+                margin-left: -425px !important; /* perfectly center 850px width */
+                transform: scale(0.65) !important; /* Scale visually, but flow ignores it */
+                transform-origin: top center !important;
             }
             .cut-line-print {
-                margin: 15px auto !important;
                 width: 90% !important;
+                margin: 0 auto !important;
+                height: 10mm !important;
             }
-            /* Reset min-width for the main wrapper during print so mobile auto-scales */
             .print-wrapper-reset {
                 min-width: auto !important;
                 width: 100% !important;
-                height: auto !important;
             }
         }
     </style>
@@ -207,15 +215,17 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         
         @foreach($chunks as $chunk)
             <!-- 1 Physical A4 Page -->
-            <div class="a4-physical-page">
+            <div class="page-container">
                 @foreach($chunk as $index => $admitCard)
-                    <div class="card-wrapper w-full">
-                        @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
+                    <div class="card-slot">
+                        <div class="card-wrapper">
+                            @include('backend.admin.admit_cards._print_card', ['admitCard' => $admitCard, 'isBulkPrint' => true])
+                        </div>
                     </div>
                     
                     @if($loop->first && count($chunk) > 1)
                         <!-- Cut Line between the 2 students on this page -->
-                        <div class="w-full max-w-[1050px] flex items-center gap-2 px-4 cut-line-print">
+                        <div class="w-full flex items-center gap-2 cut-line-print">
                             <i class="fa-solid fa-scissors text-gray-700 text-lg"></i>
                             <div class="w-full border-t-[3px] border-dashed border-gray-500"></div>
                             <span class="text-xs text-gray-400 font-bold uppercase tracking-widest whitespace-nowrap">Cut Here</span>
@@ -226,7 +236,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
             
             @if(!$loop->last)
                 <!-- Bulletproof Page Break -->
-                <div style="page-break-after: always; break-after: page; clear: both;"></div>
+                <div style="page-break-after: always; break-after: page; display: block; height: 0;"></div>
             @endif
         @endforeach
     </div>
