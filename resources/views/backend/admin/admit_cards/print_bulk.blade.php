@@ -152,25 +152,34 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         }
         @media print {
             @page {
-                margin: 0.5cm; /* Small margins for print */
+                size: A4 portrait;
+                margin: 0.5cm;
             }
             body {
                 padding: 0 !important;
                 margin: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             .card-wrapper {
-                zoom: 0.7; /* Zoom affects document flow height, transform does not */
+                zoom: 0.65; /* Slightly smaller to ensure it fits mobile print margins */
             }
             .cut-line-print {
-                margin-top: 15px !important;
-                margin-bottom: 15px !important;
+                margin-top: 10px !important;
+                margin-bottom: 10px !important;
             }
             .bottom-card {
-                zoom: 0.7;
+                zoom: 0.65;
             }
             .page-break-wrapper {
                 page-break-inside: avoid;
                 margin-bottom: 0 !important;
+            }
+            /* Reset min-width for the main wrapper during print so mobile auto-scales */
+            .print-wrapper-reset {
+                min-width: auto !important;
+                width: 100% !important;
+                height: auto !important;
             }
         }
     </style>
@@ -185,7 +194,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
     </div>
 
     @foreach($admitCards as $admitCard)
-        <div class="page-break-wrapper @if(!$loop->last) page-break @endif min-w-[850px] w-full flex flex-col items-center print:h-[290mm] print:overflow-hidden print:justify-start">
+        <div class="page-break-wrapper @if(!$loop->last) page-break @endif min-w-[850px] print-wrapper-reset w-full flex flex-col items-center print:overflow-hidden print:justify-start">
             <!-- Student Copy -->
             <div class="text-center font-bold text-gray-500 uppercase tracking-widest text-xs mb-2 mt-4 print:mt-0">Student Copy</div>
             <div class="card-wrapper">

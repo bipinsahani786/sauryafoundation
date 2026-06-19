@@ -140,21 +140,30 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         }
         @media print {
             @page {
-                margin: 0.5cm; /* Small margins for print */
+                size: A4 portrait;
+                margin: 0.5cm;
             }
             body {
                 padding: 0 !important;
                 margin: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             .card-wrapper {
-                zoom: 0.7; /* Zoom affects document flow height, transform does not */
+                zoom: 0.65; /* Slightly smaller to ensure it fits mobile print margins */
             }
             .cut-line-print {
-                margin-top: 15px !important;
-                margin-bottom: 15px !important;
+                margin-top: 10px !important;
+                margin-bottom: 10px !important;
             }
             .bottom-card {
-                zoom: 0.7;
+                zoom: 0.65;
+            }
+            /* Reset min-width for the main wrapper during print so mobile auto-scales */
+            .print-wrapper-reset {
+                min-width: auto !important;
+                width: 100% !important;
+                height: auto !important;
             }
         }
     </style>
@@ -166,7 +175,7 @@ $siteSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
         </button>
     </div>
 
-    <div class="min-w-[850px] w-full flex flex-col items-center print:h-[290mm] print:overflow-hidden print:justify-start">
+    <div class="min-w-[850px] print-wrapper-reset w-full flex flex-col items-center print:overflow-hidden print:justify-start">
         <!-- Student Copy -->
         <div class="text-center font-bold text-gray-500 uppercase tracking-widest text-xs mb-2">Student Copy</div>
         <div class="card-wrapper">
